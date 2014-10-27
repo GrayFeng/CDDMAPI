@@ -1,0 +1,20 @@
+package com.cdd.mapi.member.service;
+
+import com.cdd.mapi.pojo.Member;
+
+/**
+ * CDDMAPI
+ * @date 2014-10-27 下午8:07:56
+ * @author Gray(tyfjy823@gmail.com)
+ * @version 1.0
+ */
+public interface IMemberService {
+
+	public void addMember(Member member);
+	
+	public Member login(String loginId,String password,String ip);
+	
+	public Member getMemberByLoginId(String loginId);
+	
+	public Member getMemberByName(String name);
+}

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.cdd.mapi.member.dao.IMemberDao">
+    
+    	<sql id="memberValues">
+    	    id,login_id as loginId,name,password,sex,status,level_id as levelId,score_ceiling as scoreCeiling,
+    	    available_score as availableScore,create_time as createTime,modify_time as modifyTime,mobile,email,
+    	    photo,description,device_flag as deviceFlag,origin,is_admin as isAdmin,sign_time as signTime
+    	</sql>
+    
+    	<insert id="addMember" parameterType="Member">
+	 		insert into t_member 
+	 			(login_id,name,password,sex,status,level_id,score_ceiling,available_score,create_time,modify_time) 
+	 		values
+	 			(#{loginId},#{name},#{password},1,0,1,0,0,now(),now())
+		 	<selectKey resultType="int" keyProperty="id" order="AFTER">  
+	  			SELECT LAST_INSERT_ID() as id
+	  		</selectKey>  
+	 	</insert>
+	 	
+    	<select id="getMemberByLoginId" resultType="Member" parameterType="String">
+			select <include refid="memberValues"/> from t_member where login_id = #{loginId} and status = 0;
+	 	</select>
+	 	
+    	<select id="getMemberByName" resultType="Member" parameterType="String">
+			select <include refid="memberValues"/> from t_member where name = #{name} and status = 0;
+	 	</select>
+</mapper> 
