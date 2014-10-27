@@ -1,4 +1,4 @@
-package net.netne.common.pojo;
+package com.cdd.mapi.pojo;
 
 /**
  * Description: City.java
@@ -12,6 +12,26 @@ public class City {
 	private	Integer id;
 	
 	private String name;
+	
+	private String enName;
+	
+	private Integer provinceId;
+	
+	public String getEnName() {
+		return enName;
+	}
+
+	public void setEnName(String enName) {
+		this.enName = enName;
+	}
+
+	public Integer getProvinceId() {
+		return provinceId;
+	}
+
+	public void setProvinceId(Integer provinceId) {
+		this.provinceId = provinceId;
+	}
 
 	public Integer getId() {
 		return id;

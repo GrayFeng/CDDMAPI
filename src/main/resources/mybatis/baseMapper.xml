@@ -2,11 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!-- namespace必须指向Dao接口 -->
-<mapper namespace="net.netne.test.dao.ITestDao">
+<mapper namespace="com.cdd.mapi.base.dao.IBaseDao">
     <!--
          获取城市信息
      -->
-    <select id="getCityList" resultType="City">
-		select id,name from city;
+    <select id="getCiytList" resultType="City">
+		select id,name,en_name as enName,province_id as provinceId from t_city order by sort_id;
 	</select>
 </mapper> 

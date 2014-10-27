@@ -10,7 +10,7 @@
     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
 
 	<!-- 使用annotation 自动注册bean, 并保证@Required、@Autowired的属性被注入 -->
-    <context:component-scan base-package="net.netne">
+    <context:component-scan base-package="com.cdd.mapi">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
     
@@ -23,15 +23,15 @@
     <!-- MyBatis配置 -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
-        <property name="typeAliasesPackage" value="net.netne.common.pojo"/>
+        <property name="typeAliasesPackage" value="com.cdd.mapi.pojo"/>
         <!-- 显式指定Mapper文件位置 -->
         <property name="mapperLocations" value="classpath:/mybatis/*.xml"/>
     </bean>
 
     <!-- 扫描basePackage下所有以@MyBatisRepository标识的 接口-->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="net.netne"/>
-        <property name="annotationClass" value="net.netne.common.annotation.MyBatisRepository"/>
+        <property name="basePackage" value="com.cdd.mapi"/>
+        <property name="annotationClass" value="com.cdd.mapi.common.annotation.MyBatisRepository"/>
     </bean>
 
 </beans>

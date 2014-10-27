@@ -7,7 +7,7 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 	<!-- 自动扫描且只扫描@Controller -->
-    <context:component-scan base-package="net.netne" use-default-filters="false">
+    <context:component-scan base-package="com.cdd.mapi" use-default-filters="false">
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 
@@ -27,15 +27,14 @@
     </bean>
     
     <mvc:annotation-driven/>
+    
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/api/**"/>
+            <bean class="com.cdd.mapi.filter.RuleInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
 
-    <!-- 将无法mapping到Controller的path交给default servlet handler处理
-    <mvc:default-servlet-handler/>-->
-
-    <!-- 定义JSP文件的位置 
-    <bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="prefix" value="/jsp/"/>
-        <property name="suffix" value=".jsp"/>
-    </bean>-->
    	<bean id="jspWebInfViewResolver"
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="viewNames">
@@ -44,5 +43,7 @@
 			</list>
 		</property>
 	</bean>
+	
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>  
 </beans>
 	
