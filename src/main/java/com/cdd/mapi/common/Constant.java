@@ -12,7 +12,7 @@ public class Constant {
 	
 	public static final String HOST_URL = "http://123.57.45.145";
 	
-	public static final String PHOTO_URL_PATH = HOST_URL + "/images";
+	public static final String PHOTO_URL_PATH = HOST_URL + ":82";
 	
 	public static final String photoBasePath = "/alidata/www/cdd_images/";
 	
