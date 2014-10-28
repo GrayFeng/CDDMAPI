@@ -3,10 +3,16 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!-- namespace必须指向Dao接口 -->
 <mapper namespace="com.cdd.mapi.base.dao.IBaseDao">
-    <!--
-         获取城市信息
-     -->
+
     <select id="getCiytList" resultType="City">
 		select id,name,en_name as enName,province_id as provinceId from t_city order by sort_id;
+	</select>
+	
+	<select id="getProvinceList" resultType="Province">
+		select id,name from t_province order by sort_id;
+	</select>
+	
+	<select id="getMemberLevelList" resultType="MemberLevel">
+		select id,name,score_range_start as scoreRangeStart,score_range_end as scoreRangeEnd from t_level order by sort_id;
 	</select>
 </mapper> 

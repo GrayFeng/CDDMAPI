@@ -20,4 +20,10 @@ public interface IMemberDao {
 	
 	public Member getMemberByName(String name);
 	
+	public Member getMemberById(Integer id);
+	
+	public void updateMemberDeviceFlag(Member member);
+	
+	public void updateMember(Member member);
+	
 }

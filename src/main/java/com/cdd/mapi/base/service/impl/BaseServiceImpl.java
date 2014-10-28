@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import com.cdd.mapi.base.dao.IBaseDao;
 import com.cdd.mapi.base.service.IBaseService;
 import com.cdd.mapi.pojo.City;
+import com.cdd.mapi.pojo.MemberLevel;
+import com.cdd.mapi.pojo.Province;
 
 /**
  * Description: BaseServiceImpl.java
@@ -25,6 +27,16 @@ public class BaseServiceImpl implements IBaseService{
 	@Override
 	public List<City> getCityList() {
 		return baseDao.getCiytList();
+	}
+
+	@Override
+	public List<Province> getProvinceList() {
+		return baseDao.getProvinceList();
+	}
+
+	@Override
+	public List<MemberLevel> getMemberLevelList() {
+		return baseDao.getMemberLevelList();
 	}
 
 }

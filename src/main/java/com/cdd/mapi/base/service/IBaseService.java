@@ -3,6 +3,8 @@ package com.cdd.mapi.base.service;
 import java.util.List;
 
 import com.cdd.mapi.pojo.City;
+import com.cdd.mapi.pojo.MemberLevel;
+import com.cdd.mapi.pojo.Province;
 
 /**
  * Description: IBaseDao.java
@@ -14,5 +16,9 @@ import com.cdd.mapi.pojo.City;
 public interface IBaseService {
 	
 	public List<City> getCityList();
+	
+	public List<Province> getProvinceList();
+	
+	public List<MemberLevel> getMemberLevelList();
 
 }

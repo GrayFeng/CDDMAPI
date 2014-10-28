@@ -48,8 +48,22 @@ public class Member {
 	
 	private Date modifyTime;
 	
-	private int status;
+	private Integer status;
 	
+	private Integer cityId;
+	
+	public Integer getCityId() {
+		return cityId;
+	}
+
+	public void setCityId(Integer cityId) {
+		this.cityId = cityId;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
 	public String getConfirmPassword() {
 		return confirmPassword;
 	}

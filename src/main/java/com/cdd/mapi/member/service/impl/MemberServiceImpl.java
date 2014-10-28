@@ -1,8 +1,14 @@
 package com.cdd.mapi.member.service.impl;
 
+import java.io.File;
+
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cdd.mapi.common.Constant;
+import com.cdd.mapi.common.cache.MemberCache;
+import com.cdd.mapi.common.pojo.LoginInfo;
 import com.cdd.mapi.member.dao.IMemberDao;
 import com.cdd.mapi.member.service.IMemberService;
 import com.cdd.mapi.pojo.Member;
@@ -42,6 +48,50 @@ public class MemberServiceImpl implements IMemberService {
 	@Override
 	public Member getMemberByName(String name) {
 		return memberDao.getMemberByName(name);
+	}
+
+	@Override
+	public void updateMemberDeviceFlag(Member member) {
+		memberDao.updateMemberDeviceFlag(member);
+	}
+
+	@Override
+	public void updateMember(Member member,String uid) {
+		memberDao.updateMember(member);
+		if(StringUtils.isNotEmpty(uid)){
+			LoginInfo loginInfo = MemberCache.getInstance().get(uid);
+			if(loginInfo != null){
+				loginInfo.setMember(member);
+				MemberCache.getInstance().add(uid, loginInfo);
+			}
+		}
+	}
+
+	@Override
+	public Member getMemberById(Integer id) {
+		return memberDao.getMemberById(id);
+	}
+
+	@Override
+	public Member getMemberByUID(String uid) {
+		Member member = null;
+		LoginInfo loginInfo = MemberCache.getInstance().get(uid);
+		if(loginInfo != null && loginInfo.getMember() != null){
+			member = getMemberById(loginInfo.getMember().getId());
+		}
+		return member;
+	}
+
+	@Override
+	public void deleteMemberPhoto(Integer memberId) {
+		Member member = getMemberById(memberId);
+		if(member != null && StringUtils.isNotEmpty(member.getPhoto())){
+			File file = new File(Constant.PHOTO_URL_PATH + member.getPhoto()
+					.replace(Constant.PHOTO_URL_PATH, ""));
+			if(file.exists()){
+				file.delete();
+			}
+		}
 	}
 
 }

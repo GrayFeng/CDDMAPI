@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository;
 
 import com.cdd.mapi.common.annotation.MyBatisRepository;
 import com.cdd.mapi.pojo.City;
+import com.cdd.mapi.pojo.MemberLevel;
+import com.cdd.mapi.pojo.Province;
 
 /**
  * Description: BaseDao.java
@@ -19,5 +21,9 @@ import com.cdd.mapi.pojo.City;
 public interface IBaseDao {
 	
 	public List<City> getCiytList();
+	
+	public List<Province> getProvinceList();
+	
+	public List<MemberLevel> getMemberLevelList();
 
 }

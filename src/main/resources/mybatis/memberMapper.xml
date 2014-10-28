@@ -7,24 +7,39 @@
     	<sql id="memberValues">
     	    id,login_id as loginId,name,password,sex,status,level_id as levelId,score_ceiling as scoreCeiling,
     	    available_score as availableScore,create_time as createTime,modify_time as modifyTime,mobile,email,
-    	    photo,description,device_flag as deviceFlag,origin,is_admin as isAdmin,sign_time as signTime
+    	    photo,description,device_flag as deviceFlag,origin,is_admin as isAdmin,sign_time as signTime,city_id as cityId
     	</sql>
     
     	<insert id="addMember" parameterType="Member">
 	 		insert into t_member 
-	 			(login_id,name,password,sex,status,level_id,score_ceiling,available_score,create_time,modify_time) 
+	 			(login_id,name,password,sex,status,level_id,score_ceiling,available_score,create_time,modify_time,mobile,email) 
 	 		values
-	 			(#{loginId},#{name},#{password},1,0,1,0,0,now(),now())
+	 			(#{loginId},#{name},#{password},1,0,1,0,0,now(),now(),#{mobile},#{email})
 		 	<selectKey resultType="int" keyProperty="id" order="AFTER">  
 	  			SELECT LAST_INSERT_ID() as id
 	  		</selectKey>  
 	 	</insert>
 	 	
+	 	<update id="updateMember" parameterType="Member">
+	 		update t_member 
+	 		set city_id = #{cityId},sex = #{sex},photo = #{photo},name = #{name},
+	 			description = #{description},password = #{password},mobile = #{mobile}
+	 		where id = #{id}
+	 	</update>
+	 	
+	 	<select id="getMemberById" resultType="Member" parameterType="Integer">
+			select <include refid="memberValues"/> from t_member where id = #{id} and status = 0
+	 	</select>
+	 	
     	<select id="getMemberByLoginId" resultType="Member" parameterType="String">
-			select <include refid="memberValues"/> from t_member where login_id = #{loginId} and status = 0;
+			select <include refid="memberValues"/> from t_member where login_id = #{loginId} and status = 0
 	 	</select>
 	 	
     	<select id="getMemberByName" resultType="Member" parameterType="String">
-			select <include refid="memberValues"/> from t_member where name = #{name} and status = 0;
+			select <include refid="memberValues"/> from t_member where name = #{name} and status = 0
 	 	</select>
+	 	
+	 	<update id="updateMemberDeviceFlag" parameterType="Member">
+	 		update t_member set device_flag = #{deviceFlag} where id = #{id}
+	 	</update>
 </mapper> 

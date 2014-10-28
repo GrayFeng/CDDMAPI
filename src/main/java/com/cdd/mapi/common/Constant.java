@@ -10,11 +10,11 @@ public class Constant {
 	
 	public static final Integer MAX_DICE_POINT = 6;
 	
-	public static final String HOST_URL = "http://www.yedianshaiwang.com";
+	public static final String HOST_URL = "http://123.57.45.145";
 	
-	public static final String PHOTO_URL_PATH = HOST_URL + "/api/img.do?key=";
+	public static final String PHOTO_URL_PATH = HOST_URL + "/images";
 	
-	public static final String PRIZE_PHOTO_URL_PATH = HOST_URL + "/api/prize/img.do?key=";
+	public static final String photoBasePath = "/alidata/www/cdd_images/";
 	
 	public static String getClientIp(HttpServletRequest request){
 		String ip = request.getHeader("x-forwarded-for");

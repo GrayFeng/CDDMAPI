@@ -44,6 +44,26 @@ public class BaseController {
 		return ResultUtil.getJsonString(result);
 	}
 	
+	@RequestMapping("provinceList")
+	@ResponseBody
+	@NotNeedLogin
+	@NotNeedUID
+	public String getProvinceList(){
+		Result result = Result.getSuccessResult();
+		result.setRe(baseService.getProvinceList());
+		return ResultUtil.getJsonString(result);
+	}
+	
+	@RequestMapping("memberLevelList")
+	@ResponseBody
+	@NotNeedLogin
+	@NotNeedUID
+	public String getMemberLevelList(){
+		Result result = Result.getSuccessResult();
+		result.setRe(baseService.getMemberLevelList());
+		return ResultUtil.getJsonString(result);
+	}
+	
 	@RequestMapping("start")
 	@ResponseBody
 	@NotNeedLogin

@@ -17,4 +17,15 @@ public interface IMemberService {
 	public Member getMemberByLoginId(String loginId);
 	
 	public Member getMemberByName(String name);
+	
+	public Member getMemberById(Integer id);
+	
+	public Member getMemberByUID(String uid);
+	
+	public void updateMemberDeviceFlag(Member member);
+	
+	public void updateMember(Member member,String uid);
+	
+	public void deleteMemberPhoto(Integer memberId);
+	
 }
