@@ -1,5 +1,6 @@
 package com.cdd.mapi.member.control;
 
+import java.util.Date;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -7,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -128,8 +128,7 @@ public class MemberController {
 							loginInfo.setMember(member);
 							MemberCache.getInstance().add(uid, loginInfo);
 							result = Result.getSuccessResult();
-							MemberVO memberVO = new MemberVO();
-							BeanUtils.copyProperties(member, memberVO);
+							MemberVO memberVO = memberService.transformMember(member);
 							result.setRe(memberVO);
 						}
 					}
@@ -241,8 +240,8 @@ public class MemberController {
 			ImageUploadResult imageUploadResult =  uploadService.processupload(member.getId(),file,EUploadType.MEMBER_PHOTO);
 			if(imageUploadResult.isSuccess() 
 					&& StringUtils.isNotEmpty(imageUploadResult.getUrl())){
-				member.setPhoto(Constant.PHOTO_URL_PATH +"/"+ imageUploadResult.getUrl());
 				memberService.deleteMemberPhoto(member.getId());
+				member.setPhoto(Constant.PHOTO_URL_PATH +"/"+ imageUploadResult.getUrl());
 				memberService.updateMember(member,uid);
 				Map<String,String> paramMap = Maps.newHashMap();
 				paramMap.put("url",member.getPhoto());
@@ -265,8 +264,7 @@ public class MemberController {
 			Member member = memberService.getMemberByUID(uid);
 			if(member != null){
 				result = Result.getSuccessResult();
-				MemberVO memberVO = new MemberVO();
-				BeanUtils.copyProperties(member, memberVO);
+				MemberVO memberVO = memberService.transformMember(member);
 				result.setRe(memberVO);
 			}
 		}catch (Exception e) {
@@ -274,6 +272,43 @@ public class MemberController {
 		}finally{
 			if(result == null){
 				result = new Result(EEchoCode.ERROR.getCode(),"读取用户信息失败");
+			}
+		}
+		return ResultUtil.getJsonString(result);
+	}
+	
+	@RequestMapping("signIn")
+	@ResponseBody
+	public String signIn(String uid,String params){
+		Result result = null;
+		try{
+			Member member = memberService.getMemberByUID(uid);
+			if(member != null){
+				Date lastSignInTime = member.getSignTime();
+				if(lastSignInTime == null){
+					member.setSignTime(new Date());
+					memberService.signIn(member);
+					result = Result.getSuccessResult();
+				}else{
+					if(Constant.isSignIn(lastSignInTime) == 0){
+						member.setSignTime(new Date());
+						memberService.signIn(member);
+						result = Result.getSuccessResult();
+					}else{
+						result = new Result(EEchoCode.ERROR.getCode(), "今日已签到过了哦");
+					}
+				}
+				LoginInfo loginInfo = MemberCache.getInstance().get(uid);
+				if(loginInfo != null){
+					loginInfo.setMember(member);
+					MemberCache.getInstance().add(uid, loginInfo);
+				}
+			}
+		}catch (Exception e) {
+			log.error(e.getMessage(),e);
+		}finally{
+			if(result == null){
+				result = new Result(EEchoCode.ERROR.getCode(),"系统异常，签到失败");
 			}
 		}
 		return ResultUtil.getJsonString(result);

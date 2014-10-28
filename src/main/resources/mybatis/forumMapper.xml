@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+	<mapper namespace="com.cdd.mapi.forum.dao.IForumDao">
+		<insert id="addSubject" parameterType="ForumSubject">
+	 		insert into t_forum_question 
+	 			(title,content,member_id,status,item_id,sub_item_id,anonymous,create_time,modify_time) 
+	 		values
+	 			(#{title},#{content},#{memberId},0,#{itemId},#{subItemId},#{anonymous},now(),now())
+		 	<selectKey resultType="int" keyProperty="id" order="AFTER">  
+	  			SELECT LAST_INSERT_ID() as id
+	  		</selectKey>  
+	 	</insert>
+	</mapper> 

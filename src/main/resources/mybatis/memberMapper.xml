@@ -42,4 +42,13 @@
 	 	<update id="updateMemberDeviceFlag" parameterType="Member">
 	 		update t_member set device_flag = #{deviceFlag} where id = #{id}
 	 	</update>
+	 	
+	 	<update id="signIn" parameterType="Member">
+	 		update t_member set sign_time = #{signTime} where id = #{id}
+	 	</update>
+	 	
+	 	<update id="addMemberScore" parameterType="Map">
+	 		update t_member set score_ceiling = score_ceiling + #{score},
+	 		available_score = available_score + #{score} where id = #{id}
+	 	</update>
 </mapper> 

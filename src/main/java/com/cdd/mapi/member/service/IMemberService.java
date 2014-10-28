@@ -1,5 +1,7 @@
 package com.cdd.mapi.member.service;
 
+import com.cdd.mapi.common.enums.EScoreRuleType;
+import com.cdd.mapi.common.pojo.MemberVO;
 import com.cdd.mapi.pojo.Member;
 
 /**
@@ -27,5 +29,11 @@ public interface IMemberService {
 	public void updateMember(Member member,String uid);
 	
 	public void deleteMemberPhoto(Integer memberId);
+	
+	public void addMemberScore(Integer memberId,EScoreRuleType type);
+	
+	public void signIn(Member member);
+	
+	public MemberVO transformMember(Member member);
 	
 }

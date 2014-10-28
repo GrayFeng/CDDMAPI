@@ -15,4 +15,17 @@
 	<select id="getMemberLevelList" resultType="MemberLevel">
 		select id,name,score_range_start as scoreRangeStart,score_range_end as scoreRangeEnd from t_level order by sort_id;
 	</select>
+	
+	<select id="getScoreRuleList" resultType="ScoreRule">
+		select id,type,score from t_score_rule;
+	</select>
+	
+	<select id="getForumItemList" resultType="ForumItem">
+		select id,name from t_forum_item;
+	</select>
+	
+	<select id="getExamItemList" resultType="ExamItem">
+		select id,name from t_exam_item;
+	</select>
+	
 </mapper> 

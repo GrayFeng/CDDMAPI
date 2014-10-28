@@ -2,7 +2,6 @@ package com.cdd.mapi.common.serivce.impl;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.net.URI;
 import java.util.Date;
 
 import javax.imageio.ImageIO;
@@ -10,7 +9,6 @@ import javax.imageio.ImageIO;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,16 +17,12 @@ import com.cdd.mapi.common.enums.EUploadType;
 import com.cdd.mapi.common.pojo.ImageUploadResult;
 import com.cdd.mapi.common.serivce.IUploadService;
 import com.cdd.mapi.common.uitls.SimpleFileUtil;
-import com.cdd.mapi.member.dao.IMemberDao;
 import com.google.common.io.Files;
 
 @Service
 public class UploadServiceImpl implements IUploadService{
 	
 	private final static Logger logger = Logger.getLogger(UploadServiceImpl.class);
-	
-	@Autowired
-	private IMemberDao memberDao;
 
 	public ImageUploadResult processupload(Integer memberId,MultipartFile uploadFile,EUploadType uploadType) {
 		ImageUploadResult result = null;
@@ -57,7 +51,7 @@ public class UploadServiceImpl implements IUploadService{
 			case MEMBER_PHOTO:
 				String filePath = getNewFilePath(uploadType,fileExtension);
 				if(StringUtils.isNotEmpty(filePath)){
-					File imageFile = new File(Constant.PHOTO_URL_PATH + filePath);
+					File imageFile = new File(Constant.PHOTO_BASE_PATH + filePath);
 					Files.createParentDirs(imageFile);
 					Files.write(imgbytes, imageFile);
 					result = new ImageUploadResult(true,"图片上传成功");

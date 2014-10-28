@@ -6,8 +6,11 @@ import org.springframework.stereotype.Repository;
 
 import com.cdd.mapi.common.annotation.MyBatisRepository;
 import com.cdd.mapi.pojo.City;
+import com.cdd.mapi.pojo.ExamItem;
+import com.cdd.mapi.pojo.ForumItem;
 import com.cdd.mapi.pojo.MemberLevel;
 import com.cdd.mapi.pojo.Province;
+import com.cdd.mapi.pojo.ScoreRule;
 
 /**
  * Description: BaseDao.java
@@ -25,5 +28,11 @@ public interface IBaseDao {
 	public List<Province> getProvinceList();
 	
 	public List<MemberLevel> getMemberLevelList();
+	
+	public List<ScoreRule> getScoreRuleList();
+	
+	public List<ForumItem> getForumItemList();
+	
+	public List<ExamItem> getExamItemList();
 
 }

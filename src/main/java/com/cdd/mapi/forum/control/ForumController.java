@@ -1,0 +1,61 @@
+package com.cdd.mapi.forum.control;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.alibaba.fastjson.JSON;
+import com.cdd.mapi.common.enums.EEchoCode;
+import com.cdd.mapi.common.pojo.Result;
+import com.cdd.mapi.common.uitls.ResultUtil;
+import com.cdd.mapi.forum.service.IForumService;
+import com.cdd.mapi.member.service.IMemberService;
+import com.cdd.mapi.pojo.ForumSubject;
+import com.cdd.mapi.pojo.Member;
+
+/**
+ * CDDMAPI
+ * @date 2014-10-28 下午9:42:25
+ * @author Gray(tyfjy823@gmail.com)
+ * @version 1.0
+ */
+@Controller
+@RequestMapping("/api/forum")
+public class ForumController {
+	
+	private Logger log = LoggerFactory.getLogger(ForumController.class);
+	
+	@Autowired
+	private IForumService forumService;
+	
+	@Autowired
+	private IMemberService memberService;
+	
+	@RequestMapping("addSubject")
+	public String addSubject(String uid,String params){
+		Result result = null;
+		try{
+			ForumSubject subject = JSON.parseObject(params, ForumSubject.class);
+			Member member = memberService.getMemberByUID(uid);
+			if(subject != null && member != null
+					&& StringUtils.isNotEmpty(subject.getTitle())
+					&& StringUtils.isNotEmpty(subject.getContent())
+					&& subject.getItemId() != null){
+				subject.setMemberId(member.getId());
+				forumService.addSubject(subject);
+				result = Result.getSuccessResult();
+			}
+		}catch (Exception e) {
+			log.error(e.getMessage(),e);
+		}finally{
+			if(result == null){
+				result = new Result(EEchoCode.ERROR.getCode(),"信息不全，发布失败!");
+			}
+		}
+		return ResultUtil.getJsonString(result);
+	}
+
+}

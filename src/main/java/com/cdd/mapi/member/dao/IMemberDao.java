@@ -1,5 +1,7 @@
 package com.cdd.mapi.member.dao;
 
+import java.util.Map;
+
 import org.springframework.stereotype.Repository;
 
 import com.cdd.mapi.common.annotation.MyBatisRepository;
@@ -25,5 +27,9 @@ public interface IMemberDao {
 	public void updateMemberDeviceFlag(Member member);
 	
 	public void updateMember(Member member);
+	
+	public void addMemberScore(Map<String,Object> paramMap);
+	
+	public void signIn(Member member);
 	
 }

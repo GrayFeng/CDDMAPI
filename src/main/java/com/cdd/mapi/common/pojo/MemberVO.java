@@ -20,19 +20,31 @@ private Integer id;
 	
 	private Integer levelId;
 	
+	private String levelName;
+	
 	private String photo;
 	
 	private String email;
 	
 	private String description;
-	//积分上限值
-	private String scoreCeiling;
 	//可用积分
 	private String availableScore;
 	
 	private Integer status;
 	
 	private Integer cityId;
+	
+	private String cityName;
+	//今日是否签到过
+	private Integer isSignIn;
+	
+	public Integer getIsSignIn() {
+		return isSignIn;
+	}
+
+	public void setIsSignIn(Integer isSignIn) {
+		this.isSignIn = isSignIn;
+	}
 
 	public Integer getId() {
 		return id;
@@ -98,14 +110,6 @@ private Integer id;
 		this.description = description;
 	}
 
-	public String getScoreCeiling() {
-		return scoreCeiling;
-	}
-
-	public void setScoreCeiling(String scoreCeiling) {
-		this.scoreCeiling = scoreCeiling;
-	}
-
 	public String getAvailableScore() {
 		return availableScore;
 	}
@@ -128,6 +132,22 @@ private Integer id;
 
 	public void setCityId(Integer cityId) {
 		this.cityId = cityId;
+	}
+
+	public String getLevelName() {
+		return levelName;
+	}
+
+	public void setLevelName(String levelName) {
+		this.levelName = levelName;
+	}
+
+	public String getCityName() {
+		return cityName;
+	}
+
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
 	}
 	
 }

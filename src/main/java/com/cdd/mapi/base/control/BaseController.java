@@ -82,5 +82,25 @@ public class BaseController {
 		result.setRe(resultMap);
 		return ResultUtil.getJsonString(result);
 	}
+	
+	@RequestMapping("forumItemList")
+	@ResponseBody
+	@NotNeedLogin
+	@NotNeedUID
+	public String getForumItemList(){
+		Result result = Result.getSuccessResult();
+		result.setRe(baseService.getForumItemList());
+		return ResultUtil.getJsonString(result);
+	}
+	
+	@RequestMapping("examItemList")
+	@ResponseBody
+	@NotNeedLogin
+	@NotNeedUID
+	public String getExamItemList(){
+		Result result = Result.getSuccessResult();
+		result.setRe(baseService.getExamItemList());
+		return ResultUtil.getJsonString(result);
+	}
 
 }

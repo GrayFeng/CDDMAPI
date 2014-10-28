@@ -1,17 +1,26 @@
 package com.cdd.mapi.member.service.impl;
 
 import java.io.File;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cdd.mapi.base.service.IBaseService;
 import com.cdd.mapi.common.Constant;
 import com.cdd.mapi.common.cache.MemberCache;
+import com.cdd.mapi.common.enums.EScoreRuleType;
 import com.cdd.mapi.common.pojo.LoginInfo;
+import com.cdd.mapi.common.pojo.MemberVO;
 import com.cdd.mapi.member.dao.IMemberDao;
 import com.cdd.mapi.member.service.IMemberService;
+import com.cdd.mapi.pojo.City;
 import com.cdd.mapi.pojo.Member;
+import com.cdd.mapi.pojo.MemberLevel;
+import com.google.common.collect.Maps;
 
 /**
  * CDDMAPI
@@ -24,6 +33,8 @@ public class MemberServiceImpl implements IMemberService {
 	
 	@Autowired
 	private IMemberDao memberDao;
+	@Autowired
+	private IBaseService baseService;
 
 	@Override
 	public void addMember(Member member) {
@@ -92,6 +103,48 @@ public class MemberServiceImpl implements IMemberService {
 				file.delete();
 			}
 		}
+	}
+
+	@Override
+	public void addMemberScore(Integer memberId, EScoreRuleType type) {
+		int score = baseService.getScoreByType(type);
+		if(score > 0){
+			Map<String,Object> paramMap = Maps.newHashMap();
+			paramMap.put("id", memberId);
+			paramMap.put("score", score);
+			memberDao.addMemberScore(paramMap);
+		}
+	}
+
+	@Override
+	public void signIn(Member member) {
+		memberDao.signIn(member);
+		addMemberScore(member.getId(), EScoreRuleType.SIGN);
+	}
+	
+	public MemberVO transformMember(Member member){
+		MemberVO memberVO = new MemberVO();
+		BeanUtils.copyProperties(member, memberVO);
+		memberVO.setIsSignIn(Constant.isSignIn(member.getSignTime()));
+		List<MemberLevel> levelList = baseService.getMemberLevelList();
+		if(levelList != null){
+			for(MemberLevel memberLevel : levelList){
+				if(memberLevel.getId().equals(member.getLevelId())){
+					memberVO.setLevelName(memberLevel.getName());
+					break;
+				}
+			}
+		}
+		List<City> cityList = baseService.getCityList();
+		if(cityList != null){
+			for(City city : cityList){
+				if(city.getId().equals(member.getCityId())){
+					memberVO.setCityName(city.getName());
+					break;
+				}
+			}
+		}
+		return memberVO;
 	}
 
 }
