@@ -3,6 +3,7 @@ package com.cdd.mapi.forum.service;
 import java.util.List;
 
 import com.cdd.mapi.pojo.ForumAnswer;
+import com.cdd.mapi.pojo.ForumAnswerVO;
 import com.cdd.mapi.pojo.ForumSubject;
 import com.cdd.mapi.pojo.ForumSubjectSearch;
 import com.cdd.mapi.pojo.ForumSubjectVO;
@@ -21,10 +22,12 @@ public interface IForumService {
 	
 	public ForumSubjectVO getForumSubjectById(Integer id);
 	
-	public List<ForumAnswer> getAnswerListBySubjectId(Integer subjectId);
+	public List<ForumAnswerVO> getAnswerListBySubjectId(Integer subjectId,Integer pageNum);
 	
 	public Integer getSubjectCount(ForumSubjectSearch params);
 	
 	public List<ForumSubjectVO> getSubjectList(ForumSubjectSearch params);
+	
+	public Integer getAnswerCountBySubjectId(Integer subjectId);
 
 }

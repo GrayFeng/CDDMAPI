@@ -26,6 +26,16 @@ public class ForumAnswer {
 	private Date createTime;
 	
 	private Date modifyTime;
+	
+	private Integer anonymous;
+	
+	public Integer getAnonymous() {
+		return anonymous;
+	}
+
+	public void setAnonymous(Integer anonymous) {
+		this.anonymous = anonymous;
+	}
 
 	public Integer getId() {
 		return id;

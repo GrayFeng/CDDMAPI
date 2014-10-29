@@ -10,12 +10,12 @@ import com.cdd.mapi.common.pojo.Page;
 import com.cdd.mapi.forum.dao.IForumDao;
 import com.cdd.mapi.forum.service.IForumService;
 import com.cdd.mapi.pojo.ForumAnswer;
+import com.cdd.mapi.pojo.ForumAnswerSearch;
 import com.cdd.mapi.pojo.ForumAnswerVO;
 import com.cdd.mapi.pojo.ForumSubject;
 import com.cdd.mapi.pojo.ForumSubjectSearch;
 import com.cdd.mapi.pojo.ForumSubjectVO;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * CDDMAPI
@@ -44,8 +44,24 @@ public class ForumServiceImpl implements IForumService{
 	}
 
 	@Override
-	public List<ForumAnswer> getAnswerListBySubjectId(Integer subjectId) {
-		return forumDao.getAnswerListBySubjectId(subjectId);
+	public List<ForumAnswerVO> getAnswerListBySubjectId(Integer subjectId,Integer pageNum) {
+		List<ForumAnswerVO> list = null;
+		Integer prizeCount = forumDao.getAnswerCountBySubjectId(subjectId);
+		if(prizeCount != null && prizeCount > 0){
+			Page page = new Page();
+			page.setTotal(prizeCount);
+			page.setSize(20);
+			pageNum = pageNum == null ? 1 : pageNum;
+			page.setNumber(pageNum);
+			if(page.getTotalPages() >= pageNum){
+				ForumAnswerSearch forumAnswerSearch = new ForumAnswerSearch();
+				forumAnswerSearch.setStartNum(page.getStartNum());
+				forumAnswerSearch.setSize(page.getSize());
+				forumAnswerSearch.setSubjectId(subjectId);
+				list = forumDao.getAnswerListBySubjectId(forumAnswerSearch);
+			}
+		}
+		return list;
 	}
 
 	@Override
@@ -60,42 +76,62 @@ public class ForumServiceImpl implements IForumService{
 		if(prizeCount != null && prizeCount > 0){
 			Page page = new Page();
 			page.setTotal(prizeCount);
-			page.setSize(prizeCount);
-			page.setNumber(params.getPageNum());
+			page.setSize(20);
+			Integer pageNum = params.getPageNum() == null ? 1 : params.getPageNum();
+			page.setNumber(pageNum);
 			params.setStartNum(page.getStartNum());
 			params.setSize(page.getSize());
+			if(page.getTotalPages() < pageNum){
+				return list;
+			}
 			List<Map<String,Object>> mapList = forumDao.getSubjectList(params);
 			if(mapList != null && !mapList.isEmpty()){
 				list = Lists.newArrayList();
 				for(Map<String,Object> mapInfo : mapList){
 					ForumSubjectVO subjectVO = new ForumSubjectVO();
-					subjectVO.setId((Integer)mapInfo.get("id"));
+					subjectVO.setId(getIntegerFromMap(mapInfo,"id"));
 					subjectVO.setTitle((String)mapInfo.get("title"));
 					subjectVO.setTitle((String)mapInfo.get("content"));
-					subjectVO.setLikeCount((Integer)mapInfo.get("likeCount"));
-					subjectVO.setShareCount((Integer)mapInfo.get("shareCount"));
-					subjectVO.setFavoriteCount((Integer)mapInfo.get("favoriteCount"));
-					subjectVO.setMemberId((Integer)mapInfo.get("memberId"));
-					subjectVO.setItemId((Integer)mapInfo.get("itemId"));
-					subjectVO.setSubItemId((Integer)mapInfo.get("subItemId"));
-					subjectVO.setAnonymous((Integer)mapInfo.get("anonymous"));
+					subjectVO.setLikeCount(getIntegerFromMap(mapInfo,"likeCount"));
+					subjectVO.setShareCount(getIntegerFromMap(mapInfo,"shareCount"));
+					subjectVO.setFavoriteCount(getIntegerFromMap(mapInfo,"favoriteCount"));
+					subjectVO.setMemberId(getIntegerFromMap(mapInfo,"memberId"));
+					subjectVO.setItemId(getIntegerFromMap(mapInfo,"itemId"));
+					subjectVO.setSubItemId(getIntegerFromMap(mapInfo,"subItemId"));
+					subjectVO.setAnonymous(getIntegerFromMap(mapInfo,"anonymous"));
 					subjectVO.setMemberPhoto((String)mapInfo.get("photo"));
 					subjectVO.setCreateTime((String)mapInfo.get("createTime"));
-					ForumAnswerVO answerVO = new ForumAnswerVO();
-					answerVO.setId((Integer)mapInfo.get("answerId"));
-					answerVO.setContent((String)mapInfo.get("answerContent"));
-					answerVO.setMemberId((Integer)mapInfo.get("answerMemberId"));
-					answerVO.setLikeCount((Integer)mapInfo.get("answerlikeCount"));
-					answerVO.setCreateTime((String)mapInfo.get("answerCreateTime"));
-					answerVO.setMemberName((String)mapInfo.get("answerMemberName"));
-					answerVO.setAnonymous((Integer)mapInfo.get("answerAnonymous"));
-					answerVO.setMemberPhoto((String)mapInfo.get("answerMemberPhoto"));
-					subjectVO.setAnswerList(Lists.newArrayList(answerVO));
+					Integer answerId = getIntegerFromMap(mapInfo,"answerId");
+					if(answerId != null){
+						ForumAnswerVO answerVO = new ForumAnswerVO();
+						answerVO.setId(answerId);
+						answerVO.setContent((String)mapInfo.get("answerContent"));
+						answerVO.setMemberId(getIntegerFromMap(mapInfo,"answerMemberId"));
+						answerVO.setLikeCount(getIntegerFromMap(mapInfo,"answerlikeCount"));
+						answerVO.setCreateTime((String)mapInfo.get("answerCreateTime"));
+						answerVO.setMemberName((String)mapInfo.get("answerMemberName"));
+						answerVO.setAnonymous(getIntegerFromMap(mapInfo,"answerAnonymous"));
+						answerVO.setMemberPhoto((String)mapInfo.get("answerMemberPhoto"));
+						subjectVO.setAnswerList(Lists.newArrayList(answerVO));
+					}
 					list.add(subjectVO);
 				}
 			}
 		}
 		return list;
+	}
+	
+	private Integer getIntegerFromMap(Map<String,Object> map,String key){
+		Object obj = map.get(key);
+		if(obj != null && obj instanceof Integer){
+			return (Integer)obj;
+		}
+		return null;
+	}
+
+	@Override
+	public Integer getAnswerCountBySubjectId(Integer subjectId) {
+		return forumDao.getAnswerCountBySubjectId(subjectId);
 	}
 
 
