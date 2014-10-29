@@ -106,20 +106,22 @@ public class MemberServiceImpl implements IMemberService {
 	}
 
 	@Override
-	public void addMemberScore(Integer memberId, EScoreRuleType type) {
+	public Integer addMemberScore(Integer memberId, EScoreRuleType type) {
 		int score = baseService.getScoreByType(type);
 		if(score > 0){
 			Map<String,Object> paramMap = Maps.newHashMap();
 			paramMap.put("id", memberId);
 			paramMap.put("score", score);
 			memberDao.addMemberScore(paramMap);
+			return score;
 		}
+		return null;
 	}
 
 	@Override
-	public void signIn(Member member) {
+	public Integer signIn(Member member) {
 		memberDao.signIn(member);
-		addMemberScore(member.getId(), EScoreRuleType.SIGN);
+		return addMemberScore(member.getId(), EScoreRuleType.SIGN);
 	}
 	
 	public MemberVO transformMember(Member member){

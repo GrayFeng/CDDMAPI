@@ -1,6 +1,11 @@
 package com.cdd.mapi.forum.service;
 
+import java.util.List;
+
+import com.cdd.mapi.pojo.ForumAnswer;
 import com.cdd.mapi.pojo.ForumSubject;
+import com.cdd.mapi.pojo.ForumSubjectSearch;
+import com.cdd.mapi.pojo.ForumSubjectVO;
 
 /**
  * CDDMAPI
@@ -11,5 +16,15 @@ import com.cdd.mapi.pojo.ForumSubject;
 public interface IForumService {
 	
 	public void addSubject(ForumSubject forumSubject);
+	
+	public void addAnswer(ForumAnswer answer);
+	
+	public ForumSubjectVO getForumSubjectById(Integer id);
+	
+	public List<ForumAnswer> getAnswerListBySubjectId(Integer subjectId);
+	
+	public Integer getSubjectCount(ForumSubjectSearch params);
+	
+	public List<ForumSubjectVO> getSubjectList(ForumSubjectSearch params);
 
 }

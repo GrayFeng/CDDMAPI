@@ -30,9 +30,9 @@ public interface IMemberService {
 	
 	public void deleteMemberPhoto(Integer memberId);
 	
-	public void addMemberScore(Integer memberId,EScoreRuleType type);
+	public Integer addMemberScore(Integer memberId,EScoreRuleType type);
 	
-	public void signIn(Member member);
+	public Integer signIn(Member member);
 	
 	public MemberVO transformMember(Member member);
 	

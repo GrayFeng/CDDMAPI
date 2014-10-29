@@ -8,12 +8,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.cdd.mapi.common.enums.EEchoCode;
 import com.cdd.mapi.common.pojo.Result;
 import com.cdd.mapi.common.uitls.ResultUtil;
 import com.cdd.mapi.forum.service.IForumService;
 import com.cdd.mapi.member.service.IMemberService;
+import com.cdd.mapi.pojo.ForumAnswer;
 import com.cdd.mapi.pojo.ForumSubject;
+import com.cdd.mapi.pojo.ForumSubjectVO;
 import com.cdd.mapi.pojo.Member;
 
 /**
@@ -53,6 +56,52 @@ public class ForumController {
 		}finally{
 			if(result == null){
 				result = new Result(EEchoCode.ERROR.getCode(),"信息不全，发布失败!");
+			}
+		}
+		return ResultUtil.getJsonString(result);
+	}
+	
+	@RequestMapping("addAnswer")
+	public String addAnswer(String uid,String params){
+		Result result = null;
+		try{
+			ForumAnswer answer = JSON.parseObject(params, ForumAnswer.class);
+			Member member = memberService.getMemberByUID(uid);
+			if(answer != null && member != null
+					&& StringUtils.isNotEmpty(answer.getContent())
+					&& answer.getSubjectId() != null){
+				answer.setMemberId(member.getId());
+				forumService.addAnswer(answer);
+				result = Result.getSuccessResult();
+			}
+		}catch (Exception e) {
+			log.error(e.getMessage(),e);
+		}finally{
+			if(result == null){
+				result = new Result(EEchoCode.ERROR.getCode(),"信息不全，回答失败!");
+			}
+		}
+		return ResultUtil.getJsonString(result);
+	}
+	
+	@RequestMapping("subjectInfo")
+	public String subjectInfo(String uid,String params){
+		Result result = null;
+		try{
+			JSONObject jsonObject = JSON.parseObject(params);
+			Integer subjectId = jsonObject.getInteger("subjectId");
+			if(subjectId != null){
+				ForumSubjectVO subject = forumService.getForumSubjectById(subjectId);
+				if(subject != null ){
+					result = Result.getSuccessResult();
+					result.setRe(subject);
+				}
+			}
+		}catch (Exception e) {
+			log.error(e.getMessage(),e);
+		}finally{
+			if(result == null){
+				result = new Result(EEchoCode.ERROR.getCode(),"读取失败,未找到相关的主题");
 			}
 		}
 		return ResultUtil.getJsonString(result);

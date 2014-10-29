@@ -292,8 +292,13 @@ public class MemberController {
 				}else{
 					if(Constant.isSignIn(lastSignInTime) == 0){
 						member.setSignTime(new Date());
-						memberService.signIn(member);
-						result = Result.getSuccessResult();
+						Integer score = memberService.signIn(member);
+						if(score != null){
+							result = Result.getSuccessResult();
+							Map<String,Object> map = Maps.newHashMap();
+							map.put("score", score);
+							result.setRe(map);
+						}
 					}else{
 						result = new Result(EEchoCode.ERROR.getCode(), "今日已签到过了哦");
 					}
