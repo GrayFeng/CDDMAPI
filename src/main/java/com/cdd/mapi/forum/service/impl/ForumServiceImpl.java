@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cdd.mapi.common.pojo.Page;
 import com.cdd.mapi.forum.dao.IForumDao;
@@ -16,6 +17,7 @@ import com.cdd.mapi.pojo.ForumSubject;
 import com.cdd.mapi.pojo.ForumSubjectSearch;
 import com.cdd.mapi.pojo.ForumSubjectVO;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * CDDMAPI
@@ -29,13 +31,17 @@ public class ForumServiceImpl implements IForumService{
 	@Autowired
 	private IForumDao forumDao;
 	
+	@Transactional
 	public void addSubject(ForumSubject forumSubject){
 		forumDao.addSubject(forumSubject);
+		addPhotos(forumSubject.getPhotos(), forumSubject.getId(), null);
 	}
 
 	@Override
+	@Transactional
 	public void addAnswer(ForumAnswer answer) {
 		forumDao.addAnswer(answer);
+		addPhotos(answer.getPhotos(), null, answer.getId());
 	}
 
 	@Override
@@ -132,6 +138,19 @@ public class ForumServiceImpl implements IForumService{
 	@Override
 	public Integer getAnswerCountBySubjectId(Integer subjectId) {
 		return forumDao.getAnswerCountBySubjectId(subjectId);
+	}
+
+	@Override
+	public void addPhotos(List<String> photos, Integer subjectId,
+			Integer answerId) {
+		if(photos != null && !photos.isEmpty() 
+				&& (subjectId != null || answerId != null)){
+			Map<String,Object> map = Maps.newHashMap();
+			map.put("subjectId", subjectId);
+			map.put("answerId",answerId);
+			map.put("photos",photos);
+			forumDao.addPhotos(map);
+		}
 	}
 
 

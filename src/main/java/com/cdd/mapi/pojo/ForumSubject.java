@@ -1,6 +1,7 @@
 package com.cdd.mapi.pojo;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * CDDMAPI
@@ -34,7 +35,17 @@ public class ForumSubject {
 	
 	private Integer anonymous;
 	
+	private List<String> photos;
+	
 	private Date createTime;
+	
+	public List<String> getPhotos() {
+		return photos;
+	}
+
+	public void setPhotos(List<String> photos) {
+		this.photos = photos;
+	}
 
 	public Date getCreateTime() {
 		return createTime;

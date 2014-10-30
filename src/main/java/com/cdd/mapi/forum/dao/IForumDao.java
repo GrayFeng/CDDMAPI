@@ -36,5 +36,7 @@ public interface IForumDao {
 	public List<Map<String,Object>> getSubjectList(ForumSubjectSearch params);
 	
 	public Integer getAnswerCountBySubjectId(Integer subjectId);
+	
+	public void addPhotos(Map<String,Object> params);
 
 }

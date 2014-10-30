@@ -7,7 +7,7 @@ public enum EUploadType {
 			return 100;
 		}
 	},
-	PRIZE_PHOTO{
+	FORUM_PHOTO{
 		public Integer getCode(){
 			return 101;
 		}

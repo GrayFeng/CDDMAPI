@@ -23,7 +23,36 @@
 	  		</selectKey>  
 	 	</insert>
 	 	
-	 	<select id="getForumSubjectById" parameterType="int" resultType="ForumSubjectVO">
+	 	<insert id="addPhotos" parameterType="Map">
+	 	    insert into t_forum_photo 
+	 			(url,question_id,answer_id,create_time) 
+	 		values
+	 		<foreach collection="photos" item="photo" index="index" separator=",">
+	 		    (#{photo},#{subjectId},#{answerId},now())
+	 		</foreach>
+	 	</insert>
+	 	
+	 	<resultMap type="ForumSubjectVO" id="getForumSubjectByIdResultMap">
+	 	    <id column="id" property="id"/>
+	 	    <result column="title" property="title"/>
+	 	    <result column="content" property="content"/>
+	 	    <result column="likeCount" property="likeCount"/>
+	 	    <result column="shareCount" property="shareCount"/>
+	 	    <result column="favoriteCount" property="favoriteCount"/>
+	 	    <result column="anonymous" property="anonymous"/>
+	 	    <result column="createTime" property="createTime"/>
+	 	    <result column="itemId" property="itemId"/>
+	 	    <result column="subItemId" property="subItemId"/>
+	 	    <result column="memberName" property="memberName"/>
+	 	    <result column="photo" property="memberPhoto"/>
+	 	    <result column="memberId" property="memberId"/>
+	 	    <collection property="photos" column="question_id" ofType="ForumPhoto">
+	 	        <id column="fpId" property="id"/>
+	 	        <result column="url" javaType="String" property="url"/>
+	 	    </collection>
+	 	</resultMap>
+	 	
+	 	<select id="getForumSubjectById" parameterType="int" resultMap="getForumSubjectByIdResultMap">
 	 		select 
 	 			q.id,
 	 			q.title,
@@ -37,32 +66,60 @@
 	 			q.sub_item_id as subItemId,
 	 			m.name as memberName,
 	 			m.photo,
-	 			m.id as memberId 
+	 			m.id as memberId,
+	 			fp.url,
+	 			fp.question_id,
+	 			fp.id as fpId
 	 		from 
 	 			t_forum_question q 
 	 		left join 
 	 			t_member m 
 	 		on 
 	 			q.member_id = m.id and q.anonymous = 0 
+	 		left join t_forum_photo fp
+	 		on
+	 			q.id = fp.question_id
 	 		where 
 	 			q.id = #{id};
 	 	</select>
 	 	
-	 	<select id="getAnswerListBySubjectId" parameterType="ForumAnswerSearch" resultType="ForumAnswerVO">
+	 	<resultMap type="ForumAnswerVO" id="getAnswerListBySubjectIdResultMap">
+	 	    <id column="id" property="id"/>
+	 	    <result column="content" property="content"/>
+	 	    <result column="likeCount" property="likeCount"/>
+	 	    <result column="anonymous" property="anonymous"/>
+	 	    <result column="createTime" property="createTime"/>
+	 	    <result column="memberName" property="memberName"/>
+	 	    <result column="memberPhoto" property="memberPhoto"/>
+	 	    <result column="memberId" property="memberId"/>
+	 	    <collection property="photos" column="answer_id" ofType="ForumPhoto">
+	 	        <id column="fpId" property="id"/>
+	 	        <result column="url" javaType="String" property="url"/>
+	 	    </collection>
+	 	</resultMap>
+	 	
+	 	<select id="getAnswerListBySubjectId" parameterType="ForumAnswerSearch" resultMap="getAnswerListBySubjectIdResultMap">
 	 		select 
 	 			fa.id,
 	 			fa.content,
 	 			fa.member_id as memberId,
 	 			fa.like_count as likeCount,
+	 			fa.anonymous,
 	 			DATE_FORMAT(fa.create_time,'%Y-%m-%d %T') as createTime,
 	 			m.name as memberName,
-	 			m.photo as memberPhoto 
+	 			m.photo as memberPhoto,
+	 			fp.answer_id,
+	 			fp.id as fpId,
+	 			fp.url
 	 		from 
 	 			t_forum_answer fa 
 	 		left join 
 	 			t_member m 
 	 		on 
-	 			fa.member_id = m.id and fa.anonymous = 0 
+	 			fa.member_id = m.id and fa.anonymous = 0
+	 		left join t_forum_photo fp
+	 		on
+	 			fa.id = fp.answer_id
 	 		where 
 	 			fa.question_id = #{subjectId}
 	 		order by fa.create_time desc

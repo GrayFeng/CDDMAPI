@@ -1,10 +1,7 @@
 package com.cdd.mapi.common.serivce.impl;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Date;
-
-import javax.imageio.ImageIO;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -35,31 +32,25 @@ public class UploadServiceImpl implements IUploadService{
 //		}
 		try {
 			//奖品图片格式检测
-			if(EUploadType.PRIZE_PHOTO.equals(uploadType)){
-				 BufferedImage sourceImg = ImageIO.read(uploadFile.getInputStream());
-				 if(sourceImg != null 
-						 && (sourceImg.getHeight() > 220 || sourceImg.getWidth() > 305)){
-					 return new ImageUploadResult(false,"图片尺寸大于305x220");
-				 }
-			}
+//			if(EUploadType.PRIZE_PHOTO.equals(uploadType)){
+//				 BufferedImage sourceImg = ImageIO.read(uploadFile.getInputStream());
+//				 if(sourceImg != null 
+//						 && (sourceImg.getHeight() > 220 || sourceImg.getWidth() > 305)){
+//					 return new ImageUploadResult(false,"图片尺寸大于305x220");
+//				 }
+//			}
 			byte[] imgbytes = SimpleFileUtil.boBin(uploadFile.getInputStream());
 			String fileExtension = SimpleFileUtil.detectFileStype(imgbytes);
 			if (!cheackFileExtention(fileExtension)) {
 				return new ImageUploadResult(false,"不支持的文件格式");
 			}
-			switch (uploadType) {
-			case MEMBER_PHOTO:
-				String filePath = getNewFilePath(uploadType,fileExtension);
-				if(StringUtils.isNotEmpty(filePath)){
-					File imageFile = new File(Constant.PHOTO_BASE_PATH + filePath);
-					Files.createParentDirs(imageFile);
-					Files.write(imgbytes, imageFile);
-					result = new ImageUploadResult(true,"图片上传成功");
-					result.setUrl(filePath);
-				}
-				break;
-			default:
-				break;
+			String filePath = getNewFilePath(uploadType,fileExtension);
+			if(StringUtils.isNotEmpty(filePath)){
+				File imageFile = new File(Constant.PHOTO_BASE_PATH + filePath);
+				Files.createParentDirs(imageFile);
+				Files.write(imgbytes, imageFile);
+				result = new ImageUploadResult(true,"图片上传成功");
+				result.setUrl(filePath);
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e);
@@ -84,14 +75,26 @@ public class UploadServiceImpl implements IUploadService{
 	}
 	
 	private String getNewFilePath(EUploadType uploadType,String fileExtension){
+		StringBuffer pathBuffer = new StringBuffer();
 		switch (uploadType) {
 		case MEMBER_PHOTO:
-			StringBuffer pathBuffer = new StringBuffer();
 			pathBuffer.append("memberPhoto");
 			pathBuffer.append("/");
 			pathBuffer.append(DateFormatUtils.format(new Date(),"yyyy-MM-dd"));
 			pathBuffer.append("/");
 			pathBuffer.append("mp_");
+			pathBuffer.append(System.currentTimeMillis());
+			pathBuffer.append(".");
+			pathBuffer.append(fileExtension.equals("jpeg") ? "jpg" : fileExtension);
+			return pathBuffer.toString();
+		case FORUM_PHOTO:
+			pathBuffer.append("forumPhoto");
+			pathBuffer.append("/");
+			pathBuffer.append(DateFormatUtils.format(new Date(),"yyyy-MM-dd"));
+			pathBuffer.append("/");
+			pathBuffer.append(DateFormatUtils.format(new Date(),"HH"));
+			pathBuffer.append("/");
+			pathBuffer.append("forum_");
 			pathBuffer.append(System.currentTimeMillis());
 			pathBuffer.append(".");
 			pathBuffer.append(fileExtension.equals("jpeg") ? "jpg" : fileExtension);

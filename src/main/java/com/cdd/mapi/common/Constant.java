@@ -17,7 +17,9 @@ public class Constant {
 	
 	public static final String PHOTO_URL_PATH = HOST_URL + ":82";
 	
-	public static final String PHOTO_BASE_PATH = "/alidata/www/cdd_images/";
+//	public static final String PHOTO_BASE_PATH = "/alidata/www/cdd_images/";
+	
+	public static final String PHOTO_BASE_PATH = "c:\\";
 	
 	public static String getClientIp(HttpServletRequest request){
 		String ip = request.getHeader("x-forwarded-for");

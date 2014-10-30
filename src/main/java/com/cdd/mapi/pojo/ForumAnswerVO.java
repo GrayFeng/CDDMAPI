@@ -1,5 +1,7 @@
 package com.cdd.mapi.pojo;
 
+import java.util.List;
+
 /**
  * Description: ForumAnswerVO.java
  * All Rights Reserved.
@@ -25,8 +27,18 @@ public class ForumAnswerVO {
 	
 	private Integer anonymous;
 	
+	private List<ForumPhoto> photos;
+	
 	private String createTime;
 	
+	public List<ForumPhoto> getPhotos() {
+		return photos;
+	}
+
+	public void setPhotos(List<ForumPhoto> photos) {
+		this.photos = photos;
+	}
+
 	public String getMemberName() {
 		return memberName;
 	}

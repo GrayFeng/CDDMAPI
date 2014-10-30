@@ -1,6 +1,7 @@
 package com.cdd.mapi.pojo;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Description: ForumAnswer.java
@@ -23,12 +24,22 @@ public class ForumAnswer {
 	
 	private Integer status;
 	
+	private List<String> photos;
+	
 	private Date createTime;
 	
 	private Date modifyTime;
 	
 	private Integer anonymous;
 	
+	public List<String> getPhotos() {
+		return photos;
+	}
+
+	public void setPhotos(List<String> photos) {
+		this.photos = photos;
+	}
+
 	public Integer getAnonymous() {
 		return anonymous;
 	}

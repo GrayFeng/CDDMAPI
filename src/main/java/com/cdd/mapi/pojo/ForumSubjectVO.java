@@ -37,6 +37,16 @@ public class ForumSubjectVO {
 	
 	private String createTime;
 	
+	private List<ForumPhoto> photos;
+	
+	public List<ForumPhoto> getPhotos() {
+		return photos;
+	}
+
+	public void setPhotos(List<ForumPhoto> photos) {
+		this.photos = photos;
+	}
+
 	public Integer getItemId() {
 		return itemId;
 	}

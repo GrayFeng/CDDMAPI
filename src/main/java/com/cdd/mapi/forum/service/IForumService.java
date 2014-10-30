@@ -1,6 +1,7 @@
 package com.cdd.mapi.forum.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.cdd.mapi.pojo.ForumAnswer;
 import com.cdd.mapi.pojo.ForumAnswerVO;
@@ -29,5 +30,7 @@ public interface IForumService {
 	public List<ForumSubjectVO> getSubjectList(ForumSubjectSearch params);
 	
 	public Integer getAnswerCountBySubjectId(Integer subjectId);
+	
+	public void addPhotos(List<String> photos,Integer subjectId,Integer answerId);
 
 }
