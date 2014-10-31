@@ -127,6 +127,9 @@ public class MemberServiceImpl implements IMemberService {
 	public MemberVO transformMember(Member member){
 		MemberVO memberVO = new MemberVO();
 		BeanUtils.copyProperties(member, memberVO);
+		if(StringUtils.isEmpty(memberVO.getName())){
+			memberVO.setName(member.getLoginId());
+		}
 		memberVO.setIsSignIn(Constant.isSignIn(member.getSignTime()));
 		List<MemberLevel> levelList = baseService.getMemberLevelList();
 		if(levelList != null){
