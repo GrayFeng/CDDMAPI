@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 import com.cdd.mapi.common.annotation.MyBatisRepository;
+import com.cdd.mapi.pojo.ForumAffiliatedInfo;
 import com.cdd.mapi.pojo.ForumAnswer;
 import com.cdd.mapi.pojo.ForumAnswerSearch;
 import com.cdd.mapi.pojo.ForumAnswerVO;
@@ -35,8 +36,22 @@ public interface IForumDao {
 	
 	public List<Map<String,Object>> getSubjectList(ForumSubjectSearch params);
 	
+	public Integer getHotSubjectCount(ForumSubjectSearch params);
+	
+	public List<Map<String,Object>> getHotSubjectList(ForumSubjectSearch params);
+	
 	public Integer getAnswerCountBySubjectId(Integer subjectId);
 	
 	public void addPhotos(Map<String,Object> params);
+	
+	public void updateSubjectLikeCount(Integer subjectId);
+	
+	public void updateSubjectFavCount(Integer subjectId);
+	
+	public void updateSubjectShareCount(Integer subjectId);
+	
+	public void updateAnswerLikeCount(Integer answerId);
+	
+	public void addForumAffiliated(ForumAffiliatedInfo forumAffiliatedInfo);
 
 }

@@ -140,8 +140,8 @@
 	 			count(id) from t_forum_question q
 	 		where 
 	 			1=1
-	 		<if test="isHot != null">
-	 			and q.is_hot = #{isHot}
+	 		<if test="memberId != null">
+	 			and q.member_id = #{memberId}
 	 		</if>
 	 		<if test="itemId != null">
 	 			and q.item_id = #{itemId}
@@ -203,8 +203,8 @@
 	 			q.member_id = m.id and q.anonymous = 0
 	 		where 
 	 			1=1
-	 		<if test="isHot != null">
-	 			and q.is_hot = #{isHot}
+	 		<if test="memberId != null">
+	 			and q.member_id = #{memberId}
 	 		</if>
 	 		<if test="itemId != null">
 	 			and q.item_id = #{itemId}
@@ -215,5 +215,107 @@
 	 		order by q.create_time desc
 	 		limit #{startNum},#{size};
 	 	</select>
+	 	
+	 	
+	 	<select id="getHotSubjectCount" parameterType="ForumSubjectSearch" resultType="int">
+	 		select 
+	 			count(id) from t_forum_question q
+	 		where 
+	 			1=1
+	 		<if test="itemId != null">
+	 			and q.item_id = #{itemId}
+	 		</if>
+	 		<if test="subItemId != null">
+	 			and q.sub_item_id = #{subItemId}
+	 		</if>
+	 		order by q.is_hot,like_count desc
+	 	</select>
+	 	
+	 	<select id="getHotSubjectList" parameterType="ForumSubjectSearch" resultType="Map">
+	 		select 
+	 			q.id,
+	 			q.title,
+	 			q.content,
+	 			q.like_count as likeCount,
+	 			q.share_count as shareCount,
+	 			q.favorite_count as favoriteCount,
+	 			q.anonymous,
+	 			DATE_FORMAT(q.create_time,'%Y-%m-%d %T') as createTime,
+	 			q.item_id as itemId,
+	 			q.sub_item_id as subItemId,
+	 			m.name as memberName,
+	 			m.photo,
+	 			m.id as memberId,
+	 			fa.answerId,
+	 			fa.answerContent,
+	 			fa.answerMemberId,
+	 			fa.answerlikeCount,
+	 			DATE_FORMAT(fa.answerCreateTime,'%Y-%m-%d %T'),
+	 			fa.answerMemberName,
+	 			fa.answerMemberPhoto,
+	 			fa.anonymous as answerAnonymous
+	 		from 
+	 			t_forum_question q
+	 		left join 
+	 			(select
+		 			fa.id as answerId,
+		 			fa.content as answerContent,
+		 			fa.member_id as answerMemberId,
+		 			fa.like_count as answerlikeCount,
+		 			fa.create_time as answerCreateTime,
+					fa.question_id,
+					fa.anonymous,
+		 			m.name as answerMemberName,
+		 			m.photo as answerMemberPhoto 
+		 		from 
+		 			t_forum_answer fa 
+		 		left join 
+		 			t_member m 
+		 		on 
+		 			fa.member_id = m.id and fa.anonymous = 0
+	 			order by  fa.like_count desc limit 0,1) as fa
+	 		on 
+	 			fa.question_id = q.id
+	 		left join 
+	 			t_member m 
+	 		on 
+	 			q.member_id = m.id and q.anonymous = 0
+	 		where 
+	 			1 = 1
+	 		<if test="itemId != null">
+	 			and q.item_id = #{itemId}
+	 		</if>
+	 		<if test="subItemId != null">
+	 			and q.sub_item_id = #{subItemId}
+	 		</if>
+	 		order by q.is_hot,like_count desc
+	 		limit #{startNum},#{size};
+	 	</select>
+	 	
+	 	<insert id="addForumAffiliated" parameterType="ForumAffiliatedInfo">
+	 		insert into t_forum_affiliated_info 
+	 			(member_id,answer_id,question_id,type,create_time,status) 
+	 		values
+	 			(#{memberId},#{answerId},#{questionId},#{type},now(),0)
+		 	<selectKey resultType="int" keyProperty="id" order="AFTER">  
+	  			SELECT LAST_INSERT_ID() as id
+	  		</selectKey>  
+	 	</insert>
+	 	
+	 	<update id="updateSubjectLikeCount" parameterType="int">
+	 	    update t_forum_question set like_count = like_count + 1,modify_time = now() where id = #{subjectId}
+	 	</update>
+	 	
+	 	<update id="updateSubjectFavCount" parameterType="int">
+	 	    update t_forum_question set favorite_count = favorite_count + 1,modify_time = now() where id = #{subjectId}
+	 	</update>
+	 	
+	 	<update id="updateSubjectShareCount" parameterType="int">
+	 	    update t_forum_question set share_count = share_count + 1,modify_time = now() where id = #{subjectId}
+	 	</update>
+	 	
+	 	<update id="updateAnswerLikeCount" parameterType="int">
+	 	    update t_forum_answer set like_count = like_count + 1,modify_time = now() where id = #{answerId}
+	 	</update>
 	 	
 	</mapper> 

@@ -21,6 +21,16 @@ public class ForumSubjectSearch {
 	
 	private Integer pageNum;
 	
+	private Integer memberId;
+	
+	public Integer getMemberId() {
+		return memberId;
+	}
+
+	public void setMemberId(Integer memberId) {
+		this.memberId = memberId;
+	}
+
 	public Integer getPageNum() {
 		return pageNum;
 	}

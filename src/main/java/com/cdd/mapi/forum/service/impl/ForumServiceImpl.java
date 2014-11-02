@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cdd.mapi.common.enums.EForumAffiliatedType;
 import com.cdd.mapi.common.pojo.Page;
 import com.cdd.mapi.forum.dao.IForumDao;
 import com.cdd.mapi.forum.service.IForumService;
+import com.cdd.mapi.pojo.ForumAffiliatedInfo;
 import com.cdd.mapi.pojo.ForumAnswer;
 import com.cdd.mapi.pojo.ForumAnswerSearch;
 import com.cdd.mapi.pojo.ForumAnswerVO;
@@ -94,37 +96,42 @@ public class ForumServiceImpl implements IForumService{
 			if(mapList != null && !mapList.isEmpty()){
 				list = Lists.newArrayList();
 				for(Map<String,Object> mapInfo : mapList){
-					ForumSubjectVO subjectVO = new ForumSubjectVO();
-					subjectVO.setId(getIntegerFromMap(mapInfo,"id"));
-					subjectVO.setTitle((String)mapInfo.get("title"));
-					subjectVO.setTitle((String)mapInfo.get("content"));
-					subjectVO.setLikeCount(getIntegerFromMap(mapInfo,"likeCount"));
-					subjectVO.setShareCount(getIntegerFromMap(mapInfo,"shareCount"));
-					subjectVO.setFavoriteCount(getIntegerFromMap(mapInfo,"favoriteCount"));
-					subjectVO.setMemberId(getIntegerFromMap(mapInfo,"memberId"));
-					subjectVO.setItemId(getIntegerFromMap(mapInfo,"itemId"));
-					subjectVO.setSubItemId(getIntegerFromMap(mapInfo,"subItemId"));
-					subjectVO.setAnonymous(getIntegerFromMap(mapInfo,"anonymous"));
-					subjectVO.setMemberPhoto((String)mapInfo.get("photo"));
-					subjectVO.setCreateTime((String)mapInfo.get("createTime"));
-					Integer answerId = getIntegerFromMap(mapInfo,"answerId");
-					if(answerId != null){
-						ForumAnswerVO answerVO = new ForumAnswerVO();
-						answerVO.setId(answerId);
-						answerVO.setContent((String)mapInfo.get("answerContent"));
-						answerVO.setMemberId(getIntegerFromMap(mapInfo,"answerMemberId"));
-						answerVO.setLikeCount(getIntegerFromMap(mapInfo,"answerlikeCount"));
-						answerVO.setCreateTime((String)mapInfo.get("answerCreateTime"));
-						answerVO.setMemberName((String)mapInfo.get("answerMemberName"));
-						answerVO.setAnonymous(getIntegerFromMap(mapInfo,"answerAnonymous"));
-						answerVO.setMemberPhoto((String)mapInfo.get("answerMemberPhoto"));
-						subjectVO.setAnswerList(Lists.newArrayList(answerVO));
-					}
+					ForumSubjectVO subjectVO = packageSubjectVo(mapInfo);
 					list.add(subjectVO);
 				}
 			}
 		}
 		return list;
+	}
+	
+	private ForumSubjectVO packageSubjectVo(Map<String,Object> subjectMap){
+		ForumSubjectVO subjectVO = new ForumSubjectVO();
+		subjectVO.setId(getIntegerFromMap(subjectMap,"id"));
+		subjectVO.setTitle((String)subjectMap.get("title"));
+		subjectVO.setTitle((String)subjectMap.get("content"));
+		subjectVO.setLikeCount(getIntegerFromMap(subjectMap,"likeCount"));
+		subjectVO.setShareCount(getIntegerFromMap(subjectMap,"shareCount"));
+		subjectVO.setFavoriteCount(getIntegerFromMap(subjectMap,"favoriteCount"));
+		subjectVO.setMemberId(getIntegerFromMap(subjectMap,"memberId"));
+		subjectVO.setItemId(getIntegerFromMap(subjectMap,"itemId"));
+		subjectVO.setSubItemId(getIntegerFromMap(subjectMap,"subItemId"));
+		subjectVO.setAnonymous(getIntegerFromMap(subjectMap,"anonymous"));
+		subjectVO.setMemberPhoto((String)subjectMap.get("photo"));
+		subjectVO.setCreateTime((String)subjectMap.get("createTime"));
+		Integer answerId = getIntegerFromMap(subjectMap,"answerId");
+		if(answerId != null){
+			ForumAnswerVO answerVO = new ForumAnswerVO();
+			answerVO.setId(answerId);
+			answerVO.setContent((String)subjectMap.get("answerContent"));
+			answerVO.setMemberId(getIntegerFromMap(subjectMap,"answerMemberId"));
+			answerVO.setLikeCount(getIntegerFromMap(subjectMap,"answerlikeCount"));
+			answerVO.setCreateTime((String)subjectMap.get("answerCreateTime"));
+			answerVO.setMemberName((String)subjectMap.get("answerMemberName"));
+			answerVO.setAnonymous(getIntegerFromMap(subjectMap,"answerAnonymous"));
+			answerVO.setMemberPhoto((String)subjectMap.get("answerMemberPhoto"));
+			subjectVO.setAnswerList(Lists.newArrayList(answerVO));
+		}
+		return subjectVO;
 	}
 	
 	private Integer getIntegerFromMap(Map<String,Object> map,String key){
@@ -153,5 +160,55 @@ public class ForumServiceImpl implements IForumService{
 		}
 	}
 
+	@Override
+	public List<ForumSubjectVO> getHotSubjectList(ForumSubjectSearch params) {
+		List<ForumSubjectVO> list = null;
+		Integer prizeCount = forumDao.getHotSubjectCount(params);
+		if(prizeCount != null && prizeCount > 0){
+			Page page = new Page();
+			page.setTotal(prizeCount);
+			page.setSize(20);
+			Integer pageNum = params.getPageNum() == null ? 1 : params.getPageNum();
+			page.setNumber(pageNum);
+			params.setStartNum(page.getStartNum());
+			params.setSize(page.getSize());
+			if(page.getTotalPages() < pageNum){
+				return list;
+			}
+			List<Map<String,Object>> mapList = forumDao.getHotSubjectList(params);
+			if(mapList != null && !mapList.isEmpty()){
+				list = Lists.newArrayList();
+				for(Map<String,Object> mapInfo : mapList){
+					ForumSubjectVO subjectVO = packageSubjectVo(mapInfo);
+					list.add(subjectVO);
+				}
+			}
+		}
+		return list;
+	}
 
+	@Override
+	public Integer getHotSubjectCount(ForumSubjectSearch params) {
+		return forumDao.getHotSubjectCount(params);
+	}
+
+	@Override
+	@Transactional
+	public void addForumAffiliated(ForumAffiliatedInfo forumAffiliatedInfo) {
+		if(forumAffiliatedInfo.getType() != null){
+			if(forumAffiliatedInfo.getQuestionId() != null){
+				forumDao.addForumAffiliated(forumAffiliatedInfo);
+				if(EForumAffiliatedType.LIKE.getCode().equals(forumAffiliatedInfo.getType())){
+					forumDao.updateSubjectLikeCount(forumAffiliatedInfo.getQuestionId());
+				}else if(EForumAffiliatedType.FAV.getCode().equals(forumAffiliatedInfo.getType())){
+					forumDao.updateSubjectFavCount(forumAffiliatedInfo.getQuestionId());
+				}else if(EForumAffiliatedType.SHARE.getCode().equals(forumAffiliatedInfo.getType())){
+					forumDao.updateSubjectShareCount(forumAffiliatedInfo.getQuestionId());
+				}
+			}else if(forumAffiliatedInfo.getAnswerId() != null){
+				forumDao.addForumAffiliated(forumAffiliatedInfo);
+				forumDao.updateAnswerLikeCount(forumAffiliatedInfo.getAnswerId());
+			}
+		}
+	}
 }

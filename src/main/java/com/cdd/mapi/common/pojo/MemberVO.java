@@ -37,7 +37,37 @@ private Integer id;
 	private String cityName;
 	//今日是否签到过
 	private Integer isSignIn;
+	//粉丝数量
+	private Integer fansCount = 0;
+	//动态信息数量
+	private Integer dynamicInfoCount = 0;
+	//关注的人数量
+	private Integer idolCount = 0;
 	
+	public Integer getFansCount() {
+		return fansCount;
+	}
+
+	public void setFansCount(Integer fansCount) {
+		this.fansCount = fansCount;
+	}
+
+	public Integer getDynamicInfoCount() {
+		return dynamicInfoCount;
+	}
+
+	public void setDynamicInfoCount(Integer dynamicInfoCount) {
+		this.dynamicInfoCount = dynamicInfoCount;
+	}
+
+	public Integer getIdolCount() {
+		return idolCount;
+	}
+
+	public void setIdolCount(Integer idolCount) {
+		this.idolCount = idolCount;
+	}
+
 	public Integer getIsSignIn() {
 		return isSignIn;
 	}
