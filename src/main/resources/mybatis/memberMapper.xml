@@ -6,7 +6,7 @@
     
     	<sql id="memberValues">
     	    id,login_id as loginId,name,password,sex,status,level_id as levelId,score_ceiling as scoreCeiling,
-    	    available_score as availableScore,create_time as createTime,modify_time as modifyTime,mobile,email,
+    	    available_score as availableScore,m.create_time as createTime,modify_time as modifyTime,mobile,email,
     	    photo,description,device_flag as deviceFlag,origin,is_admin as isAdmin,sign_time as signTime,city_id as cityId
     	</sql>
     
@@ -28,16 +28,22 @@
 	 	</update>
 	 	
 	 	<select id="getMemberById" resultType="Member" parameterType="Integer">
-			select <include refid="memberValues"/> from t_member where id = #{id} and status = 0
+			select <include refid="memberValues"/> from t_member m where id = #{id} and status = 0
 	 	</select>
 	 	
     	<select id="getMemberByLoginId" resultType="Member" parameterType="String">
-			select <include refid="memberValues"/> from t_member where login_id = #{loginId} and status = 0
+			select <include refid="memberValues"/> from t_member m where login_id = #{loginId} and status = 0
 	 	</select>
 	 	
     	<select id="getMemberByName" resultType="Member" parameterType="String">
-			select <include refid="memberValues"/> from t_member where name = #{name} and status = 0
+			select <include refid="memberValues"/> from t_member m where name = #{name} and status = 0
 	 	</select>
+	 	
+    	<select id="getMemberStatistics" resultType="Map" parameterType="Integer">
+    	    select fansCount,idolCount from
+    	    ((select count(fans) as fansCount from t_member_relation where popular_person = #{memberId}) as f
+    	    ,(select count(popular_person) as idolCount from t_member_relation where fans = #{memberId}) as i)
+    	</select>
 	 	
 	 	<update id="updateMemberDeviceFlag" parameterType="Member">
 	 		update t_member set device_flag = #{deviceFlag} where id = #{id}
@@ -51,4 +57,30 @@
 	 		update t_member set score_ceiling = score_ceiling + #{score},
 	 		available_score = available_score + #{score} where id = #{id}
 	 	</update>
+	 	
+	 	<insert id="attention" parameterType="MemberRelation">
+	 	    insert into t_member_relation (fans,popular_person,create_time) values(#{fans},#{popular_person},now())
+	 	</insert>
+	 	
+	 	<delete id="unAttention" parameterType="MemberRelation">
+	 		delete from t_member_relation where fans = #{fans} and popular_person = #{popular_person}
+	 	</delete>
+	 	
+	 	<select id="getFansCount" resultType="int" parameterType="Integer">
+	 	    select count(fans) as fansCount from t_member_relation where popular_person = #{memberId}
+	 	</select>
+	 	
+	 	<select id="getFansList" resultType="Member" parameterType="Map">
+	 	    select m.<include refid="memberValues"/> from t_member m left join t_member_relation mr on m.id = mr.fans 
+			where m.status = 0 and mr.popular_person = #{memberId} order by mr.create_time desc limit #{startNum},#{size}
+	 	</select>
+	 	
+	 	<select id="getIdolCount" resultType="int" parameterType="Integer">
+	 	    select count(popular_person) as idolCount from t_member_relation where fans = #{memberId}
+	 	</select>
+	 	
+	 	<select id="getIdolList" resultType="Member" parameterType="Map">
+	 	    select m.<include refid="memberValues"/> from t_member m left join t_member_relation mr on m.id = mr.popular_person 
+			where m.status = 0 and mr.fans = #{memberId} order by mr.create_time desc limit #{startNum},#{size}
+	 	</select>
 </mapper> 

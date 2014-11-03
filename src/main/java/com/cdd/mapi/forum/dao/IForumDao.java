@@ -53,5 +53,7 @@ public interface IForumDao {
 	public void updateAnswerLikeCount(Integer answerId);
 	
 	public void addForumAffiliated(ForumAffiliatedInfo forumAffiliatedInfo);
+	
+	public Integer findForumAffiliatedInfo(ForumAffiliatedInfo forumAffiliatedInfo);
 
 }

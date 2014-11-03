@@ -318,4 +318,10 @@
 	 	    update t_forum_answer set like_count = like_count + 1,modify_time = now() where id = #{answerId}
 	 	</update>
 	 	
+	 	<select id="findForumAffiliatedInfo" parameterType="ForumAffiliatedInfo" resultType="int">
+	 	    select count(id) from t_forum_affiliated_info 
+	 	    where member_id = #{memberId} and type = #{type}
+	 	    <if test="answerId != null"> and answer_id = #{answerId}</if>
+	 	    <if test="questionId != null"> and question_id = #{question_id}</if>
+	 	</select>
 	</mapper> 

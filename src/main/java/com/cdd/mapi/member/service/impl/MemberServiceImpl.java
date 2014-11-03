@@ -15,11 +15,15 @@ import com.cdd.mapi.common.cache.MemberCache;
 import com.cdd.mapi.common.enums.EScoreRuleType;
 import com.cdd.mapi.common.pojo.LoginInfo;
 import com.cdd.mapi.common.pojo.MemberVO;
+import com.cdd.mapi.common.pojo.Page;
 import com.cdd.mapi.member.dao.IMemberDao;
 import com.cdd.mapi.member.service.IMemberService;
 import com.cdd.mapi.pojo.City;
+import com.cdd.mapi.pojo.ForumSubjectVO;
 import com.cdd.mapi.pojo.Member;
 import com.cdd.mapi.pojo.MemberLevel;
+import com.cdd.mapi.pojo.MemberRelation;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -149,7 +153,91 @@ public class MemberServiceImpl implements IMemberService {
 				}
 			}
 		}
+		Map<String,Long> statisticsMap = getMemberStatistics(member.getId());
+		if(statisticsMap != null){
+			memberVO.setFansCount(statisticsMap.get("fansCount"));
+			memberVO.setIdolCount(statisticsMap.get("idolCount"));
+		}
 		return memberVO;
+	}
+
+	@Override
+	public void attention(MemberRelation memberRelation) {
+		memberDao.attention(memberRelation);
+	}
+
+	@Override
+	public void unAttention(MemberRelation memberRelation) {
+		memberDao.unAttention(memberRelation);
+	}
+
+	@Override
+	public Map<String, Long> getMemberStatistics(Integer memberId) {
+		return memberDao.getMemberStatistics(memberId);
+	}
+
+	@Override
+	public Integer getFansCount(Integer memberId) {
+		return memberDao.getFansCount(memberId);
+	}
+
+	@Override
+	public Integer getIdolCount(Integer memberId) {
+		return memberDao.getIdolCount(memberId);
+	}
+
+	@Override
+	public List<MemberVO> getFansList(Integer memberId,Integer pageNum) {
+		List<MemberVO> list = null;
+		Integer prizeCount = memberDao.getFansCount(memberId);
+		if(prizeCount != null && prizeCount > 0){
+			Page page = new Page();
+			page.setTotal(prizeCount);
+			page.setSize(20);
+			page.setNumber(pageNum == null ? 1 : pageNum);
+			if(page.getTotalPages() < pageNum){
+				return list;
+			}
+			Map<String,Object> paramsMap = Maps.newHashMap();
+			paramsMap.put("startNum", page.getStartNum());
+			paramsMap.put("size", page.getSize());
+			paramsMap.put("memberId", memberId);
+			List<Member> memberList = memberDao.getFansList(paramsMap);
+			if(memberList != null && !memberList.isEmpty()){
+				list = Lists.newArrayList();
+				for(Member member : memberList){
+					list.add(transformMember(member));
+				}
+			}
+		}
+		return list;
+	}
+
+	@Override
+	public List<MemberVO> getIdolList(Integer memberId,Integer pageNum) {
+		List<MemberVO> list = null;
+		Integer prizeCount = memberDao.getIdolCount(memberId);
+		if(prizeCount != null && prizeCount > 0){
+			Page page = new Page();
+			page.setTotal(prizeCount);
+			page.setSize(20);
+			page.setNumber(pageNum == null ? 1 : pageNum);
+			if(page.getTotalPages() < pageNum){
+				return list;
+			}
+			Map<String,Object> paramsMap = Maps.newHashMap();
+			paramsMap.put("startNum", page.getStartNum());
+			paramsMap.put("size", page.getSize());
+			paramsMap.put("memberId", memberId);
+			List<Member> memberList = memberDao.getIdolList(paramsMap);
+			if(memberList != null && !memberList.isEmpty()){
+				list = Lists.newArrayList();
+				for(Member member : memberList){
+					list.add(transformMember(member));
+				}
+			}
+		}
+		return list;
 	}
 
 }

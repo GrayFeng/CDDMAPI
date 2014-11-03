@@ -211,4 +211,10 @@ public class ForumServiceImpl implements IForumService{
 			}
 		}
 	}
+
+	@Override
+	public Integer findForumAffiliatedInfo(
+			ForumAffiliatedInfo forumAffiliatedInfo) {
+		return forumDao.findForumAffiliatedInfo(forumAffiliatedInfo);
+	}
 }

@@ -38,5 +38,7 @@ public interface IForumService {
 	public void addPhotos(List<String> photos,Integer subjectId,Integer answerId);
 	
 	public void addForumAffiliated(ForumAffiliatedInfo forumAffiliatedInfo);
+	
+	public Integer findForumAffiliatedInfo(ForumAffiliatedInfo forumAffiliatedInfo);
 
 }

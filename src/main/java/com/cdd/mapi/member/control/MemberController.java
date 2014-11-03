@@ -1,6 +1,7 @@
 package com.cdd.mapi.member.control;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +32,7 @@ import com.cdd.mapi.common.uitls.CommonValidate;
 import com.cdd.mapi.common.uitls.ResultUtil;
 import com.cdd.mapi.member.service.IMemberService;
 import com.cdd.mapi.pojo.Member;
+import com.cdd.mapi.pojo.MemberRelation;
 import com.google.common.collect.Maps;
 
 /**
@@ -314,6 +316,102 @@ public class MemberController {
 		}finally{
 			if(result == null){
 				result = new Result(EEchoCode.ERROR.getCode(),"系统异常，签到失败");
+			}
+		}
+		return ResultUtil.getJsonString(result);
+	}
+	
+	@RequestMapping("attention")
+	@ResponseBody
+	public String attention(String uid,String params){
+		Result result = null;
+		try{
+			Member member = memberService.getMemberByUID(uid);
+			JSONObject jsonObject = JSONObject.parseObject(params);
+			Integer idolId = jsonObject.getInteger("idolId");
+			if(member != null && idolId != null){
+				MemberRelation memberRelation = new MemberRelation();
+				memberRelation.setFans(member.getId());
+				memberRelation.setPopular_person(idolId);
+				memberService.attention(memberRelation);
+				result = Result.getSuccessResult();
+			}
+		}catch (Exception e) {
+			log.error(e.getMessage(),e);
+		}finally{
+			if(result == null){
+				result = new Result(EEchoCode.ERROR.getCode(),"关注失败，缺少参数信息");
+			}
+		}
+		return ResultUtil.getJsonString(result);
+	}
+	
+	@RequestMapping("unAttention")
+	@ResponseBody
+	public String unAttention(String uid,String params){
+		Result result = null;
+		try{
+			Member member = memberService.getMemberByUID(uid);
+			JSONObject jsonObject = JSONObject.parseObject(params);
+			Integer idolId = jsonObject.getInteger("idolId");
+			if(member != null && idolId != null){
+				MemberRelation memberRelation = new MemberRelation();
+				memberRelation.setFans(member.getId());
+				memberRelation.setPopular_person(idolId);
+				memberService.unAttention(memberRelation);
+				result = Result.getSuccessResult();
+			}
+		}catch (Exception e) {
+			log.error(e.getMessage(),e);
+		}finally{
+			if(result == null){
+				result = new Result(EEchoCode.ERROR.getCode(),"取消关注失败，缺少参数信息");
+			}
+		}
+		return ResultUtil.getJsonString(result);
+	}
+	
+	@RequestMapping("getIdolList")
+	@ResponseBody
+	public String getIdolList(String uid,String params){
+		Result result = null;
+		try{
+			Member member = memberService.getMemberByUID(uid);
+			JSONObject jsonObject = JSONObject.parseObject(params);
+			Integer pageNum = jsonObject.getInteger("pageNum");
+			if(member != null && pageNum != null){
+				List<MemberVO> list = memberService.getIdolList(member.getId(), pageNum);
+				result = Result.getSuccessResult();
+				result.setRe(list);
+			}
+		}catch (Exception e) {
+			log.error(e.getMessage(),e);
+		}finally{
+			if(result == null){
+				result = new Result(EEchoCode.ERROR.getCode(),"读取关注列表失败，缺少参数信息");
+			}
+		}
+		return ResultUtil.getJsonString(result);
+	}
+	
+	@RequestMapping("getFansList")
+	@ResponseBody
+	public String getFansList(String uid,String params){
+		Result result = null;
+		try{
+			Member member = memberService.getMemberByUID(uid);
+			JSONObject jsonObject = JSONObject.parseObject(params);
+			Integer pageNum = jsonObject.getInteger("pageNum");
+			if(member != null && pageNum != null){
+				List<MemberVO> list = memberService.getFansList(member.getId(), pageNum);
+				result = Result.getSuccessResult();
+				result.setRe(list);
+			}
+		}catch (Exception e) {
+			log.error(e.getMessage(),e);
+		}finally{
+			if(result == null){
+				result = new Result(EEchoCode.ERROR.getCode(),"读取粉丝列表失败，缺少参数信息");
 			}
 		}
 		return ResultUtil.getJsonString(result);

@@ -227,7 +227,13 @@ public class ForumController {
 				forumAffiliatedInfo.setQuestionId(subjectId);
 				forumAffiliatedInfo.setType(EForumAffiliatedType.LIKE.getCode());
 				forumAffiliatedInfo.setMemberId(member.getId());
-				result = Result.getSuccessResult();
+				Integer isDone = forumService.findForumAffiliatedInfo(forumAffiliatedInfo);
+				if(isDone == null || isDone == 0){
+					forumService.addForumAffiliated(forumAffiliatedInfo);
+					result = Result.getSuccessResult();
+				}else{
+					result = new Result(EEchoCode.ERROR.getCode(),"已经赞过了");
+				}
 			}else{
 				result = new Result(EEchoCode.ERROR.getCode(),"缺少问题ID");
 			}
@@ -254,7 +260,13 @@ public class ForumController {
 				forumAffiliatedInfo.setQuestionId(subjectId);
 				forumAffiliatedInfo.setType(EForumAffiliatedType.FAV.getCode());
 				forumAffiliatedInfo.setMemberId(member.getId());
-				result = Result.getSuccessResult();
+				Integer isDone = forumService.findForumAffiliatedInfo(forumAffiliatedInfo);
+				if(isDone == null || isDone == 0){
+					forumService.addForumAffiliated(forumAffiliatedInfo);
+					result = Result.getSuccessResult();
+				}else{
+					result = new Result(EEchoCode.ERROR.getCode(),"已经收藏过了");
+				}
 			}else{
 				result = new Result(EEchoCode.ERROR.getCode(),"缺少问题ID");
 			}
@@ -281,7 +293,13 @@ public class ForumController {
 				forumAffiliatedInfo.setQuestionId(subjectId);
 				forumAffiliatedInfo.setType(EForumAffiliatedType.SHARE.getCode());
 				forumAffiliatedInfo.setMemberId(member.getId());
-				result = Result.getSuccessResult();
+				Integer isDone = forumService.findForumAffiliatedInfo(forumAffiliatedInfo);
+				if(isDone == null || isDone == 0){
+					forumService.addForumAffiliated(forumAffiliatedInfo);
+					result = Result.getSuccessResult();
+				}else{
+					result = new Result(EEchoCode.ERROR.getCode(),"已经分享过了");
+				}
 			}else{
 				result = new Result(EEchoCode.ERROR.getCode(),"缺少问题ID");
 			}
@@ -308,7 +326,13 @@ public class ForumController {
 				forumAffiliatedInfo.setAnswerId(answerId);
 				forumAffiliatedInfo.setType(EForumAffiliatedType.LIKE.getCode());
 				forumAffiliatedInfo.setMemberId(member.getId());
-				result = Result.getSuccessResult();
+				Integer isDone = forumService.findForumAffiliatedInfo(forumAffiliatedInfo);
+				if(isDone == null || isDone == 0){
+					forumService.addForumAffiliated(forumAffiliatedInfo);
+					result = Result.getSuccessResult();
+				}else{
+					result = new Result(EEchoCode.ERROR.getCode(),"已经赞过了");
+				}
 			}else{
 				result = new Result(EEchoCode.ERROR.getCode(),"缺少回答ID");
 			}

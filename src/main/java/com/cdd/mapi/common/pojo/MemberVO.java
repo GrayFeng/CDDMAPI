@@ -38,33 +38,33 @@ private Integer id;
 	//今日是否签到过
 	private Integer isSignIn;
 	//粉丝数量
-	private Integer fansCount = 0;
+	private Long fansCount = 0L;
 	//动态信息数量
-	private Integer dynamicInfoCount = 0;
+	private Long dynamicInfoCount = 0L;
 	//关注的人数量
-	private Integer idolCount = 0;
+	private Long idolCount = 0L;
 	
-	public Integer getFansCount() {
+	public Long getFansCount() {
 		return fansCount;
 	}
 
-	public void setFansCount(Integer fansCount) {
+	public void setFansCount(Long fansCount) {
 		this.fansCount = fansCount;
 	}
 
-	public Integer getDynamicInfoCount() {
+	public Long getDynamicInfoCount() {
 		return dynamicInfoCount;
 	}
 
-	public void setDynamicInfoCount(Integer dynamicInfoCount) {
+	public void setDynamicInfoCount(Long dynamicInfoCount) {
 		this.dynamicInfoCount = dynamicInfoCount;
 	}
 
-	public Integer getIdolCount() {
+	public Long getIdolCount() {
 		return idolCount;
 	}
 
-	public void setIdolCount(Integer idolCount) {
+	public void setIdolCount(Long idolCount) {
 		this.idolCount = idolCount;
 	}
 

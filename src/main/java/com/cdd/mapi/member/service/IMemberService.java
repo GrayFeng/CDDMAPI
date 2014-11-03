@@ -1,8 +1,12 @@
 package com.cdd.mapi.member.service;
 
+import java.util.List;
+import java.util.Map;
+
 import com.cdd.mapi.common.enums.EScoreRuleType;
 import com.cdd.mapi.common.pojo.MemberVO;
 import com.cdd.mapi.pojo.Member;
+import com.cdd.mapi.pojo.MemberRelation;
 
 /**
  * CDDMAPI
@@ -35,5 +39,19 @@ public interface IMemberService {
 	public Integer signIn(Member member);
 	
 	public MemberVO transformMember(Member member);
+	
+	public void attention(MemberRelation memberRelation);
+	
+	public void unAttention(MemberRelation memberRelation);
+	
+	public Map<String,Long> getMemberStatistics(Integer memberId);
+	
+	public Integer getFansCount(Integer memberId);
+	
+	public Integer getIdolCount(Integer memberId);
+	
+	public List<MemberVO> getFansList(Integer memberId,Integer pageNum);
+	
+	public List<MemberVO> getIdolList(Integer memberId,Integer pageNum);
 	
 }
