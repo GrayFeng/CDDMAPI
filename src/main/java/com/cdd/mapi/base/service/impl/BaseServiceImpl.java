@@ -2,7 +2,11 @@ package com.cdd.mapi.base.service.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +19,9 @@ import com.cdd.mapi.pojo.ForumItem;
 import com.cdd.mapi.pojo.MemberLevel;
 import com.cdd.mapi.pojo.Province;
 import com.cdd.mapi.pojo.ScoreRule;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Maps;
 
 /**
@@ -26,31 +33,92 @@ import com.google.common.collect.Maps;
 
 @Service
 public class BaseServiceImpl implements IBaseService{
+	
+	private Logger log = LoggerFactory.getLogger(BaseServiceImpl.class);
 
 	@Autowired
 	private IBaseDao baseDao;
 	
+	private enum ListCacheKey {
+		PROVINCE,CITY,MEMBERLEVEL,SCORERULE,FORUMITEM,EXAMITEM
+	}
+	
+	private final LoadingCache<ListCacheKey, List<?>> dataCache = CacheBuilder
+			.newBuilder().expireAfterWrite(30, TimeUnit.MINUTES)
+			.maximumSize(600).build(new CacheLoader<ListCacheKey, List<?>>() {
+				@Override
+				public List<?> load(ListCacheKey key) throws Exception {
+					List<?> result = null;
+					switch (key) {
+					case PROVINCE:
+						result = baseDao.getProvinceList();
+						break;
+					case CITY:
+						result = baseDao.getCiytList();
+						break;
+					case MEMBERLEVEL:
+						result = baseDao.getMemberLevelList();
+						break;
+					case SCORERULE:
+						result = baseDao.getScoreRuleList();
+						break;
+					case FORUMITEM:
+						result = baseDao.getForumItemList();
+						break;
+					case EXAMITEM:
+						result = baseDao.getExamItemList();
+						break;
+					default:
+						break;
+					}
+					return result;
+				}
+			});
+	
 	@Override
 	public List<City> getCityList() {
-		return baseDao.getCiytList();
+		List<City> result = null;
+		try {
+			result = (List<City>)dataCache.get(ListCacheKey.CITY);
+		} catch (ExecutionException e) {
+			log.error(e.getMessage(),e);;
+		}
+		return result;
 	}
 
 	@Override
 	public List<Province> getProvinceList() {
-		return baseDao.getProvinceList();
+		List<Province> result = null;
+		try {
+			result = (List<Province>)dataCache.get(ListCacheKey.PROVINCE);
+		} catch (ExecutionException e) {
+			log.error(e.getMessage(),e);;
+		}
+		return result;
 	}
 
 	@Override
 	public List<MemberLevel> getMemberLevelList() {
-		return baseDao.getMemberLevelList();
+		List<MemberLevel> result = null;
+		try {
+			result = (List<MemberLevel>)dataCache.get(ListCacheKey.MEMBERLEVEL);
+		} catch (ExecutionException e) {
+			log.error(e.getMessage(),e);;
+		}
+		return result;
 	}
 
 	@Override
 	public Map<Integer,ScoreRule> getScoreRuleMap() {
 		Map<Integer,ScoreRule> map = Maps.newHashMap();
-		List<ScoreRule> list = baseDao.getScoreRuleList();
-		for(ScoreRule scoreRule : list){
-			map.put(scoreRule.getType(), scoreRule);
+		List<ScoreRule> list = null;
+		try {
+			list = (List<ScoreRule>)dataCache.get(ListCacheKey.SCORERULE);
+			for(ScoreRule scoreRule : list){
+				map.put(scoreRule.getType(), scoreRule);
+			}
+		} catch (ExecutionException e) {
+			log.error(e.getMessage(),e);;
 		}
 		return map;
 	}
@@ -69,11 +137,16 @@ public class BaseServiceImpl implements IBaseService{
 
 	@Override
 	public List<ForumItem> getForumItemList() {
-		List<ForumItem> forumItems = baseDao.getForumItemList();
+		List<ForumItem> forumItems = null;
+		try {
+			forumItems = (List<ForumItem>)dataCache.get(ListCacheKey.FORUMITEM);
+		} catch (ExecutionException e) {
+			log.error(e.getMessage(),e);;
+		}
 		if(forumItems != null){
 			for(ForumItem forumItem : forumItems){
 				if(forumItem.getId() == 9){
-					forumItem.setSubItems(baseDao.getExamItemList());
+					forumItem.setSubItems(getExamItemList());
 				}
 			}
 		}
@@ -82,7 +155,12 @@ public class BaseServiceImpl implements IBaseService{
 
 	@Override
 	public List<ExamItem> getExamItemList() {
-		return baseDao.getExamItemList();
+		List<ExamItem> result = null;
+		try {
+			result = (List<ExamItem>)dataCache.get(ListCacheKey.EXAMITEM);
+		} catch (ExecutionException e) {
+			log.error(e.getMessage(),e);;
+		}
+		return result;
 	}
-
 }

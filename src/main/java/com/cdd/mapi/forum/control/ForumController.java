@@ -345,5 +345,4 @@ public class ForumController {
 		}
 		return ResultUtil.getJsonString(result);
 	}
-
 }
