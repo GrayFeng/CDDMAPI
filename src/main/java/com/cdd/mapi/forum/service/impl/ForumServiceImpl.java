@@ -108,15 +108,16 @@ public class ForumServiceImpl implements IForumService{
 		ForumSubjectVO subjectVO = new ForumSubjectVO();
 		subjectVO.setId(getIntegerFromMap(subjectMap,"id"));
 		subjectVO.setTitle((String)subjectMap.get("title"));
-		subjectVO.setTitle((String)subjectMap.get("content"));
+		subjectVO.setContent((String)subjectMap.get("content"));
 		subjectVO.setLikeCount(getIntegerFromMap(subjectMap,"likeCount"));
 		subjectVO.setShareCount(getIntegerFromMap(subjectMap,"shareCount"));
 		subjectVO.setFavoriteCount(getIntegerFromMap(subjectMap,"favoriteCount"));
 		subjectVO.setMemberId(getIntegerFromMap(subjectMap,"memberId"));
+		subjectVO.setMemberName((String)subjectMap.get("memberName"));
+		subjectVO.setMemberPhoto((String)subjectMap.get("photo"));
 		subjectVO.setItemId(getIntegerFromMap(subjectMap,"itemId"));
 		subjectVO.setSubItemId(getIntegerFromMap(subjectMap,"subItemId"));
 		subjectVO.setAnonymous(getIntegerFromMap(subjectMap,"anonymous"));
-		subjectVO.setMemberPhoto((String)subjectMap.get("photo"));
 		subjectVO.setCreateTime((String)subjectMap.get("createTime"));
 		Integer answerId = getIntegerFromMap(subjectMap,"answerId");
 		if(answerId != null){
