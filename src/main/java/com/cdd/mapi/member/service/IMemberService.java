@@ -7,6 +7,8 @@ import com.cdd.mapi.common.enums.EScoreRuleType;
 import com.cdd.mapi.common.pojo.MemberVO;
 import com.cdd.mapi.pojo.Member;
 import com.cdd.mapi.pojo.MemberRelation;
+import com.cdd.mapi.pojo.PrivateLetter;
+import com.cdd.mapi.pojo.PrivateLetterVO;
 
 /**
  * CDDMAPI
@@ -53,5 +55,9 @@ public interface IMemberService {
 	public List<MemberVO> getFansList(Integer memberId,Integer pageNum);
 	
 	public List<MemberVO> getIdolList(Integer memberId,Integer pageNum);
+	
+	public List<PrivateLetterVO> getPrivateLetterList(Integer memberId,Integer pageNum);
+	
+	public void sendPrivateMessage(PrivateLetter letter);
 	
 }

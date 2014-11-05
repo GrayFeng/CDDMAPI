@@ -83,4 +83,42 @@
 	 	    select m.<include refid="memberValues"/> from t_member m left join t_member_relation mr on m.id = mr.popular_person 
 			where m.status = 0 and mr.fans = #{memberId} order by mr.create_time desc limit #{startNum},#{size}
 	 	</select>
+	 	
+	 	<insert id="sendPrivateMessage" parameterType="PrivateLetter">
+	 	    insert into t_privete_letter 
+	 	    	(sender,receive_member,message,reply_msg_id,create_time) 
+	 	    values
+	 	    	(#{from},#{to},#{msg},#{replyId},now())
+	 	</insert>
+	 	
+	 	<select id="getPrivateLetterList" parameterType="PrivateLetterListSearch" resultType="PrivateLetterVO">
+	 		select 
+	 			pl.id,
+	 			pl.sender fromMemberId,
+	 			pl.receive_member toMemberId,
+	 			pl.message msg,
+	 			pl.reply_msg_id replyId,
+	 			DATE_FORMAT(pl.create_time,'%Y-%m-%d %T') createTime,
+	 			m.name fromMemberName,
+	 			m.photo fromMemberPhoto
+	 		from 
+	 			t_privete_letter pl 
+	 		left join
+	 			t_member m
+	 		on pl.sender = m.id
+	 		where 
+	 			pl.receive_member = #{memberId}
+	 		order by pl.create_time desc
+	 		limit #{startNum},#{size}
+	 	</select>
+	 	
+	 	<select id="getPrivateLetterCount" parameterType="int" resultType="int">
+	 		select 
+	 			count(id)
+	 		from 
+	 			t_privete_letter pl 
+	 		where 
+	 			pl.receive_member = #{memberId}
+	 	</select>
+	 	
 </mapper> 

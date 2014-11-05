@@ -1,6 +1,7 @@
 package com.cdd.mapi.forum.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.cdd.mapi.pojo.ForumAffiliatedInfo;
 import com.cdd.mapi.pojo.ForumAnswer;
@@ -25,11 +26,11 @@ public interface IForumService {
 	
 	public List<ForumAnswerVO> getAnswerListBySubjectId(Integer subjectId,Integer pageNum);
 	
-	public Integer getSubjectCount(ForumSubjectSearch params);
-	
 	public List<ForumSubjectVO> getHotSubjectList(ForumSubjectSearch params);
 	
-	public Integer getHotSubjectCount(ForumSubjectSearch params);
+	public List<ForumSubjectVO> getMySubjectList(ForumSubjectSearch params);
+	
+	public List<ForumSubjectVO> getFavSubjectList(ForumSubjectSearch params);
 	
 	public List<ForumSubjectVO> getSubjectList(ForumSubjectSearch params);
 	

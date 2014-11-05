@@ -33,6 +33,8 @@ import com.cdd.mapi.common.uitls.ResultUtil;
 import com.cdd.mapi.member.service.IMemberService;
 import com.cdd.mapi.pojo.Member;
 import com.cdd.mapi.pojo.MemberRelation;
+import com.cdd.mapi.pojo.PrivateLetter;
+import com.cdd.mapi.pojo.PrivateLetterVO;
 import com.google.common.collect.Maps;
 
 /**
@@ -154,6 +156,8 @@ public class MemberController {
 			Member member = JSON.parseObject(params, Member.class);
 			if(member != null){
 				Member tempMember = memberService.getMemberByUID(uid);
+				JSONObject jsonObject = JSON.parseObject(params);
+				String defaultPhoto = jsonObject.getString("defaultPhoto");
 				if(tempMember != null){
 					if(StringUtils.isNotEmpty(member.getName())){
 						if(memberService.getMemberByName(member.getName()) != null){
@@ -172,6 +176,9 @@ public class MemberController {
 					}
 					if(member.getSex() != null){
 						tempMember.setSex(member.getSex());
+					}
+					if("1".equals(defaultPhoto)){
+						tempMember.setPhoto(null);
 					}
 					if(result == null){
 						memberService.updateMember(tempMember,uid);
@@ -412,6 +419,66 @@ public class MemberController {
 		}finally{
 			if(result == null){
 				result = new Result(EEchoCode.ERROR.getCode(),"读取粉丝列表失败，缺少参数信息");
+			}
+		}
+		return ResultUtil.getJsonString(result);
+	}
+	
+	@RequestMapping("sendMsg")
+	@ResponseBody
+	public String sendPrivateMessage(String uid,String params){
+		Result result = null;
+		try{
+			Member member = memberService.getMemberByUID(uid);
+			PrivateLetter letter = JSON.parseObject(params, PrivateLetter.class);
+			if(member != null && letter != null){
+				if(letter.getTo() != null 
+						&& StringUtils.isNotEmpty(letter.getMsg())){
+					letter.setFrom(member.getId());
+					memberService.sendPrivateMessage(letter);
+					result = Result.getSuccessResult();
+				}
+			}
+		}catch (Exception e) {
+			log.error(e.getMessage(),e);
+		}finally{
+			if(result == null){
+				result = new Result(EEchoCode.ERROR.getCode(),"信息不全，发送失败");
+			}
+		}
+		return ResultUtil.getJsonString(result);
+	}
+	
+	@RequestMapping("letterList")
+	@ResponseBody
+	public String getPrivateLetterList(String uid,String params){
+		Result result = null;
+		try{
+			Member member = memberService.getMemberByUID(uid);
+			JSONObject jsonObject = JSON.parseObject(params);
+			Integer pageNum = null;
+			if(jsonObject != null){
+				pageNum = jsonObject.getInteger("pageNum");
+			}
+			List<PrivateLetterVO> list = null;
+			if(member != null){
+				list = memberService.getPrivateLetterList(member.getId(), pageNum);
+			}
+			Map<String,Object> map = Maps.newHashMap();
+			if(list != null){
+				map.put("size", list.size());
+				map.put("letterList", list);
+			}else{
+				map.put("size", 0);
+				map.put("letterList", null);
+			}
+			result = Result.getSuccessResult();
+			result.setRe(map);
+		}catch (Exception e) {
+			log.error(e.getMessage(),e);
+		}finally{
+			if(result == null){
+				result = new Result(EEchoCode.ERROR.getCode(),"系统异常，读取私信列表失败");
 			}
 		}
 		return ResultUtil.getJsonString(result);

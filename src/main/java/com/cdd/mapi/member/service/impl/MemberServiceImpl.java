@@ -19,10 +19,12 @@ import com.cdd.mapi.common.pojo.Page;
 import com.cdd.mapi.member.dao.IMemberDao;
 import com.cdd.mapi.member.service.IMemberService;
 import com.cdd.mapi.pojo.City;
-import com.cdd.mapi.pojo.ForumSubjectVO;
 import com.cdd.mapi.pojo.Member;
 import com.cdd.mapi.pojo.MemberLevel;
 import com.cdd.mapi.pojo.MemberRelation;
+import com.cdd.mapi.pojo.PrivateLetter;
+import com.cdd.mapi.pojo.PrivateLetterListSearch;
+import com.cdd.mapi.pojo.PrivateLetterVO;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -236,6 +238,34 @@ public class MemberServiceImpl implements IMemberService {
 					list.add(transformMember(member));
 				}
 			}
+		}
+		return list;
+	}
+
+	@Override
+	public void sendPrivateMessage(PrivateLetter letter) {
+		memberDao.sendPrivateMessage(letter);
+	}
+
+	@Override
+	public List<PrivateLetterVO> getPrivateLetterList(Integer memberId,
+			Integer pageNum) {
+		List<PrivateLetterVO> list = null;
+		Integer prizeCount = memberDao.getPrivateLetterCount(memberId);
+		if(prizeCount != null && prizeCount > 0){
+			Page page = new Page();
+			page.setTotal(prizeCount);
+			page.setSize(20);
+			pageNum = pageNum == null ? 1 : pageNum;
+			page.setNumber(pageNum);
+			PrivateLetterListSearch search = new PrivateLetterListSearch();
+			search.setStartNum(page.getStartNum());
+			search.setSize(page.getSize());
+			search.setMemberId(memberId);
+			if(page.getTotalPages() < pageNum){
+				return list;
+			}
+			list = memberDao.getPrivateLetterList(search);
 		}
 		return list;
 	}

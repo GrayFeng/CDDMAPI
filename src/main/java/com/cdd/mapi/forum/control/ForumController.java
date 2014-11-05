@@ -1,8 +1,5 @@
 package com.cdd.mapi.forum.control;
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,12 +18,9 @@ import com.cdd.mapi.forum.service.IForumService;
 import com.cdd.mapi.member.service.IMemberService;
 import com.cdd.mapi.pojo.ForumAffiliatedInfo;
 import com.cdd.mapi.pojo.ForumAnswer;
-import com.cdd.mapi.pojo.ForumAnswerVO;
 import com.cdd.mapi.pojo.ForumSubject;
-import com.cdd.mapi.pojo.ForumSubjectSearch;
 import com.cdd.mapi.pojo.ForumSubjectVO;
 import com.cdd.mapi.pojo.Member;
-import com.google.common.collect.Maps;
 
 /**
  * CDDMAPI
@@ -119,100 +113,6 @@ public class ForumController {
 		return ResultUtil.getJsonString(result);
 	}
 	
-	@RequestMapping("answerList")
-	@ResponseBody
-	public String answerList(String uid,String params){
-		Result result = null;
-		try{
-			JSONObject jsonObject = JSON.parseObject(params);
-			Integer subjectId = jsonObject.getInteger("subjectId");
-			Integer pageNum = jsonObject.getInteger("pageNum");
-			if(subjectId != null){
-				List<ForumAnswerVO> answerList = forumService.getAnswerListBySubjectId(subjectId,pageNum);
-				result = Result.getSuccessResult();
-				Map<String,Object> map = Maps.newHashMap();
-				if(answerList != null ){
-					map.put("size", answerList.size());
-					map.put("answerList", answerList);
-				}else{
-					map.put("size", 0);
-					map.put("answerList", null);
-				}
-				result.setRe(map);
-			}
-		}catch (Exception e) {
-			log.error(e.getMessage(),e);
-		}finally{
-			if(result == null){
-				result = new Result(EEchoCode.ERROR.getCode(),"读取失败,未找到相关的回答");
-			}
-		}
-		return ResultUtil.getJsonString(result);
-	}
-	
-	@RequestMapping("subjectList")
-	@ResponseBody
-	public String subjectList(String uid,String params){
-		Result result = getSubjectList(uid, params, false);
-		return ResultUtil.getJsonString(result);
-	}
-	
-	private Result getSubjectList(String uid,String params,boolean isHot){
-		Result result = null;
-		try{
-			JSONObject jsonObject = JSON.parseObject(params);
-			Integer itemId = jsonObject.getInteger("itemId");
-			Integer subItemId = jsonObject.getInteger("subItemId");
-			Integer memberId = jsonObject.getInteger("memberId");
-			Integer pageNum = jsonObject.getInteger("pageNum");
-			if(itemId != null && pageNum != null){
-				ForumSubjectSearch forumSubjectSearch = new ForumSubjectSearch();
-				forumSubjectSearch.setPageNum(pageNum);
-				forumSubjectSearch.setItemId(itemId);
-				forumSubjectSearch.setSubItemId(subItemId);
-				forumSubjectSearch.setMemberId(memberId);
-				List<ForumSubjectVO> list = null;
-				if(isHot){
-					list = forumService.getHotSubjectList(forumSubjectSearch);
-				}else{
-					list = forumService.getSubjectList(forumSubjectSearch);
-				}
-				result = Result.getSuccessResult();
-				Map<String,Object> map = Maps.newHashMap();
-				if(list != null){
-					map.put("size", list.size());
-					map.put("subjectList", list);
-				}else{
-					map.put("size", 0);
-					map.put("subjectList", null);
-				}
-				result.setRe(map);
-			}else{
-				result = new Result(EEchoCode.ERROR.getCode(),"读取失败，缺少参数");
-			}
-		}catch (Exception e) {
-			log.error(e.getMessage(),e);
-		}finally{
-			if(result == null){
-				result = new Result(EEchoCode.ERROR.getCode(),"读取失败,未找到相关的提问");
-			}
-		}
-		return result;
-	}
-	
-	@RequestMapping("hotSubjectList")
-	@ResponseBody
-	public String hotSubjectList(String uid,String params){
-		Result result = getSubjectList(uid, params,true);
-		return ResultUtil.getJsonString(result);
-	}
-	
-	@RequestMapping("myQuestionList")
-	@ResponseBody
-	public String myQuestionList(String uid,String params){
-		Result result = getSubjectList(uid, params,true);
-		return ResultUtil.getJsonString(result);
-	}
 	
 	@RequestMapping("likeSubject")
 	@ResponseBody

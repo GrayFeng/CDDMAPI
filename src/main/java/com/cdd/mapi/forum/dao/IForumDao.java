@@ -40,6 +40,14 @@ public interface IForumDao {
 	
 	public List<Map<String,Object>> getHotSubjectList(ForumSubjectSearch params);
 	
+	public Integer getMySubjectCount(ForumSubjectSearch params);
+	
+	public List<Map<String,Object>> getMySubjectList(ForumSubjectSearch params);
+	
+	public Integer getFavSubjectCount(ForumSubjectSearch params);
+	
+	public List<Map<String,Object>> getFavSubjectList(ForumSubjectSearch params);
+	
 	public Integer getAnswerCountBySubjectId(Integer subjectId);
 	
 	public void addPhotos(Map<String,Object> params);
@@ -55,5 +63,7 @@ public interface IForumDao {
 	public void addForumAffiliated(ForumAffiliatedInfo forumAffiliatedInfo);
 	
 	public Integer findForumAffiliatedInfo(ForumAffiliatedInfo forumAffiliatedInfo);
+	
+	
 
 }

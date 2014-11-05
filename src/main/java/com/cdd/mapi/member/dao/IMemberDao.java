@@ -8,6 +8,9 @@ import org.springframework.stereotype.Repository;
 import com.cdd.mapi.common.annotation.MyBatisRepository;
 import com.cdd.mapi.pojo.Member;
 import com.cdd.mapi.pojo.MemberRelation;
+import com.cdd.mapi.pojo.PrivateLetter;
+import com.cdd.mapi.pojo.PrivateLetterListSearch;
+import com.cdd.mapi.pojo.PrivateLetterVO;
 /**
  * CDDMAPI
  * @date 2014-10-27 下午8:06:42
@@ -47,5 +50,11 @@ public interface IMemberDao {
 	public List<Member> getFansList(Map<String,Object> paramsMap);
 	
 	public List<Member> getIdolList(Map<String,Object> paramsMap);
+	
+	public Integer getPrivateLetterCount(Integer memberId);
+	
+	public List<PrivateLetterVO> getPrivateLetterList(PrivateLetterListSearch search);
+	
+	public void sendPrivateMessage(PrivateLetter letter);
 	
 }

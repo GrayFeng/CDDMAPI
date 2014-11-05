@@ -73,11 +73,6 @@ public class ForumServiceImpl implements IForumService{
 	}
 
 	@Override
-	public Integer getSubjectCount(ForumSubjectSearch params) {
-		return forumDao.getSubjectCount(params);
-	}
-
-	@Override
 	public List<ForumSubjectVO> getSubjectList(ForumSubjectSearch params) {
 		List<ForumSubjectVO> list = null;
 		Integer prizeCount = forumDao.getSubjectCount(params);
@@ -187,10 +182,59 @@ public class ForumServiceImpl implements IForumService{
 		}
 		return list;
 	}
-
+	
 	@Override
-	public Integer getHotSubjectCount(ForumSubjectSearch params) {
-		return forumDao.getHotSubjectCount(params);
+	public List<ForumSubjectVO> getMySubjectList(ForumSubjectSearch params) {
+		List<ForumSubjectVO> list = null;
+		Integer prizeCount = forumDao.getMySubjectCount(params);
+		if(prizeCount != null && prizeCount > 0){
+			Page page = new Page();
+			page.setTotal(prizeCount);
+			page.setSize(20);
+			Integer pageNum = params.getPageNum() == null ? 1 : params.getPageNum();
+			page.setNumber(pageNum);
+			params.setStartNum(page.getStartNum());
+			params.setSize(page.getSize());
+			if(page.getTotalPages() < pageNum){
+				return list;
+			}
+			List<Map<String,Object>> mapList = forumDao.getMySubjectList(params);
+			if(mapList != null && !mapList.isEmpty()){
+				list = Lists.newArrayList();
+				for(Map<String,Object> mapInfo : mapList){
+					ForumSubjectVO subjectVO = packageSubjectVo(mapInfo);
+					list.add(subjectVO);
+				}
+			}
+		}
+		return list;
+	}
+	
+	@Override
+	public List<ForumSubjectVO> getFavSubjectList(ForumSubjectSearch params) {
+		List<ForumSubjectVO> list = null;
+		Integer prizeCount = forumDao.getFavSubjectCount(params);
+		if(prizeCount != null && prizeCount > 0){
+			Page page = new Page();
+			page.setTotal(prizeCount);
+			page.setSize(20);
+			Integer pageNum = params.getPageNum() == null ? 1 : params.getPageNum();
+			page.setNumber(pageNum);
+			params.setStartNum(page.getStartNum());
+			params.setSize(page.getSize());
+			if(page.getTotalPages() < pageNum){
+				return list;
+			}
+			List<Map<String,Object>> mapList = forumDao.getFavSubjectList(params);
+			if(mapList != null && !mapList.isEmpty()){
+				list = Lists.newArrayList();
+				for(Map<String,Object> mapInfo : mapList){
+					ForumSubjectVO subjectVO = packageSubjectVo(mapInfo);
+					list.add(subjectVO);
+				}
+			}
+		}
+		return list;
 	}
 
 	@Override
@@ -218,4 +262,5 @@ public class ForumServiceImpl implements IForumService{
 			ForumAffiliatedInfo forumAffiliatedInfo) {
 		return forumDao.findForumAffiliatedInfo(forumAffiliatedInfo);
 	}
+
 }

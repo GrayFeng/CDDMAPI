@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+	<mapper namespace="com.cdd.mapi.forum.dao.IForumDao">
+	 	
+	 	<resultMap type="ForumAnswerVO" id="getAnswerListBySubjectIdResultMap">
+	 	    <id column="id" property="id"/>
+	 	    <result column="content" property="content"/>
+	 	    <result column="likeCount" property="likeCount"/>
+	 	    <result column="anonymous" property="anonymous"/>
+	 	    <result column="createTime" property="createTime"/>
+	 	    <result column="memberName" property="memberName"/>
+	 	    <result column="memberPhoto" property="memberPhoto"/>
+	 	    <result column="memberId" property="memberId"/>
+	 	    <collection property="photos" column="answer_id" ofType="ForumPhoto">
+	 	        <id column="fpId" property="id"/>
+	 	        <result column="url" javaType="String" property="url"/>
+	 	    </collection>
+	 	</resultMap>
+	 	
+	 	<select id="getAnswerListBySubjectId" parameterType="ForumAnswerSearch" resultMap="getAnswerListBySubjectIdResultMap">
+	 		select 
+	 			fa.id,
+	 			fa.content,
+	 			fa.member_id as memberId,
+	 			fa.like_count as likeCount,
+	 			fa.anonymous,
+	 			DATE_FORMAT(fa.create_time,'%Y-%m-%d %T') as createTime,
+	 			m.name as memberName,
+	 			m.photo as memberPhoto,
+	 			fp.answer_id,
+	 			fp.id as fpId,
+	 			fp.url
+	 		from 
+	 			t_forum_answer fa 
+	 		left join 
+	 			t_member m 
+	 		on 
+	 			fa.member_id = m.id and fa.anonymous = 0
+	 		left join t_forum_photo fp
+	 		on
+	 			fa.id = fp.answer_id
+	 		where 
+	 			fa.question_id = #{subjectId}
+	 		order by fa.create_time desc
+	 		limit #{startNum},#{size}
+	 	</select>
+	 	
+	 	<select id="getAnswerCountBySubjectId" parameterType="int" resultType="int">
+	 		select 
+	 			count(id)
+	 		from 
+	 			t_forum_answer fa 
+	 		where 
+	 			fa.question_id = #{id}
+	 	</select>
+	 	
+	 	<select id="getSubjectCount" parameterType="ForumSubjectSearch" resultType="int">
+	 		select 
+	 			count(id) from t_forum_question q
+	 		where 
+	 			1=1
+	 		<if test="memberId != null">
+	 			and q.member_id = #{memberId}
+	 		</if>
+	 		<if test="itemId != null">
+	 			and q.item_id = #{itemId}
+	 		</if>
+	 		<if test="subItemId != null">
+	 			and q.sub_item_id = #{subItemId}
+	 		</if>
+	 		order by q.create_time desc
+	 	</select>
+	 	
+	 	<select id="getSubjectList" parameterType="ForumSubjectSearch" resultType="Map">
+	 		select 
+	 			q.id,
+	 			q.title,
+	 			q.content,
+	 			q.like_count as likeCount,
+	 			q.share_count as shareCount,
+	 			q.favorite_count as favoriteCount,
+	 			q.anonymous,
+	 			DATE_FORMAT(q.create_time,'%Y-%m-%d %T') as createTime,
+	 			q.item_id as itemId,
+	 			q.sub_item_id as subItemId,
+	 			m.name as memberName,
+	 			m.photo,
+	 			m.id as memberId,
+	 			fa.answerId,
+	 			fa.answerContent,
+	 			fa.answerMemberId,
+	 			fa.answerlikeCount,
+	 			DATE_FORMAT(fa.answerCreateTime,'%Y-%m-%d %T'),
+	 			fa.answerMemberName,
+	 			fa.answerMemberPhoto,
+	 			fa.anonymous as answerAnonymous
+	 		from 
+	 			t_forum_question q
+	 		left join 
+	 			(select
+		 			fa.id as answerId,
+		 			fa.content as answerContent,
+		 			fa.member_id as answerMemberId,
+		 			fa.like_count as answerlikeCount,
+		 			fa.create_time as answerCreateTime,
+					fa.question_id,
+					fa.anonymous,
+		 			m.name as answerMemberName,
+		 			m.photo as answerMemberPhoto 
+		 		from 
+		 			t_forum_answer fa 
+		 		left join 
+		 			t_member m 
+		 		on 
+		 			fa.member_id = m.id and fa.anonymous = 0
+	 			order by  fa.like_count desc limit 0,1) as fa
+	 		on 
+	 			fa.question_id = q.id
+	 		left join 
+	 			t_member m 
+	 		on 
+	 			q.member_id = m.id and q.anonymous = 0
+	 		where 
+	 			1=1
+	 		<if test="memberId != null">
+	 			and q.member_id = #{memberId}
+	 		</if>
+	 		<if test="itemId != null">
+	 			and q.item_id = #{itemId}
+	 		</if>
+	 		<if test="subItemId != null">
+	 			and q.sub_item_id = #{subItemId}
+	 		</if>
+	 		order by q.create_time desc
+	 		limit #{startNum},#{size};
+	 	</select>
+	 	
+	 	
+	 	<select id="getHotSubjectCount" parameterType="ForumSubjectSearch" resultType="int">
+	 		select 
+	 			count(id) from t_forum_question q
+	 		where 
+	 			1=1
+	 		<if test="itemId != null">
+	 			and q.item_id = #{itemId}
+	 		</if>
+	 		<if test="subItemId != null">
+	 			and q.sub_item_id = #{subItemId}
+	 		</if>
+	 		order by q.is_hot,like_count desc
+	 	</select>
+	 	
+	 	<select id="getHotSubjectList" parameterType="ForumSubjectSearch" resultType="Map">
+	 		select 
+	 			q.id,
+	 			q.title,
+	 			q.content,
+	 			q.like_count as likeCount,
+	 			q.share_count as shareCount,
+	 			q.favorite_count as favoriteCount,
+	 			q.anonymous,
+	 			DATE_FORMAT(q.create_time,'%Y-%m-%d %T') as createTime,
+	 			q.item_id as itemId,
+	 			q.sub_item_id as subItemId,
+	 			m.name as memberName,
+	 			m.photo,
+	 			m.id as memberId,
+	 			fa.answerId,
+	 			fa.answerContent,
+	 			fa.answerMemberId,
+	 			fa.answerlikeCount,
+	 			DATE_FORMAT(fa.answerCreateTime,'%Y-%m-%d %T'),
+	 			fa.answerMemberName,
+	 			fa.answerMemberPhoto,
+	 			fa.anonymous as answerAnonymous
+	 		from 
+	 			t_forum_question q
+	 		left join 
+	 			(select
+		 			fa.id as answerId,
+		 			fa.content as answerContent,
+		 			fa.member_id as answerMemberId,
+		 			fa.like_count as answerlikeCount,
+		 			fa.create_time as answerCreateTime,
+					fa.question_id,
+					fa.anonymous,
+		 			m.name as answerMemberName,
+		 			m.photo as answerMemberPhoto 
+		 		from 
+		 			t_forum_answer fa 
+		 		left join 
+		 			t_member m 
+		 		on 
+		 			fa.member_id = m.id and fa.anonymous = 0
+	 			order by  fa.like_count desc limit 0,1) as fa
+	 		on 
+	 			fa.question_id = q.id
+	 		left join 
+	 			t_member m 
+	 		on 
+	 			q.member_id = m.id and q.anonymous = 0
+	 		where 
+	 			1 = 1
+	 		<if test="itemId != null">
+	 			and q.item_id = #{itemId}
+	 		</if>
+	 		<if test="subItemId != null">
+	 			and q.sub_item_id = #{subItemId}
+	 		</if>
+	 		order by q.is_hot desc,q.like_count desc,q.create_time desc
+	 		limit #{startNum},#{size};
+	 	</select>
+	 	
+	 	<select id="getMySubjectCount" parameterType="ForumSubjectSearch" resultType="int">
+	 		select 
+	 			count(q.id) from t_forum_question q
+	 		inner join 
+	 			(select
+		 			fa.id as answerId,
+		 			fa.question_id
+		 		from 
+		 			t_forum_answer fa 
+		 		where fa.member_id = #{memberId}
+	 			order by fa.create_time desc limit 0,1) as fa
+	 		on 
+	 			fa.question_id = q.id
+	 	</select>
+	 	
+	 	<select id="getMySubjectList" parameterType="ForumSubjectSearch" resultType="Map">
+	 		select 
+	 			q.id,
+	 			q.title,
+	 			q.content,
+	 			q.like_count as likeCount,
+	 			q.share_count as shareCount,
+	 			q.favorite_count as favoriteCount,
+	 			q.anonymous,
+	 			DATE_FORMAT(q.create_time,'%Y-%m-%d %T') as createTime,
+	 			q.item_id as itemId,
+	 			q.sub_item_id as subItemId,
+	 			m.name as memberName,
+	 			m.photo,
+	 			m.id as memberId,
+	 			fa.answerId,
+	 			fa.answerContent,
+	 			fa.answerMemberId,
+	 			fa.answerlikeCount,
+	 			DATE_FORMAT(fa.answerCreateTime,'%Y-%m-%d %T'),
+	 			fa.answerMemberName,
+	 			fa.answerMemberPhoto,
+	 			fa.anonymous as answerAnonymous
+	 		from 
+	 			t_forum_question q
+	 		inner join 
+	 			(select
+		 			fa.id as answerId,
+		 			fa.content as answerContent,
+		 			fa.member_id as answerMemberId,
+		 			fa.like_count as answerlikeCount,
+		 			fa.create_time as answerCreateTime,
+					fa.question_id,
+					fa.anonymous,
+		 			m.name as answerMemberName,
+		 			m.photo as answerMemberPhoto 
+		 		from 
+		 			t_forum_answer fa 
+		 		left join 
+		 			t_member m 
+		 		on 
+		 			fa.member_id = m.id and fa.anonymous = 0
+		 		where fa.member_id = #{memberId}
+	 			order by fa.create_time desc limit 0,1) as fa
+	 		on 
+	 			fa.question_id = q.id
+	 		left join 
+	 			t_member m 
+	 		on 
+	 			q.member_id = m.id and q.anonymous = 0
+	 		order by fa.answerCreateTime desc
+	 		limit #{startNum},#{size};
+	 	</select>
+	 	
+	 	<select id="getFavSubjectCount" parameterType="ForumSubjectSearch" resultType="int">
+	 		select 
+	 			count(q.id) from t_forum_question q
+	 		inner join 
+	 			t_forum_affiliated_info fai
+	 		on 
+	 			q.id = fai.question_id 
+	 			and type = 2
+	 			and fai.member_id = #{memberId}
+	 	</select>
+	 	
+	 	<select id="getFavSubjectList" parameterType="ForumSubjectSearch" resultType="Map">
+	 		select 
+	 			q.id,
+	 			q.title,
+	 			q.content,
+	 			q.like_count as likeCount,
+	 			q.share_count as shareCount,
+	 			q.favorite_count as favoriteCount,
+	 			q.anonymous,
+	 			DATE_FORMAT(q.create_time,'%Y-%m-%d %T') as createTime,
+	 			q.item_id as itemId,
+	 			q.sub_item_id as subItemId,
+	 			m.name as memberName,
+	 			m.photo,
+	 			m.id as memberId,
+	 			fa.answerId,
+	 			fa.answerContent,
+	 			fa.answerMemberId,
+	 			fa.answerlikeCount,
+	 			DATE_FORMAT(fa.answerCreateTime,'%Y-%m-%d %T'),
+	 			fa.answerMemberName,
+	 			fa.answerMemberPhoto,
+	 			fa.anonymous as answerAnonymous
+	 		from 
+	 			t_forum_question q
+	 		left join 
+	 			t_forum_affiliated_info fai
+	 		on 
+	 			q.id = fai.question_id 
+	 		left join 
+	 			(select
+		 			fa.id as answerId,
+		 			fa.content as answerContent,
+		 			fa.member_id as answerMemberId,
+		 			fa.like_count as answerlikeCount,
+		 			fa.create_time as answerCreateTime,
+					fa.question_id,
+					fa.anonymous,
+		 			m.name as answerMemberName,
+		 			m.photo as answerMemberPhoto 
+		 		from 
+		 			t_forum_answer fa 
+		 		left join 
+		 			t_member m 
+		 		on 
+		 			fa.member_id = m.id and fa.anonymous = 0
+	 			order by fa.create_time desc limit 0,1) as fa
+	 		on 
+	 			fa.question_id = q.id
+	 		left join 
+	 			t_member m 
+	 		on 
+	 			q.member_id = m.id and q.anonymous = 0
+	 		where fai.member_id = #{memberId} and fai.type = 2
+	 		order by fai.create_time desc
+	 		limit #{startNum},#{size};
+	 	</select>
+	
+	</mapper> 
