@@ -11,6 +11,11 @@ public enum EUploadType {
 		public Integer getCode(){
 			return 101;
 		}
+	},
+	COF_PHOTO{
+		public Integer getCode(){
+			return 102;
+		}
 	};
 	
 	abstract public Integer getCode();

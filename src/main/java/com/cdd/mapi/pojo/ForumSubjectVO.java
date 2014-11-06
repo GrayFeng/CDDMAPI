@@ -23,6 +23,10 @@ public class ForumSubjectVO {
 	
 	private String memberPhoto;
 	
+	private Integer memberSex;
+	
+	private String memberLevelName;
+	
 	private Integer likeCount;
 	
 	private Integer shareCount;
@@ -39,6 +43,24 @@ public class ForumSubjectVO {
 	
 	private List<ForumPhoto> photos;
 	
+	private List<ForumAnswerVO> answerList;
+	
+	public Integer getMemberSex() {
+		return memberSex;
+	}
+
+	public void setMemberSex(Integer memberSex) {
+		this.memberSex = memberSex;
+	}
+
+	public String getMemberLevelName() {
+		return memberLevelName;
+	}
+
+	public void setMemberLevelName(String memberLevelName) {
+		this.memberLevelName = memberLevelName;
+	}
+
 	public List<ForumPhoto> getPhotos() {
 		return photos;
 	}
@@ -70,8 +92,6 @@ public class ForumSubjectVO {
 	public void setMemberName(String memberName) {
 		this.memberName = memberName;
 	}
-
-	private List<ForumAnswerVO> answerList;
 
 	public Integer getId() {
 		return id;

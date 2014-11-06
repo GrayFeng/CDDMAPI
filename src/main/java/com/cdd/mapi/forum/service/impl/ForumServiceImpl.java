@@ -114,6 +114,8 @@ public class ForumServiceImpl implements IForumService{
 		subjectVO.setSubItemId(getIntegerFromMap(subjectMap,"subItemId"));
 		subjectVO.setAnonymous(getIntegerFromMap(subjectMap,"anonymous"));
 		subjectVO.setCreateTime((String)subjectMap.get("createTime"));
+		subjectVO.setMemberSex(getIntegerFromMap(subjectMap,"memberSex"));
+		subjectVO.setMemberLevelName((String)subjectMap.get("memberLevelName"));
 		Integer answerId = getIntegerFromMap(subjectMap,"answerId");
 		if(answerId != null){
 			ForumAnswerVO answerVO = new ForumAnswerVO();
@@ -125,6 +127,8 @@ public class ForumServiceImpl implements IForumService{
 			answerVO.setMemberName((String)subjectMap.get("answerMemberName"));
 			answerVO.setAnonymous(getIntegerFromMap(subjectMap,"answerAnonymous"));
 			answerVO.setMemberPhoto((String)subjectMap.get("answerMemberPhoto"));
+			answerVO.setMemberSex(getIntegerFromMap(subjectMap,"answerMemberSex"));
+			answerVO.setMemberLevelName((String)subjectMap.get("answerMemberLevelName"));
 			subjectVO.setAnswerList(Lists.newArrayList(answerVO));
 		}
 		return subjectVO;

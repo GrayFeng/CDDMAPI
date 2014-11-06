@@ -26,9 +26,11 @@
 	 			fa.member_id as memberId,
 	 			fa.like_count as likeCount,
 	 			fa.anonymous,
-	 			DATE_FORMAT(fa.create_time,'%Y-%m-%d %T') as createTime,
+	 			DATE_FORMAT(fa.create_time,'%Y-%m-%d %H:%i') as createTime,
 	 			m.name as memberName,
 	 			m.photo as memberPhoto,
+	 			m.sex as memberSex,
+	 			l.name as memberLevelName,
 	 			fp.answer_id,
 	 			fp.id as fpId,
 	 			fp.url
@@ -38,6 +40,9 @@
 	 			t_member m 
 	 		on 
 	 			fa.member_id = m.id and fa.anonymous = 0
+	 		left join t_level l
+	 		on
+	 			m.level_id = l.id
 	 		left join t_forum_photo fp
 	 		on
 	 			fa.id = fp.answer_id
@@ -73,8 +78,8 @@
 	 		order by q.create_time desc
 	 	</select>
 	 	
-	 	<select id="getSubjectList" parameterType="ForumSubjectSearch" resultType="Map">
-	 		select 
+	 	<sql id="subjectListTmpl">
+	 	    select 
 	 			q.id,
 	 			q.title,
 	 			q.content,
@@ -82,17 +87,21 @@
 	 			q.share_count as shareCount,
 	 			q.favorite_count as favoriteCount,
 	 			q.anonymous,
-	 			DATE_FORMAT(q.create_time,'%Y-%m-%d %T') as createTime,
+	 			DATE_FORMAT(q.create_time,'%Y-%m-%d %H:%i') as createTime,
 	 			q.item_id as itemId,
 	 			q.sub_item_id as subItemId,
 	 			m.name as memberName,
+	 			m.sex as memberSex,
+	 			l.name as memberLevelName,
 	 			m.photo,
 	 			m.id as memberId,
 	 			fa.answerId,
 	 			fa.answerContent,
 	 			fa.answerMemberId,
 	 			fa.answerlikeCount,
-	 			DATE_FORMAT(fa.answerCreateTime,'%Y-%m-%d %T'),
+	 			fa.answerMemberSex,
+	 			fa.answerMemberLevelName,
+	 			DATE_FORMAT(fa.answerCreateTime,'%Y-%m-%d %H:%i'),
 	 			fa.answerMemberName,
 	 			fa.answerMemberPhoto,
 	 			fa.anonymous as answerAnonymous
@@ -108,6 +117,8 @@
 					fa.question_id,
 					fa.anonymous,
 		 			m.name as answerMemberName,
+		 			m.sex as answerMemberSex,
+		 			l.name as answerMemberLevelName,
 		 			m.photo as answerMemberPhoto 
 		 		from 
 		 			t_forum_answer fa 
@@ -115,13 +126,23 @@
 		 			t_member m 
 		 		on 
 		 			fa.member_id = m.id and fa.anonymous = 0
+		 		left join t_level l
+	 			on
+	 				m.level_id = l.id
 	 			order by  fa.like_count desc limit 0,1) as fa
 	 		on 
 	 			fa.question_id = q.id
 	 		left join 
-	 			t_member m 
+	 			t_member m
 	 		on 
 	 			q.member_id = m.id and q.anonymous = 0
+	 		left join t_level l
+	 		on
+	 			m.level_id = l.id
+	 	</sql>
+	 	
+	 	<select id="getSubjectList" parameterType="ForumSubjectSearch" resultType="Map">
+	 		<include refid="subjectListTmpl"/>
 	 		where 
 	 			1=1
 	 		<if test="memberId != null">
@@ -153,54 +174,7 @@
 	 	</select>
 	 	
 	 	<select id="getHotSubjectList" parameterType="ForumSubjectSearch" resultType="Map">
-	 		select 
-	 			q.id,
-	 			q.title,
-	 			q.content,
-	 			q.like_count as likeCount,
-	 			q.share_count as shareCount,
-	 			q.favorite_count as favoriteCount,
-	 			q.anonymous,
-	 			DATE_FORMAT(q.create_time,'%Y-%m-%d %T') as createTime,
-	 			q.item_id as itemId,
-	 			q.sub_item_id as subItemId,
-	 			m.name as memberName,
-	 			m.photo,
-	 			m.id as memberId,
-	 			fa.answerId,
-	 			fa.answerContent,
-	 			fa.answerMemberId,
-	 			fa.answerlikeCount,
-	 			DATE_FORMAT(fa.answerCreateTime,'%Y-%m-%d %T'),
-	 			fa.answerMemberName,
-	 			fa.answerMemberPhoto,
-	 			fa.anonymous as answerAnonymous
-	 		from 
-	 			t_forum_question q
-	 		left join 
-	 			(select
-		 			fa.id as answerId,
-		 			fa.content as answerContent,
-		 			fa.member_id as answerMemberId,
-		 			fa.like_count as answerlikeCount,
-		 			fa.create_time as answerCreateTime,
-					fa.question_id,
-					fa.anonymous,
-		 			m.name as answerMemberName,
-		 			m.photo as answerMemberPhoto 
-		 		from 
-		 			t_forum_answer fa 
-		 		left join 
-		 			t_member m 
-		 		on 
-		 			fa.member_id = m.id and fa.anonymous = 0
-	 			order by  fa.like_count desc limit 0,1) as fa
-	 		on 
-	 			fa.question_id = q.id
-	 		left join 
-	 			t_member m 
-	 		on 
-	 			q.member_id = m.id and q.anonymous = 0
+	 		<include refid="subjectListTmpl"/>
 	 		where 
 	 			1 = 1
 	 		<if test="itemId != null">
@@ -229,55 +203,7 @@
 	 	</select>
 	 	
 	 	<select id="getMySubjectList" parameterType="ForumSubjectSearch" resultType="Map">
-	 		select 
-	 			q.id,
-	 			q.title,
-	 			q.content,
-	 			q.like_count as likeCount,
-	 			q.share_count as shareCount,
-	 			q.favorite_count as favoriteCount,
-	 			q.anonymous,
-	 			DATE_FORMAT(q.create_time,'%Y-%m-%d %T') as createTime,
-	 			q.item_id as itemId,
-	 			q.sub_item_id as subItemId,
-	 			m.name as memberName,
-	 			m.photo,
-	 			m.id as memberId,
-	 			fa.answerId,
-	 			fa.answerContent,
-	 			fa.answerMemberId,
-	 			fa.answerlikeCount,
-	 			DATE_FORMAT(fa.answerCreateTime,'%Y-%m-%d %T'),
-	 			fa.answerMemberName,
-	 			fa.answerMemberPhoto,
-	 			fa.anonymous as answerAnonymous
-	 		from 
-	 			t_forum_question q
-	 		inner join 
-	 			(select
-		 			fa.id as answerId,
-		 			fa.content as answerContent,
-		 			fa.member_id as answerMemberId,
-		 			fa.like_count as answerlikeCount,
-		 			fa.create_time as answerCreateTime,
-					fa.question_id,
-					fa.anonymous,
-		 			m.name as answerMemberName,
-		 			m.photo as answerMemberPhoto 
-		 		from 
-		 			t_forum_answer fa 
-		 		left join 
-		 			t_member m 
-		 		on 
-		 			fa.member_id = m.id and fa.anonymous = 0
-		 		where fa.member_id = #{memberId}
-	 			order by fa.create_time desc limit 0,1) as fa
-	 		on 
-	 			fa.question_id = q.id
-	 		left join 
-	 			t_member m 
-	 		on 
-	 			q.member_id = m.id and q.anonymous = 0
+	 		<include refid="subjectListTmpl"/>
 	 		order by fa.answerCreateTime desc
 	 		limit #{startNum},#{size};
 	 	</select>
@@ -294,58 +220,7 @@
 	 	</select>
 	 	
 	 	<select id="getFavSubjectList" parameterType="ForumSubjectSearch" resultType="Map">
-	 		select 
-	 			q.id,
-	 			q.title,
-	 			q.content,
-	 			q.like_count as likeCount,
-	 			q.share_count as shareCount,
-	 			q.favorite_count as favoriteCount,
-	 			q.anonymous,
-	 			DATE_FORMAT(q.create_time,'%Y-%m-%d %T') as createTime,
-	 			q.item_id as itemId,
-	 			q.sub_item_id as subItemId,
-	 			m.name as memberName,
-	 			m.photo,
-	 			m.id as memberId,
-	 			fa.answerId,
-	 			fa.answerContent,
-	 			fa.answerMemberId,
-	 			fa.answerlikeCount,
-	 			DATE_FORMAT(fa.answerCreateTime,'%Y-%m-%d %T'),
-	 			fa.answerMemberName,
-	 			fa.answerMemberPhoto,
-	 			fa.anonymous as answerAnonymous
-	 		from 
-	 			t_forum_question q
-	 		left join 
-	 			t_forum_affiliated_info fai
-	 		on 
-	 			q.id = fai.question_id 
-	 		left join 
-	 			(select
-		 			fa.id as answerId,
-		 			fa.content as answerContent,
-		 			fa.member_id as answerMemberId,
-		 			fa.like_count as answerlikeCount,
-		 			fa.create_time as answerCreateTime,
-					fa.question_id,
-					fa.anonymous,
-		 			m.name as answerMemberName,
-		 			m.photo as answerMemberPhoto 
-		 		from 
-		 			t_forum_answer fa 
-		 		left join 
-		 			t_member m 
-		 		on 
-		 			fa.member_id = m.id and fa.anonymous = 0
-	 			order by fa.create_time desc limit 0,1) as fa
-	 		on 
-	 			fa.question_id = q.id
-	 		left join 
-	 			t_member m 
-	 		on 
-	 			q.member_id = m.id and q.anonymous = 0
+	 		<include refid="subjectListTmpl"/>
 	 		where fai.member_id = #{memberId} and fai.type = 2
 	 		order by fai.create_time desc
 	 		limit #{startNum},#{size};

@@ -99,6 +99,18 @@ public class UploadServiceImpl implements IUploadService{
 			pathBuffer.append(".");
 			pathBuffer.append(fileExtension.equals("jpeg") ? "jpg" : fileExtension);
 			return pathBuffer.toString();
+		case COF_PHOTO:
+			pathBuffer.append("cofPhoto");
+			pathBuffer.append("/");
+			pathBuffer.append(DateFormatUtils.format(new Date(),"yyyy-MM-dd"));
+			pathBuffer.append("/");
+			pathBuffer.append(DateFormatUtils.format(new Date(),"HH"));
+			pathBuffer.append("/");
+			pathBuffer.append("cof_");
+			pathBuffer.append(System.currentTimeMillis());
+			pathBuffer.append(".");
+			pathBuffer.append(fileExtension.equals("jpeg") ? "jpg" : fileExtension);
+			return pathBuffer.toString();
 		default:
 			break;
 		}

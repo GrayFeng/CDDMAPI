@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+	<mapper namespace="com.cdd.mapi.cof.dao.ICOFDao">
+		<insert id="addNews" parameterType="CircleOfFriends">
+	 		insert into t_circle_of_friends 
+	 			(message,sender,create_time) 
+	 		values
+	 			(#{content},#{memberId},now())
+		 	<selectKey resultType="int" keyProperty="id" order="AFTER">  
+	  			SELECT LAST_INSERT_ID() as id
+	  		</selectKey>  
+	 	</insert>
+	 	
+	 	<insert id="addPhotos" parameterType="Map">
+	 	    insert into t_cof_photo 
+	 			(photo,member_id,cof_id,create_time) 
+	 		values
+	 		<foreach collection="photos" item="photo" index="index" separator=",">
+	 		    (#{photo},#{memberId},#{cofId},now())
+	 		</foreach>
+	 	</insert>
+	 	
+	 	<insert id="addReply" parameterType="COFReply">
+	 		insert into t_cof_reply 
+	 			(message,sender,cof_id,create_time) 
+	 		values
+	 			(#{message},#{memberId},#{cofId},now())
+		 	<selectKey resultType="int" keyProperty="id" order="AFTER">  
+	  			SELECT LAST_INSERT_ID() as id
+	  		</selectKey>  
+	 	</insert>
+	 	
+	 	<resultMap type="CofNewsVO" id="getNewsListMap">
+	 	    <id column="id" property="id"/>
+	 	    <result column="content" property="content"/>
+	 	    <result column="likeCount" property="likeCount"/>
+	 	    <result column="shareCount" property="shareCount"/>
+	 	    <result column="favoriteCount" property="favoriteCount"/>
+	 	    <result column="createTime" property="createTime"/>
+	 	    <result column="memberName" property="memberName"/>
+	 	    <result column="memberSex" property="memberSex"/>
+	 	    <result column="memberPhoto" property="memberPhoto"/>
+	 	    <result column="memberLevelName" property="memberLevelName"/>
+	 	    <result column="memberId" property="memberId"/>
+	 	    <collection property="photos" column="cofp_cof_id" ofType="ForumPhoto">
+	 	        <id column="cofp_id" property="id"/>
+	 	        <result column="cofp_photo" javaType="String" property="url"/>
+	 	    </collection>
+	 	     <collection property="replyList" column="cofr_cof_id" ofType="COFReplyVO">
+	 	        <id column="cofr_id" property="id"/>
+	 	        <result column="cofr_member_id" property="memberId"/>
+	 	        <result column="message" property="message"/>
+	 	        <result column="cofr_member_name" property="memberName"/>
+	 	        <result column="cofr_member_sex" property="memberSex"/>
+	 	        <result column="cofr_member_levelName" property="memberLevelName"/>
+	 	        <result column="cofr_member_photo" property="memberPhoto"/>
+	 	        <result column="cofr_create_time" property="createTime"/>
+	 	    </collection>
+	 	</resultMap>
+	 	
+	 	<select id="getNewsCount" parameterType="CofNewsSearch" resultType="int">
+	 	    select 
+	 			count(cof.id)
+	 		from 
+	 			t_circle_of_friends cof 
+	 		inner join t_member_relation mr
+	 		on cof.sender = mr.popular_person and mr.fans = #{memberId}
+	 	</select>
+	 	
+	 	<select id="getNewsList" parameterType="CofNewsSearch" resultMap="getNewsListMap">
+	 		select 
+	 			cof.id as id,
+	 			cof.message as content,
+	 			cof.sender as memberId,
+	 			cof.share_count as shareCount,
+	 			cof.like_count as likeCount,
+	 			cof.favorite_count as favoriteCount,
+	 			DATE_FORMAT(cof.create_time,'%Y-%m-%d %H:%i') as createTime,
+	 			cofp.photo as cofp_photo,
+	 			cofp.id as cofp_id,
+	 			cofp.cof_id as cofp_cof_id,
+	 			m.name as memberName,
+	 			m.sex as memberSex,
+	 			m.photo as memberPhoto,
+	 			l.name as memberLevelName,
+	 			cofr.cofr_id,
+		 		cofr.cofr_member_id,
+		 		cofr.message,
+		 		cofr.cofr_member_name,
+		 		cofr.cofr_member_sex,
+		 		cofr.cofr_member_levelName,
+		 		cofr.cofr_member_photo,
+		 		cofr.cofr_cof_id,
+		 		DATE_FORMAT(cofr.create_time,'%Y-%m-%d %H:%i') as cofr_create_time
+	 		from 
+	 			t_circle_of_friends cof 
+	 		left join 
+	 			(select
+		 			cofr.id as cofr_id,
+		 			cofr.sender as cofr_member_id,
+		 			cofr.message as message,
+		 			m.name as cofr_member_name,
+		 			m.sex as cofr_member_sex,
+		 			m.photo as cofr_member_photo,
+		 			l.name as cofr_member_levelName,
+		 			DATE_FORMAT(cofr.create_time,'%Y-%m-%d %H:%i') as create_time,
+		 			cofr.cof_id as cofr_cof_id
+		 		from 
+		 			t_cof_reply cofr 
+		 		left join 
+		 			t_member m 
+		 		on 
+		 			cofr.sender = m.id
+		 		left join t_level l
+	 			on
+	 				m.level_id = l.id
+	 			order by  cofr.create_time desc limit 0,1) as cofr
+	 		on 
+	 			cofr.cofr_cof_id = cof.id
+	 		left join 
+	 			t_member m 
+	 		on 
+	 			cof.sender = m.id
+	 		left join t_level l
+	 		on
+	 			m.level_id = l.id
+	 		left join t_cof_photo cofp
+	 		on
+	 			cof.id = cofp.cof_id
+	 		inner join t_member_relation mr
+	 		on cof.sender = mr.popular_person and mr.fans = #{memberId}
+	 		order by cof.create_time desc
+	 		limit #{startNum},#{size}
+	 	</select>
+	 	
+	</mapper> 
