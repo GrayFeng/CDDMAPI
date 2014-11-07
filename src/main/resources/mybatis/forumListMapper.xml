@@ -121,7 +121,9 @@
 		 			l.name as answerMemberLevelName,
 		 			m.photo as answerMemberPhoto 
 		 		from 
-		 			t_forum_answer fa 
+		 			t_forum_answer fa
+		 		inner join (select  max(like_count) as like_count,question_id from t_forum_answer group by question_id) temp_fa
+		 		on fa.question_id = temp_fa.question_id and fa.like_count = temp_fa.like_count
 		 		left join 
 		 			t_member m 
 		 		on 
@@ -129,7 +131,7 @@
 		 		left join t_level l
 	 			on
 	 				m.level_id = l.id
-	 			order by  fa.like_count desc limit 0,1) as fa
+	 			group by fa.question_id) as fa
 	 		on 
 	 			fa.question_id = q.id
 	 		left join 
