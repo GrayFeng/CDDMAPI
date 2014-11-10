@@ -386,7 +386,7 @@ public class MemberController {
 			Member member = memberService.getMemberByUID(uid);
 			JSONObject jsonObject = JSONObject.parseObject(params);
 			Integer pageNum = jsonObject.getInteger("pageNum");
-			if(member != null && pageNum != null){
+			if(member != null){
 				List<MemberVO> list = memberService.getIdolList(member.getId(), pageNum);
 				result = Result.getSuccessResult();
 				result.setRe(list);
@@ -409,7 +409,7 @@ public class MemberController {
 			Member member = memberService.getMemberByUID(uid);
 			JSONObject jsonObject = JSONObject.parseObject(params);
 			Integer pageNum = jsonObject.getInteger("pageNum");
-			if(member != null && pageNum != null){
+			if(member != null){
 				List<MemberVO> list = memberService.getFansList(member.getId(), pageNum);
 				result = Result.getSuccessResult();
 				result.setRe(list);

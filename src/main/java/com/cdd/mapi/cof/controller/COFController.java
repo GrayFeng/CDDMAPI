@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cdd.mapi.cof.service.ICOFService;
-import com.cdd.mapi.common.annotation.NotNeedLogin;
 import com.cdd.mapi.common.enums.EEchoCode;
 import com.cdd.mapi.common.pojo.Result;
 import com.cdd.mapi.common.uitls.ResultUtil;
@@ -22,7 +21,6 @@ import com.cdd.mapi.member.service.IMemberService;
 import com.cdd.mapi.pojo.COFReply;
 import com.cdd.mapi.pojo.CircleOfFriends;
 import com.cdd.mapi.pojo.CofNewsVO;
-import com.cdd.mapi.pojo.ForumAnswerVO;
 import com.cdd.mapi.pojo.Member;
 import com.google.common.collect.Maps;
 

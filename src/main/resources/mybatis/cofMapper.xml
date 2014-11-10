@@ -50,6 +50,7 @@
 	 	    </collection>
 	 	     <collection property="replyList" column="cofr_cof_id" ofType="COFReplyVO">
 	 	        <id column="cofr_id" property="id"/>
+	 	        <id column="cofr_cof_id" property="cofId"/>
 	 	        <result column="cofr_member_id" property="memberId"/>
 	 	        <result column="message" property="message"/>
 	 	        <result column="cofr_member_name" property="memberName"/>
@@ -65,8 +66,8 @@
 	 			count(cof.id)
 	 		from 
 	 			t_circle_of_friends cof 
-	 		inner join t_member_relation mr
-	 		on cof.sender = mr.popular_person and mr.fans = #{memberId}
+	 		where cof.sender = #{memberId} or cof.sender in(
+	 		select mr.popular_person from t_member_relation mr where mr.fans = #{memberId})
 	 	</select>
 	 	
 	 	<select id="getNewsList" parameterType="CofNewsSearch" resultMap="getNewsListMap">
@@ -109,14 +110,15 @@
 		 			cofr.cof_id as cofr_cof_id
 		 		from 
 		 			t_cof_reply cofr 
+		 		inner join (select  max(id) as id,cof_id from t_cof_reply group by cof_id) temp_cofr
+		 		on cofr.id = temp_cofr.id
 		 		left join 
 		 			t_member m 
 		 		on 
 		 			cofr.sender = m.id
 		 		left join t_level l
 	 			on
-	 				m.level_id = l.id
-	 			order by  cofr.create_time desc limit 0,1) as cofr
+	 				m.level_id = l.id) as cofr
 	 		on 
 	 			cofr.cofr_cof_id = cof.id
 	 		left join 
@@ -129,8 +131,8 @@
 	 		left join t_cof_photo cofp
 	 		on
 	 			cof.id = cofp.cof_id
-	 		inner join t_member_relation mr
-	 		on cof.sender = mr.popular_person and mr.fans = #{memberId}
+	 		where cof.sender = #{memberId} or cof.sender in (
+	 		select mr.popular_person from t_member_relation mr where mr.fans = #{memberId})
 	 		order by cof.create_time desc
 	 		limit #{startNum},#{size}
 	 	</select>

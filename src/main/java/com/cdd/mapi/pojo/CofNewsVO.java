@@ -32,6 +32,8 @@ public class CofNewsVO {
 	
 	private Integer favoriteCount;
 	
+	private String memberPhoto;
+	
 	private List<ForumPhoto> photos;
 	
 	private String createTime;
@@ -40,6 +42,14 @@ public class CofNewsVO {
 	
 	private List<COFReplyVO> replyList;
 	
+	public String getMemberPhoto() {
+		return memberPhoto;
+	}
+
+	public void setMemberPhoto(String memberPhoto) {
+		this.memberPhoto = memberPhoto;
+	}
+
 	public List<COFReplyVO> getReplyList() {
 		return replyList;
 	}

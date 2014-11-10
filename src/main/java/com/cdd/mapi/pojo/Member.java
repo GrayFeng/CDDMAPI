@@ -52,6 +52,17 @@ public class Member {
 	
 	private Integer cityId;
 	
+	//关系，1-互相已关注；0-我的粉丝/我的关注
+	private Integer relation;
+	
+	public Integer getRelation() {
+		return relation;
+	}
+
+	public void setRelation(Integer relation) {
+		this.relation = relation;
+	}
+
 	public Integer getCityId() {
 		return cityId;
 	}
