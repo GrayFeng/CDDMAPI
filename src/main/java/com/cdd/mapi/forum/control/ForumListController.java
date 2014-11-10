@@ -154,7 +154,7 @@ public class ForumListController {
 				list = forumService.getSubjectList(forumSubjectSearch);
 				break;
 			case MY_ANSWER:
-				forumSubjectSearch.setMemberId(memberId);
+				forumSubjectSearch.setAnswerMemberId(memberId);
 				list = forumService.getMySubjectList(forumSubjectSearch);
 				break;
 			case FAV_LIST:

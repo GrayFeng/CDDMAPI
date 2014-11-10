@@ -131,6 +131,9 @@
 		 		left join t_level l
 	 			on
 	 				m.level_id = l.id
+	 			<if test="answerMemberId != null">
+	 				where fa.member_id = #{answerMemberId}
+	 			</if>
 	 			group by fa.question_id) as fa
 	 		on 
 	 			fa.question_id = q.id
@@ -223,6 +226,10 @@
 	 	
 	 	<select id="getFavSubjectList" parameterType="ForumSubjectSearch" resultType="Map">
 	 		<include refid="subjectListTmpl"/>
+	 		inner join 
+	 			t_forum_affiliated_info fai
+	 		on 
+	 			q.id = fai.question_id 
 	 		where fai.member_id = #{memberId} and fai.type = 2
 	 		order by fai.create_time desc
 	 		limit #{startNum},#{size};

@@ -23,6 +23,16 @@ public class ForumSubjectSearch {
 	
 	private Integer memberId;
 	
+	private Integer answerMemberId;
+	
+	public Integer getAnswerMemberId() {
+		return answerMemberId;
+	}
+
+	public void setAnswerMemberId(Integer answerMemberId) {
+		this.answerMemberId = answerMemberId;
+	}
+
 	public Integer getMemberId() {
 		return memberId;
 	}
