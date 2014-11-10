@@ -193,13 +193,8 @@ public class ForumController {
 				forumAffiliatedInfo.setQuestionId(subjectId);
 				forumAffiliatedInfo.setType(EForumAffiliatedType.SHARE.getCode());
 				forumAffiliatedInfo.setMemberId(member.getId());
-				Integer isDone = forumService.findForumAffiliatedInfo(forumAffiliatedInfo);
-				if(isDone == null || isDone == 0){
-					forumService.addForumAffiliated(forumAffiliatedInfo);
-					result = Result.getSuccessResult();
-				}else{
-					result = new Result(EEchoCode.ERROR.getCode(),"已经分享过了");
-				}
+				forumService.addForumAffiliated(forumAffiliatedInfo);
+				result = Result.getSuccessResult();
 			}else{
 				result = new Result(EEchoCode.ERROR.getCode(),"缺少问题ID");
 			}

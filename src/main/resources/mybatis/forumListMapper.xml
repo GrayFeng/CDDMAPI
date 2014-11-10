@@ -201,7 +201,7 @@
 		 			fa.question_id
 		 		from 
 		 			t_forum_answer fa 
-		 		where fa.member_id = #{memberId}
+		 		where fa.member_id = #{answerMemberId}
 	 			order by fa.create_time desc limit 0,1) as fa
 	 		on 
 	 			fa.question_id = q.id
