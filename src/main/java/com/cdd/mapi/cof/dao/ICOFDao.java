@@ -6,10 +6,14 @@ import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 import com.cdd.mapi.common.annotation.MyBatisRepository;
+import com.cdd.mapi.pojo.COFAffiliatedInfo;
 import com.cdd.mapi.pojo.COFReply;
+import com.cdd.mapi.pojo.COFReplyVO;
 import com.cdd.mapi.pojo.CircleOfFriends;
 import com.cdd.mapi.pojo.CofNewsSearch;
 import com.cdd.mapi.pojo.CofNewsVO;
+import com.cdd.mapi.pojo.CofReplySearch;
+import com.cdd.mapi.pojo.ForwardNews;
 
 /**
  * CDDMAPI
@@ -27,8 +31,34 @@ public interface ICOFDao {
 	
 	public void addReply(COFReply reply);
 	
-	public List<CofNewsVO> getNewsList(CofNewsSearch search);
+	public Integer getMemberNewsCount(CofNewsSearch search);
+	
+	public List<CofNewsVO> getMemberNewsList(CofNewsSearch search);
 	
 	public Integer getNewsCount(CofNewsSearch search);
+	
+	public List<CofNewsVO> getNewsList(CofNewsSearch search);
+	
+	public Integer getHotNewsCount(CofNewsSearch search);
+	
+	public List<CofNewsVO> getHotNewsList(CofNewsSearch search);
+	
+	public Integer getReplyCountByNewsId(CofReplySearch search);
+	
+	public List<COFReplyVO> getReplyListByNewsId(CofReplySearch search);
+	
+	public void updateCofLikeCount(Integer subjectId);
+	
+	public void updateCofFavCount(Integer subjectId);
+	
+	public void updateCofShareCount(Integer subjectId);
+	
+	public void addCofAffiliated(COFAffiliatedInfo affiliatedInfo);
+	
+	public Integer findCofAffiliatedInfo(COFAffiliatedInfo affiliatedInfo);
+	
+	public void forwardNews(ForwardNews forwardNews);
+	
+	public CofNewsVO getNewsInfoById(Integer newsId);
 
 }

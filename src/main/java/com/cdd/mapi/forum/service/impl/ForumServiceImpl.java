@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cdd.mapi.common.enums.EForumAffiliatedType;
+import com.cdd.mapi.common.enums.EAffiliatedType;
 import com.cdd.mapi.common.pojo.Page;
 import com.cdd.mapi.forum.dao.IForumDao;
 import com.cdd.mapi.forum.service.IForumService;
@@ -247,11 +247,11 @@ public class ForumServiceImpl implements IForumService{
 		if(forumAffiliatedInfo.getType() != null){
 			if(forumAffiliatedInfo.getQuestionId() != null){
 				forumDao.addForumAffiliated(forumAffiliatedInfo);
-				if(EForumAffiliatedType.LIKE.getCode().equals(forumAffiliatedInfo.getType())){
+				if(EAffiliatedType.LIKE.getCode().equals(forumAffiliatedInfo.getType())){
 					forumDao.updateSubjectLikeCount(forumAffiliatedInfo.getQuestionId());
-				}else if(EForumAffiliatedType.FAV.getCode().equals(forumAffiliatedInfo.getType())){
+				}else if(EAffiliatedType.FAV.getCode().equals(forumAffiliatedInfo.getType())){
 					forumDao.updateSubjectFavCount(forumAffiliatedInfo.getQuestionId());
-				}else if(EForumAffiliatedType.SHARE.getCode().equals(forumAffiliatedInfo.getType())){
+				}else if(EAffiliatedType.SHARE.getCode().equals(forumAffiliatedInfo.getType())){
 					forumDao.updateSubjectShareCount(forumAffiliatedInfo.getQuestionId());
 				}
 			}else if(forumAffiliatedInfo.getAnswerId() != null){

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cdd.mapi.common.enums.EEchoCode;
-import com.cdd.mapi.common.enums.EForumAffiliatedType;
+import com.cdd.mapi.common.enums.EAffiliatedType;
 import com.cdd.mapi.common.pojo.Result;
 import com.cdd.mapi.common.uitls.ResultUtil;
 import com.cdd.mapi.forum.service.IForumService;
@@ -125,7 +125,7 @@ public class ForumController {
 			if(subjectId != null && member != null){
 				ForumAffiliatedInfo forumAffiliatedInfo = new ForumAffiliatedInfo();
 				forumAffiliatedInfo.setQuestionId(subjectId);
-				forumAffiliatedInfo.setType(EForumAffiliatedType.LIKE.getCode());
+				forumAffiliatedInfo.setType(EAffiliatedType.LIKE.getCode());
 				forumAffiliatedInfo.setMemberId(member.getId());
 				Integer isDone = forumService.findForumAffiliatedInfo(forumAffiliatedInfo);
 				if(isDone == null || isDone == 0){
@@ -158,7 +158,7 @@ public class ForumController {
 			if(subjectId != null && member != null){
 				ForumAffiliatedInfo forumAffiliatedInfo = new ForumAffiliatedInfo();
 				forumAffiliatedInfo.setQuestionId(subjectId);
-				forumAffiliatedInfo.setType(EForumAffiliatedType.FAV.getCode());
+				forumAffiliatedInfo.setType(EAffiliatedType.FAV.getCode());
 				forumAffiliatedInfo.setMemberId(member.getId());
 				Integer isDone = forumService.findForumAffiliatedInfo(forumAffiliatedInfo);
 				if(isDone == null || isDone == 0){
@@ -191,7 +191,7 @@ public class ForumController {
 			if(subjectId != null && member != null){
 				ForumAffiliatedInfo forumAffiliatedInfo = new ForumAffiliatedInfo();
 				forumAffiliatedInfo.setQuestionId(subjectId);
-				forumAffiliatedInfo.setType(EForumAffiliatedType.SHARE.getCode());
+				forumAffiliatedInfo.setType(EAffiliatedType.SHARE.getCode());
 				forumAffiliatedInfo.setMemberId(member.getId());
 				forumService.addForumAffiliated(forumAffiliatedInfo);
 				result = Result.getSuccessResult();
@@ -219,7 +219,7 @@ public class ForumController {
 			if(answerId != null && member != null){
 				ForumAffiliatedInfo forumAffiliatedInfo = new ForumAffiliatedInfo();
 				forumAffiliatedInfo.setAnswerId(answerId);
-				forumAffiliatedInfo.setType(EForumAffiliatedType.LIKE.getCode());
+				forumAffiliatedInfo.setType(EAffiliatedType.LIKE.getCode());
 				forumAffiliatedInfo.setMemberId(member.getId());
 				Integer isDone = forumService.findForumAffiliatedInfo(forumAffiliatedInfo);
 				if(isDone == null || isDone == 0){

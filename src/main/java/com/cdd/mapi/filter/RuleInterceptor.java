@@ -2,11 +2,14 @@ package com.cdd.mapi.filter;
 
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -22,13 +25,15 @@ import com.cdd.mapi.common.uitls.ResultUtil;
  */
 public class RuleInterceptor extends HandlerInterceptorAdapter{
 
-
+	private Logger logger = LoggerFactory.getLogger(RuleInterceptor.class);
+	
 	@Override
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler)
 			throws Exception {
 		String uid = request.getParameter("uid");
 		String uri = request.getRequestURI();
+		printRequestParams(request);
 		HandlerMethod handlerMethod =  (HandlerMethod)handler;
 		Result result = null;
 		if(uri.contains("/api/")){
@@ -50,5 +55,23 @@ public class RuleInterceptor extends HandlerInterceptorAdapter{
 			}
 		}
 		return true;
+	}
+	
+	private void printRequestParams(HttpServletRequest req){
+		StringBuffer sb = new StringBuffer();
+		Map<String,String[]> paramsMap = req.getParameterMap();
+		if(paramsMap != null){
+			for(Object key : paramsMap.keySet()){
+				String[] values = paramsMap.get(key);
+				if(values != null){
+					for(String value : values){
+						sb.append(key + "=" + value +";");
+					}
+					sb.append("&");
+				}
+			}
+		}
+		sb.append(req.getQueryString());
+		logger.info("api-rev:" + sb.toString());
 	}
 }

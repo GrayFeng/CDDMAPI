@@ -2,9 +2,12 @@ package com.cdd.mapi.cof.service;
 
 import java.util.List;
 
+import com.cdd.mapi.pojo.COFAffiliatedInfo;
 import com.cdd.mapi.pojo.COFReply;
+import com.cdd.mapi.pojo.COFReplyVO;
 import com.cdd.mapi.pojo.CircleOfFriends;
 import com.cdd.mapi.pojo.CofNewsVO;
+import com.cdd.mapi.pojo.ForwardNews;
 
 /**
  * CDDMAPI
@@ -21,6 +24,20 @@ public interface ICOFService {
 	
 	public void addReply(COFReply reply);
 	
-	public List<CofNewsVO> getCofNewsLisst(Integer pageNum,Integer memberId);
+	public List<CofNewsVO> getMemberCofNewsList(Integer pageNum,Integer memberId);
+	
+	public List<CofNewsVO> getCofNewsList(Integer pageNum,Integer memberId);
+	
+	public List<CofNewsVO> getHotNewsList(Integer pageNum);
+	
+	public List<COFReplyVO> getReplyListByNewsId(Integer cofId,Integer pageNum);
+	
+	public void addCofAffiliated(COFAffiliatedInfo affiliatedInfo);
+	
+	public Integer findCofAffiliatedInfo(COFAffiliatedInfo affiliatedInfo);
+	
+	public void forwardNews(ForwardNews forwardNews);
+	
+	public CofNewsVO getNewsInfoById(Integer newsId);
 
 }

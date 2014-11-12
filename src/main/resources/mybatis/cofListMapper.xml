@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+	<mapper namespace="com.cdd.mapi.cof.dao.ICOFDao">
+		
+	 	<resultMap type="CofNewsVO" id="getNewsListMap">
+	 	    <id column="id" property="id"/>
+	 	    <result column="content" property="content"/>
+	 	    <result column="likeCount" property="likeCount"/>
+	 	    <result column="shareCount" property="shareCount"/>
+	 	    <result column="favoriteCount" property="favoriteCount"/>
+	 	    <result column="createTime" property="createTime"/>
+	 	    <result column="memberName" property="memberName"/>
+	 	    <result column="memberSex" property="memberSex"/>
+	 	    <result column="memberPhoto" property="memberPhoto"/>
+	 	    <result column="memberLevelName" property="memberLevelName"/>
+	 	    <result column="memberId" property="memberId"/>
+	 	    <result column="is_forward" property="isForward"/>
+	 	    <association property="forwardNews" column="forward_cof_id" select="getForwardNewsInfo"/>
+	 	    <collection property="photos" column="cofp_cof_id" ofType="ForumPhoto">
+	 	        <id column="cofp_id" property="id"/>
+	 	        <result column="cofp_photo" javaType="String" property="url"/>
+	 	    </collection>
+	 	    <collection property="replyList" column="id" javaType="ArrayList" ofType="COFReplyVO" select="getReplyList4NewList"></collection>
+	 	</resultMap>
+	 	
+	 	
+	 	<sql id="newsCommon">
+	 		select 
+	 			cof.id as id,
+	 			cof.message as content,
+	 			cof.sender as memberId,
+	 			cof.share_count as shareCount,
+	 			cof.like_count as likeCount,
+	 			cof.favorite_count as favoriteCount,
+	 			cof.is_forward,
+	 			cof.forward_cof_id,
+	 			DATE_FORMAT(cof.create_time,'%Y-%m-%d %H:%i') as createTime,
+	 			cofp.photo as cofp_photo,
+	 			cofp.id as cofp_id,
+	 			cofp.cof_id as cofp_cof_id,
+	 			m.name as memberName,
+	 			m.sex as memberSex,
+	 			m.photo as memberPhoto,
+	 			l.name as memberLevelName
+	 		from 
+	 			t_circle_of_friends cof 
+	 		left join 
+	 			t_member m 
+	 		on 
+	 			cof.sender = m.id
+	 		left join t_level l
+	 		on
+	 			m.level_id = l.id
+	 		left join t_cof_photo cofp
+	 		on
+	 			cof.id = cofp.cof_id
+	 	</sql>
+	 	
+	 	<select id="getReplyList4NewList" parameterType="int" resultType="COFReplyVO">
+	 		select
+		 			cofr.id,
+		 			cofr.sender as memberId,
+		 			cofr.message as message,
+		 			DATE_FORMAT(cofr.create_time,'%Y-%m-%d %H:%i') as createTime,
+		 			cofr.cof_id as cofId,
+		 			m.name as memberName,
+		 			m.sex as memberSex,
+		 			m.photo as memberPhoto,
+		 			l.name as memberLevelName
+		 		from 
+		 			t_cof_reply cofr 
+		 		left join 
+		 			t_member m 
+		 		on 
+		 			cofr.sender = m.id
+		 		left 
+		 			join t_level l
+	 			on
+	 				m.level_id = l.id
+	 		where cofr.cof_id = #{cofId}
+	 		order by cofr.create_time desc
+	 		limit 0,5
+	 	</select>
+	 	
+	 	<select id="getForwardNewsInfo" parameterType="int" resultType="Map">
+	 		select 
+	 			cof.id as id,
+	 			cof.message as content,
+	 			cof.sender as memberId,
+	 			DATE_FORMAT(cof.create_time,'%Y-%m-%d %H:%i') as createTime,
+	 			m.name as memberName,
+	 			m.sex as memberSex,
+	 			m.photo as memberPhoto
+	 		from 
+	 			t_circle_of_friends cof 
+		 	left join 
+		 			t_member m 
+		 		on 
+		 			cof.sender = m.id
+		 	where cof.id = #{cofId}
+	 	</select>
+	 	
+	 	<select id="getMemberNewsCount" parameterType="CofNewsSearch" resultType="int">
+	 	    select 
+	 			count(cof.id)
+	 		from 
+	 			t_circle_of_friends cof 
+	 		where cof.sender = #{memberId}
+	 	</select>
+	 	
+	 	<select id="getMemberNewsList" parameterType="CofNewsSearch" resultMap="getNewsListMap">
+	 		<include refid="newsCommon"/>
+	 		where cof.sender = #{memberId}
+	 		order by cof.create_time desc
+	 		limit #{startNum},#{size}
+	 	</select>
+	 	
+	 	<select id="getNewsCount" parameterType="CofNewsSearch" resultType="int">
+	 	    select 
+	 			count(cof.id)
+	 		from 
+	 			t_circle_of_friends cof 
+	 		where cof.sender = #{memberId} or cof.sender in(
+	 		select mr.popular_person from t_member_relation mr where mr.fans = #{memberId})
+	 	</select>
+	 	
+	 	<select id="getNewsList" parameterType="CofNewsSearch" resultMap="getNewsListMap">
+	 		<include refid="newsCommon"/>
+	 		where cof.sender = #{memberId} or cof.sender in (
+	 		select mr.popular_person from t_member_relation mr where mr.fans = #{memberId})
+	 		order by cof.create_time desc
+	 		limit #{startNum},#{size}
+	 	</select>
+	 	
+	 	<select id="getHotNewsCount" parameterType="CofNewsSearch" resultType="int">
+	 	    select 
+	 			count(cof.id)
+	 		from 
+	 			t_circle_of_friends cof 
+	 	</select>
+	 	
+	 	<select id="getHotNewsList" parameterType="CofNewsSearch" resultMap="getNewsListMap">
+	 		<include refid="newsCommon"/>
+	 		order by is_hot desc,like_count desc
+	 		limit #{startNum},#{size}
+	 	</select>
+	 	
+	 	<select id="getReplyCountByNewsId" parameterType="CofReplySearch" resultType="int">
+	 		select count(id) from t_cof_reply where cof_id = #{cofId}
+	 	</select>
+	 	
+	 	<select id="getReplyListByNewsId" parameterType="CofReplySearch" resultType="COFReplyVO">
+	 		select
+		 			cofr.id,
+		 			cofr.sender as memberId,
+		 			cofr.message,
+		 			m.name as memberName,
+		 			m.sex as memberSex,
+		 			m.photo as memberPhoto,
+		 			l.name as memberLevelName,
+		 			DATE_FORMAT(cofr.create_time,'%Y-%m-%d %H:%i') as createTime,
+		 			cofr.cof_id as cofId
+		 		from 
+		 			t_cof_reply cofr 
+		 		left join 
+		 			t_member m 
+		 		on 
+		 			cofr.sender = m.id
+		 		left join t_level l
+	 			on
+	 				m.level_id = l.id
+	 		where cofr.cof_id = #{cofId}
+	 		order by cofr.create_time
+	 		limit #{startNum},#{size}
+	 	</select>
+	 	
+	</mapper> 

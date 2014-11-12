@@ -25,6 +25,18 @@
 			<param-value>utf-8</param-value>
 		</init-param>
 	</filter>
+	 
+  <filter>
+    <display-name>commonFilter</display-name>
+    <filter-name>commonFilter</filter-name>
+    <filter-class>com.cdd.mapi.filter.CommonFilter</filter-class>
+  </filter>
+  
+  <filter-mapping>
+    <filter-name>commonFilter</filter-name>
+    <url-pattern>/api/*</url-pattern>
+  </filter-mapping>
+  
 	<filter-mapping>
 		<filter-name>utfEncodingFilter</filter-name>
 		<url-pattern>*.do</url-pattern>

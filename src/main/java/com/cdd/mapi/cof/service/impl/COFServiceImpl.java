@@ -9,11 +9,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cdd.mapi.cof.dao.ICOFDao;
 import com.cdd.mapi.cof.service.ICOFService;
+import com.cdd.mapi.common.enums.EAffiliatedType;
 import com.cdd.mapi.common.pojo.Page;
+import com.cdd.mapi.pojo.COFAffiliatedInfo;
 import com.cdd.mapi.pojo.COFReply;
+import com.cdd.mapi.pojo.COFReplyVO;
 import com.cdd.mapi.pojo.CircleOfFriends;
 import com.cdd.mapi.pojo.CofNewsSearch;
 import com.cdd.mapi.pojo.CofNewsVO;
+import com.cdd.mapi.pojo.CofReplySearch;
+import com.cdd.mapi.pojo.ForwardNews;
 import com.google.common.collect.Maps;
 
 /**
@@ -53,7 +58,7 @@ public class COFServiceImpl implements ICOFService{
 	}
 	
 	@Override
-	public List<CofNewsVO> getCofNewsLisst(Integer pageNum,Integer memberId) {
+	public List<CofNewsVO> getCofNewsList(Integer pageNum,Integer memberId) {
 		List<CofNewsVO> list = null;
 		CofNewsSearch cofNewsSearch = new CofNewsSearch();
 		cofNewsSearch.setMemberId(memberId);
@@ -73,4 +78,101 @@ public class COFServiceImpl implements ICOFService{
 		return list;
 	}
 
+	@Override
+	public List<CofNewsVO> getHotNewsList(Integer pageNum) {
+		List<CofNewsVO> list = null;
+		CofNewsSearch cofNewsSearch = new CofNewsSearch();
+		Integer prizeCount = cofDao.getHotNewsCount(cofNewsSearch);
+		if(prizeCount != null && prizeCount > 0){
+			Page page = new Page();
+			page.setTotal(prizeCount);
+			page.setSize(20);
+			pageNum = pageNum == null ? 1 : pageNum;
+			page.setNumber(pageNum);
+			if(page.getTotalPages() >= pageNum){
+				cofNewsSearch.setStartNum(page.getStartNum());
+				cofNewsSearch.setSize(page.getSize());
+				list = cofDao.getHotNewsList(cofNewsSearch);
+			}
+		}
+		return list;
+	}
+
+	@Override
+	public List<COFReplyVO> getReplyListByNewsId(Integer cofId, Integer pageNum) {
+		List<COFReplyVO> list = null;
+		CofReplySearch cofReplySearch = new CofReplySearch();
+		cofReplySearch.setCofId(cofId);
+		Integer prizeCount = cofDao.getReplyCountByNewsId(cofReplySearch);
+		if(prizeCount != null && prizeCount > 0){
+			Page page = new Page();
+			page.setTotal(prizeCount);
+			page.setSize(20);
+			pageNum = pageNum == null ? 1 : pageNum;
+			page.setNumber(pageNum);
+			if(page.getTotalPages() >= pageNum){
+				cofReplySearch.setStartNum(page.getStartNum());
+				cofReplySearch.setSize(page.getSize());
+				list = cofDao.getReplyListByNewsId(cofReplySearch);
+			}
+		}
+		return list;
+	}
+
+	@Override
+	public List<CofNewsVO> getMemberCofNewsList(Integer pageNum,
+			Integer memberId) {
+		List<CofNewsVO> list = null;
+		CofNewsSearch cofNewsSearch = new CofNewsSearch();
+		cofNewsSearch.setMemberId(memberId);
+		Integer prizeCount = cofDao.getMemberNewsCount(cofNewsSearch);
+		if(prizeCount != null && prizeCount > 0){
+			Page page = new Page();
+			page.setTotal(prizeCount);
+			page.setSize(20);
+			pageNum = pageNum == null ? 1 : pageNum;
+			page.setNumber(pageNum);
+			if(page.getTotalPages() >= pageNum){
+				cofNewsSearch.setStartNum(page.getStartNum());
+				cofNewsSearch.setSize(page.getSize());
+				list = cofDao.getMemberNewsList(cofNewsSearch);
+			}
+		}
+		return list;
+	}
+
+	@Override
+	public void addCofAffiliated(COFAffiliatedInfo affiliatedInfo) {
+		if(affiliatedInfo.getType() != null){
+			if(affiliatedInfo.getCofId() != null){
+				cofDao.addCofAffiliated(affiliatedInfo);
+				if(EAffiliatedType.LIKE.getCode().equals(affiliatedInfo.getType())){
+					cofDao.updateCofLikeCount(affiliatedInfo.getCofId());
+				}else if(EAffiliatedType.FAV.getCode().equals(affiliatedInfo.getType())){
+					cofDao.updateCofFavCount(affiliatedInfo.getCofId());
+				}else if(EAffiliatedType.SHARE.getCode().equals(affiliatedInfo.getType())){
+					ForwardNews forwardNews = new ForwardNews();
+					forwardNews.setMemberId(affiliatedInfo.getMemberId());
+					forwardNews.setNewsId(affiliatedInfo.getCofId());
+					forwardNews(forwardNews);
+					cofDao.updateCofShareCount(affiliatedInfo.getCofId());
+				}
+			}
+		}
+	}
+
+	@Override
+	public Integer findCofAffiliatedInfo(COFAffiliatedInfo affiliatedInfo) {
+		return cofDao.findCofAffiliatedInfo(affiliatedInfo);
+	}
+
+	@Override
+	public void forwardNews(ForwardNews forwardNews) {
+		cofDao.forwardNews(forwardNews);
+	}
+
+	@Override
+	public CofNewsVO getNewsInfoById(Integer newsId) {
+		return cofDao.getNewsInfoById(newsId);
+	}
 }
