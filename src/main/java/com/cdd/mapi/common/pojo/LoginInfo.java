@@ -1,11 +1,14 @@
 package com.cdd.mapi.common.pojo;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import com.cdd.mapi.pojo.Member;
 
-public class LoginInfo {
+public class LoginInfo implements Serializable{
 	
+	private static final long serialVersionUID = 1L;
+
 	private Date lastAccessTime;
 	
 	private Member member;

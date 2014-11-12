@@ -25,6 +25,20 @@ public class PrivateLetterVO {
 	
 	private String fromMemberPhoto;
 	
+	private String fromMemberSex;
+	
+	public String getFromMemberSex() {
+		return fromMemberSex;
+	}
+
+	public void setFromMemberSex(String fromMemberSex) {
+		this.fromMemberSex = fromMemberSex;
+	}
+
+	public void setCreateTime(String createTime) {
+		this.createTime = createTime;
+	}
+
 	public String getFromMemberName() {
 		return fromMemberName;
 	}

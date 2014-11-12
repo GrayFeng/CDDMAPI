@@ -19,6 +19,8 @@ public class Constant {
 	
 	public static final String PHOTO_BASE_PATH = "/alidata/www/cdd_images/";
 	
+	public static final boolean ENABLE_REDIS = false;
+	
 	public static String getClientIp(HttpServletRequest request){
 		String ip = request.getHeader("x-forwarded-for");
 		if(StringUtils.isEmpty(ip) || "unknown".equalsIgnoreCase(ip)){

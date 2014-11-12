@@ -2,7 +2,9 @@ package com.cdd.mapi.common.cache;
 
 import java.util.concurrent.TimeUnit;
 
+import com.cdd.mapi.common.Constant;
 import com.cdd.mapi.common.pojo.LoginInfo;
+import com.cdd.mapi.common.uitls.RedisClientUtil;
 import com.cdd.mapi.pojo.Member;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -33,7 +35,11 @@ public class MemberCache {
 	}
 	
 	public void add(String uid,LoginInfo loginInfo){
-		cache.put(uid, loginInfo);
+		if(Constant.ENABLE_REDIS){
+			RedisClientUtil.getInstance().set(uid, loginInfo);
+		}else{
+			cache.put(uid, loginInfo);
+		}
 	}
 	
 	public void updateMember(String uid,Member member){
@@ -46,11 +52,21 @@ public class MemberCache {
 	
 	
 	public LoginInfo get(String uid){
-		return cache.getIfPresent(uid);
+		LoginInfo loginInfo = null;
+		if(Constant.ENABLE_REDIS){
+			loginInfo = RedisClientUtil.getInstance().getObject(uid);
+		}else{
+			loginInfo = cache.getIfPresent(uid);
+		}
+		return loginInfo;
 	}
 	
 	public void remove(String uid){
-		cache.invalidate(uid);
+		if(Constant.ENABLE_REDIS){
+			RedisClientUtil.getInstance().del(uid);
+		}else{
+			cache.invalidate(uid);
+		}
 	}
 	
 	public boolean isHave(String uid){

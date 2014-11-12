@@ -1,5 +1,6 @@
 package com.cdd.mapi.pojo;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -8,8 +9,10 @@ import java.util.Date;
  * @author Gray(tyfjy823@gmail.com)
  * @version 1.0
  */
-public class Member {
+public class Member implements Serializable{
 	
+	private static final long serialVersionUID = 1L;
+
 	private Integer id;
 	
 	private String name;
