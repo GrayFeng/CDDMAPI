@@ -159,6 +159,7 @@ public class MemberServiceImpl implements IMemberService {
 		if(statisticsMap != null){
 			memberVO.setFansCount(statisticsMap.get("fansCount"));
 			memberVO.setIdolCount(statisticsMap.get("idolCount"));
+			memberVO.setDynamicInfoCount(statisticsMap.get("dynamicInfoCount"));
 		}
 		return memberVO;
 	}
@@ -197,7 +198,7 @@ public class MemberServiceImpl implements IMemberService {
 			page.setTotal(prizeCount);
 			page.setSize(20);
 			page.setNumber(pageNum == null ? 1 : pageNum);
-			if(page.getTotalPages() < pageNum){
+			if(page.getTotalPages() < page.getNumber()){
 				return list;
 			}
 			Map<String,Object> paramsMap = Maps.newHashMap();
@@ -224,7 +225,7 @@ public class MemberServiceImpl implements IMemberService {
 			page.setTotal(prizeCount);
 			page.setSize(20);
 			page.setNumber(pageNum == null ? 1 : pageNum);
-			if(page.getTotalPages() < pageNum){
+			if(page.getTotalPages() < page.getNumber()){
 				return list;
 			}
 			Map<String,Object> paramsMap = Maps.newHashMap();

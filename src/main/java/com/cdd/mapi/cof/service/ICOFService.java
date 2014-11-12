@@ -28,6 +28,8 @@ public interface ICOFService {
 	
 	public List<CofNewsVO> getCofNewsList(Integer pageNum,Integer memberId);
 	
+	public List<CofNewsVO> getFavNewsList(Integer pageNum,Integer memberId);
+	
 	public List<CofNewsVO> getHotNewsList(Integer pageNum);
 	
 	public List<COFReplyVO> getReplyListByNewsId(Integer cofId,Integer pageNum);

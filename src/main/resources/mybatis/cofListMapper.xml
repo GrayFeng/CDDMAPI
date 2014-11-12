@@ -17,6 +17,7 @@
 	 	    <result column="memberLevelName" property="memberLevelName"/>
 	 	    <result column="memberId" property="memberId"/>
 	 	    <result column="is_forward" property="isForward"/>
+	 	    <result column="forward_cof_id" property="forwardCofId"/>
 	 	    <association property="forwardNews" column="forward_cof_id" select="getForwardNewsInfo"/>
 	 	    <collection property="photos" column="cofp_cof_id" ofType="ForumPhoto">
 	 	        <id column="cofp_id" property="id"/>
@@ -174,6 +175,28 @@
 	 		where cofr.cof_id = #{cofId}
 	 		order by cofr.create_time
 	 		limit #{startNum},#{size}
+	 	</select>
+	 	
+	 	<select id="getFavNewsCount" parameterType="CofNewsSearch" resultType="int">
+	 		select 
+	 			count(cof.id) from t_circle_of_friends cof
+	 		inner join 
+	 			t_cof_affiliated_info cofai
+	 		on 
+	 			cof.id = cofai.cof_id 
+	 			and cofai.type = 2
+	 			and cofai.member_id = #{memberId}
+	 	</select>
+	 	
+	 	<select id="getFavNewsList" parameterType="CofNewsSearch" resultMap="getNewsListMap">
+	 		<include refid="newsCommon"/>
+	 		inner join 
+	 			t_cof_affiliated_info cofai
+	 		on 
+	 			cof.id = cofai.cof_id 
+	 		where cofai.member_id = #{memberId} and cofai.type = 2
+	 		order by cofai.create_time desc
+	 		limit #{startNum},#{size};
 	 	</select>
 	 	
 	</mapper> 

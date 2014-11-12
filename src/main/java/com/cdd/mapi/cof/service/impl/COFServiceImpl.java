@@ -154,6 +154,12 @@ public class COFServiceImpl implements ICOFService{
 					ForwardNews forwardNews = new ForwardNews();
 					forwardNews.setMemberId(affiliatedInfo.getMemberId());
 					forwardNews.setNewsId(affiliatedInfo.getCofId());
+					CofNewsVO cofNewsVO = getNewsInfoById(affiliatedInfo.getCofId());
+					if(cofNewsVO != null 
+							&& Integer.valueOf(1).equals(cofNewsVO.getIsForward()) 
+							&& cofNewsVO.getForwardCofId() != null){
+						forwardNews.setNewsId(cofNewsVO.getForwardCofId());
+					}
 					forwardNews(forwardNews);
 					cofDao.updateCofShareCount(affiliatedInfo.getCofId());
 				}
@@ -174,5 +180,26 @@ public class COFServiceImpl implements ICOFService{
 	@Override
 	public CofNewsVO getNewsInfoById(Integer newsId) {
 		return cofDao.getNewsInfoById(newsId);
+	}
+
+	@Override
+	public List<CofNewsVO> getFavNewsList(Integer pageNum, Integer memberId) {
+		List<CofNewsVO> list = null;
+		CofNewsSearch cofNewsSearch = new CofNewsSearch();
+		cofNewsSearch.setMemberId(memberId);
+		Integer prizeCount = cofDao.getFavNewsCount(cofNewsSearch);
+		if(prizeCount != null && prizeCount > 0){
+			Page page = new Page();
+			page.setTotal(prizeCount);
+			page.setSize(20);
+			pageNum = pageNum == null ? 1 : pageNum;
+			page.setNumber(pageNum);
+			if(page.getTotalPages() >= pageNum){
+				cofNewsSearch.setStartNum(page.getStartNum());
+				cofNewsSearch.setSize(page.getSize());
+				list = cofDao.getFavNewsList(cofNewsSearch);
+			}
+		}
+		return list;
 	}
 }

@@ -47,6 +47,10 @@ public interface ICOFDao {
 	
 	public List<COFReplyVO> getReplyListByNewsId(CofReplySearch search);
 	
+	public Integer getFavNewsCount(CofNewsSearch search);
+	
+	public List<CofNewsVO> getFavNewsList(CofNewsSearch search);
+	
 	public void updateCofLikeCount(Integer subjectId);
 	
 	public void updateCofFavCount(Integer subjectId);

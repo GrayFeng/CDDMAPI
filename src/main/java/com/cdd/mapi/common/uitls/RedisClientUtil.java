@@ -19,11 +19,17 @@ import redis.clients.jedis.Jedis;
 
 public class RedisClientUtil {
 	
+	private static final int REDIS_PORT = 6379;
+
+	private static final String REDIS_HOST = "192.168.118.128";
+
 	private Logger log = LoggerFactory.getLogger(RedisClientUtil.class);
 	
 	private static RedisClientUtil redisClientUtil;
 	
 	private static Jedis jedis;
+	
+	private final int EX_TIME = 7*24*60*60;
 	
 	private RedisClientUtil(){}
 	
@@ -36,7 +42,7 @@ public class RedisClientUtil {
 	
 	private synchronized Jedis getJedis(){
 		if(jedis == null){
-			jedis = new Jedis("192.168.118.128",6379);
+			jedis = new Jedis(REDIS_HOST,REDIS_PORT);
 		}
 		if(!jedis.isConnected()){
 			jedis.connect();
@@ -47,7 +53,7 @@ public class RedisClientUtil {
 	public void set(String key,Serializable value){
 		if(value != null){
 			byte[] bytes = SerializationUtils.serialize(value);
-			set(key, new String(bytes));
+			set(key.getBytes(),bytes);
 		}
 	}
 	
@@ -55,7 +61,16 @@ public class RedisClientUtil {
 		if(StringUtils.isNotEmpty(value)){
 			Jedis jedis = getJedis();
 			if(jedis.isConnected()){
-				jedis.setex(key,7*24*60*60, value);
+				jedis.setex(key,EX_TIME, value);
+			}
+		}
+	}
+	
+	public void set(byte[] key,byte[] value){
+		if(value != null && key != null){
+			Jedis jedis = getJedis();
+			if(jedis.isConnected()){
+				jedis.setex(key,EX_TIME, value);
 			}
 		}
 	}
@@ -65,10 +80,10 @@ public class RedisClientUtil {
 	}
 	
 	public <T> T getObject(String key){
-		String value = getJedis().get(key);
+		byte[] value = getJedis().get(key.getBytes());
 		T t = null;
-		if(StringUtils.isNotEmpty(value)){
-			Object obj = SerializationUtils.deserialize(value.getBytes());
+		if(value != null && value.length > 0){
+			Object obj = SerializationUtils.deserialize(value);
 			try{
 				t = (T)obj;
 			}catch(Exception e){
@@ -85,4 +100,24 @@ public class RedisClientUtil {
 	public void del(String key){
 		getJedis().del(key);
 	}
+	
+	public static void main(String[] args) {
+		Test test = new Test();
+		test.setName("123");
+		byte[] temp = SerializationUtils.serialize(test);
+		Test test1 = (Test)SerializationUtils.deserialize(temp);
+		System.out.println(test1.getName());
+	}
+}
+class Test implements Serializable{
+	private String name;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
 }

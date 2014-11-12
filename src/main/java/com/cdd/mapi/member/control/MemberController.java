@@ -36,6 +36,7 @@ import com.cdd.mapi.pojo.MemberRelation;
 import com.cdd.mapi.pojo.PrivateLetter;
 import com.cdd.mapi.pojo.PrivateLetterVO;
 import com.google.common.collect.Maps;
+import com.google.gson.JsonObject;
 
 /**
  * CDDMAPI
@@ -270,12 +271,16 @@ public class MemberController {
 	public String memberInfo(String uid,String params){
 		Result result = null;
 		try{
+			JSONObject jsonObject = JSON.parseObject(params);
+			Integer memberId = jsonObject.getInteger("memberId");
 			Member member = memberService.getMemberByUID(uid);
-			if(member != null){
-				result = Result.getSuccessResult();
-				MemberVO memberVO = memberService.transformMember(member);
-				result.setRe(memberVO);
+			if(memberId == null && member != null){
+				memberId = member.getId();
 			}
+			result = Result.getSuccessResult();
+			member = memberService.getMemberById(memberId);
+			MemberVO memberVO = memberService.transformMember(member);
+			result.setRe(memberVO);
 		}catch (Exception e) {
 			log.error(e.getMessage(),e);
 		}finally{
@@ -386,8 +391,12 @@ public class MemberController {
 			Member member = memberService.getMemberByUID(uid);
 			JSONObject jsonObject = JSONObject.parseObject(params);
 			Integer pageNum = jsonObject.getInteger("pageNum");
-			if(member != null){
-				List<MemberVO> list = memberService.getIdolList(member.getId(), pageNum);
+			Integer memberId = jsonObject.getInteger("memberId");
+			if(memberId == null && member != null){
+				memberId = member.getId();
+			}
+			if(memberId != null){
+				List<MemberVO> list = memberService.getIdolList(memberId, pageNum);
 				result = Result.getSuccessResult();
 				result.setRe(list);
 			}
@@ -409,8 +418,12 @@ public class MemberController {
 			Member member = memberService.getMemberByUID(uid);
 			JSONObject jsonObject = JSONObject.parseObject(params);
 			Integer pageNum = jsonObject.getInteger("pageNum");
-			if(member != null){
-				List<MemberVO> list = memberService.getFansList(member.getId(), pageNum);
+			Integer memberId = jsonObject.getInteger("memberId");
+			if(memberId == null && member != null){
+				memberId = member.getId();
+			}
+			if(memberId != null){
+				List<MemberVO> list = memberService.getFansList(memberId, pageNum);
 				result = Result.getSuccessResult();
 				result.setRe(list);
 			}

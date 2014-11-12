@@ -45,8 +45,18 @@ public class CofNewsVO {
 	
 	private Integer isForward;
 	
+	private Integer forwardCofId;
+	
 	private Map<String,Object> forwardNews;
 	
+	public Integer getForwardCofId() {
+		return forwardCofId;
+	}
+
+	public void setForwardCofId(Integer forwardCofId) {
+		this.forwardCofId = forwardCofId;
+	}
+
 	public Integer getIsForward() {
 		return isForward;
 	}

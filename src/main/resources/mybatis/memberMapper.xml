@@ -40,9 +40,10 @@
 	 	</select>
 	 	
     	<select id="getMemberStatistics" resultType="Map" parameterType="Integer">
-    	    select fansCount,idolCount from
+    	    select fansCount,idolCount,dynamicInfoCount from
     	    ((select count(fans) as fansCount from t_member_relation where popular_person = #{memberId}) as f
-    	    ,(select count(popular_person) as idolCount from t_member_relation where fans = #{memberId}) as i)
+    	    ,(select count(popular_person) as idolCount from t_member_relation where fans = #{memberId}) as i
+    	    ,(select count(id) as dynamicInfoCount from t_circle_of_friends where sender = #{memberId}) as d)
     	</select>
 	 	
 	 	<update id="updateMemberDeviceFlag" parameterType="Member">

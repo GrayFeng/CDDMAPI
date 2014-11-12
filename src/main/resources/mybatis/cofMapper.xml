@@ -84,6 +84,7 @@
 	 	    <result column="memberLevelName" property="memberLevelName"/>
 	 	    <result column="memberId" property="memberId"/>
 	 	    <result column="is_forward" property="isForward"/>
+	 	    <result column="forward_cof_id" property="forwardCofId"/>
 	 	    <association property="forwardNews" column="forward_cof_id" select="getForwardNewsInfo"/>
 	 	    <collection property="photos" column="cofp_cof_id" ofType="ForumPhoto">
 	 	        <id column="cofp_id" property="id"/>

@@ -98,6 +98,13 @@ public class ForumListController {
 		return ResultUtil.getJsonString(result);
 	}
 	
+	@RequestMapping("memberSubjectList")
+	@ResponseBody
+	public String memberSubjectList(String uid,String params){
+		Result result = getSubjectList(uid, params,SubjectListType.MEMBER_SUBJECT_LIST);
+		return ResultUtil.getJsonString(result);
+	}
+	
 	@RequestMapping("myAnswerSubjectList")
 	@ResponseBody
 	public String myAnswerSubjectList(String uid,String params){
@@ -113,7 +120,7 @@ public class ForumListController {
 	}
 	
 	private enum SubjectListType{
-		LIST,HOT_LIST,MY_LIST,MY_ANSWER,FAV_LIST
+		LIST,HOT_LIST,MY_LIST,MY_ANSWER,FAV_LIST,MEMBER_SUBJECT_LIST
 	}
 	
 	private Result getSubjectList(String uid,String params,SubjectListType type){
@@ -150,6 +157,7 @@ public class ForumListController {
 				list = forumService.getHotSubjectList(forumSubjectSearch);
 				break;
 			case MY_LIST:
+			case MEMBER_SUBJECT_LIST:
 				forumSubjectSearch.setMemberId(memberId);
 				list = forumService.getSubjectList(forumSubjectSearch);
 				break;
