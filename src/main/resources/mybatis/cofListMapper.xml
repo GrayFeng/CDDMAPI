@@ -18,7 +18,7 @@
 	 	    <result column="memberId" property="memberId"/>
 	 	    <result column="is_forward" property="isForward"/>
 	 	    <result column="forward_cof_id" property="forwardCofId"/>
-	 	    <association property="forwardNews" column="forward_cof_id" select="getForwardNewsInfo"/>
+	 	    <association property="forwardNews" column="forward_cof_id" javaType="ForwardNewsVO" select="getForwardNewsInfo"/>
 	 	    <collection property="photos" column="cofp_cof_id" ofType="ForumPhoto">
 	 	        <id column="cofp_id" property="id"/>
 	 	        <result column="cofp_photo" javaType="String" property="url"/>
@@ -85,7 +85,7 @@
 	 		limit 0,5
 	 	</select>
 	 	
-	 	<select id="getForwardNewsInfo" parameterType="int" resultType="Map">
+	 	<select id="getForwardNewsInfo" parameterType="int" resultType="ForwardNewsVO">
 	 		select 
 	 			cof.id as id,
 	 			cof.message as content,
@@ -93,13 +93,16 @@
 	 			DATE_FORMAT(cof.create_time,'%Y-%m-%d %H:%i') as createTime,
 	 			m.name as memberName,
 	 			m.sex as memberSex,
-	 			m.photo as memberPhoto
+	 			m.photo as memberPhoto,
+				cofp.photo
 	 		from 
 	 			t_circle_of_friends cof 
 		 	left join 
-		 			t_member m 
-		 		on 
-		 			cof.sender = m.id
+		 		t_member m 
+		 	on 
+		 		cof.sender = m.id
+			left join (select * from t_cof_photo  where cof_id = #{cofId} limit 0,1) cofp
+			on cof.id = cofp.cof_id
 		 	where cof.id = #{cofId}
 	 	</select>
 	 	

@@ -11,7 +11,8 @@ public class ResultUtil {
 	private static Logger logger = LoggerFactory.getLogger(ResultUtil.class);
 	
 	public static String getJsonString(Object result){
-		String jsonStr = JSON.toJSONString(result, SerializerFeature.WriteMapNullValue);
+		String jsonStr = JSON.toJSONString(result, SerializerFeature.WriteMapNullValue
+				,SerializerFeature.DisableCircularReferenceDetect);
 		logger.info("api-send:" + jsonStr);
 		if(AESEncrypter.isDecryption){
 			jsonStr = AESEncrypter.encrypt(jsonStr);

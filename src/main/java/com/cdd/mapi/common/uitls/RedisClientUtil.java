@@ -21,7 +21,7 @@ public class RedisClientUtil {
 	
 	private static final int REDIS_PORT = 6379;
 
-	private static final String REDIS_HOST = "192.168.118.128";
+	private static final String REDIS_HOST = "127.0.0.1";
 
 	private Logger log = LoggerFactory.getLogger(RedisClientUtil.class);
 	
@@ -99,25 +99,6 @@ public class RedisClientUtil {
 	
 	public void del(String key){
 		getJedis().del(key);
-	}
-	
-	public static void main(String[] args) {
-		Test test = new Test();
-		test.setName("123");
-		byte[] temp = SerializationUtils.serialize(test);
-		Test test1 = (Test)SerializationUtils.deserialize(temp);
-		System.out.println(test1.getName());
-	}
-}
-class Test implements Serializable{
-	private String name;
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 	
 }

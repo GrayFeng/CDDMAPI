@@ -1,7 +1,6 @@
 package com.cdd.mapi.pojo;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * CDDMAPI
@@ -47,7 +46,7 @@ public class CofNewsVO {
 	
 	private Integer forwardCofId;
 	
-	private Map<String,Object> forwardNews;
+	private ForwardNewsVO forwardNews;
 	
 	public Integer getForwardCofId() {
 		return forwardCofId;
@@ -65,11 +64,11 @@ public class CofNewsVO {
 		this.isForward = isForward;
 	}
 
-	public Map<String, Object> getForwardNews() {
+	public ForwardNewsVO getForwardNews() {
 		return forwardNews;
 	}
 
-	public void setForwardNews(Map<String, Object> forwardNews) {
+	public void setForwardNews(ForwardNewsVO forwardNews) {
 		this.forwardNews = forwardNews;
 	}
 
