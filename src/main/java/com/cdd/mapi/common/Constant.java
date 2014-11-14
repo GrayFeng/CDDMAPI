@@ -25,11 +25,9 @@ public class Constant {
 		if (bundle == null) {
 			throw new IllegalArgumentException("初始化失败，缺少配置文件");
 		}
-		String redisEnable = bundle.getString("redis.enable");
-		ENABLE_REDIS = Boolean.TRUE.equals(redisEnable) ? true : false;
+		ENABLE_REDIS = Boolean.valueOf(bundle.getString("redis.enable"));
 		
-		String isDecryption = bundle.getString("decryption.enable");
-		IS_DECRYPTION = Boolean.TRUE.equals(isDecryption) ? true : false;
+		IS_DECRYPTION = Boolean.valueOf(bundle.getString("decryption.enable"));
 	}
 	
 	public static String getClientIp(HttpServletRequest request){
