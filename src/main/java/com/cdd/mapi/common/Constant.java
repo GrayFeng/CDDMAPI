@@ -1,6 +1,7 @@
 package com.cdd.mapi.common;
 
 import java.util.Date;
+import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -9,17 +10,27 @@ import org.apache.commons.lang.time.DateFormatUtils;
 
 public class Constant {
 	
-	public static final Integer MAX_DICE_NUM = 5;
+	public static String HOST_URL = "http://123.57.45.145";
 	
-	public static final Integer MAX_DICE_POINT = 6;
+	public static String PHOTO_URL_PATH = HOST_URL + ":82";
 	
-	public static final String HOST_URL = "http://123.57.45.145";
+	public static String PHOTO_BASE_PATH = "/alidata/www/cdd_images/";
 	
-	public static final String PHOTO_URL_PATH = HOST_URL + ":82";
+	public static boolean ENABLE_REDIS = false;
 	
-	public static final String PHOTO_BASE_PATH = "/alidata/www/cdd_images/";
+	public static boolean IS_DECRYPTION = false;
 	
-	public static final boolean ENABLE_REDIS = false;
+	static {
+		ResourceBundle bundle = ResourceBundle.getBundle("config");
+		if (bundle == null) {
+			throw new IllegalArgumentException("初始化失败，缺少配置文件");
+		}
+		String redisEnable = bundle.getString("redis.enable");
+		ENABLE_REDIS = Boolean.TRUE.equals(redisEnable) ? true : false;
+		
+		String isDecryption = bundle.getString("decryption.enable");
+		IS_DECRYPTION = Boolean.TRUE.equals(isDecryption) ? true : false;
+	}
 	
 	public static String getClientIp(HttpServletRequest request){
 		String ip = request.getHeader("x-forwarded-for");

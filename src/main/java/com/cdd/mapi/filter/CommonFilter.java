@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.cdd.mapi.common.Constant;
 import com.cdd.mapi.common.uitls.AESEncrypter;
 
 public class CommonFilter implements Filter{
@@ -21,7 +22,7 @@ public class CommonFilter implements Filter{
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
-		if(AESEncrypter.isDecryption){
+		if(Constant.IS_DECRYPTION){
 			chain.doFilter(new FilteredRequest(request), response);
 		}else{
 			chain.doFilter(request, response);
@@ -50,7 +51,7 @@ class FilteredRequest extends HttpServletRequestWrapper {
     public String getParameter(String paramName) {
         String value = super.getParameter(paramName);
         if (queryId.equals(paramName) && value != null) {
-            if (AESEncrypter.isDecryption) {
+            if (Constant.IS_DECRYPTION) {
                 value = AESEncrypter.decrypt(value);
             }
             logger.info("api-rev:" + value);
@@ -61,7 +62,7 @@ class FilteredRequest extends HttpServletRequestWrapper {
     public String[] getParameterValues(String paramName) {
         String values[] = super.getParameterValues(paramName);
         if (queryId.equals(paramName) && values != null) {
-            if (AESEncrypter.isDecryption) {
+            if (Constant.IS_DECRYPTION) {
                 for (int index = 0; index < values.length; index++) {
                     values[index] = AESEncrypter.decrypt(values[index]);
                     logger.info("api-rev:" + values[index]);

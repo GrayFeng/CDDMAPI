@@ -8,8 +8,6 @@ public class AESEncrypter {
 
     private static final String key = "ydsw123321";
     
-    public static final boolean isDecryption = false;
-
     public static String encrypt(String str) {
         CryptAES aes = new CryptAES(key, 128);
         byte[] encryptByte = aes.encrypt(str.getBytes(Charsets.UTF_8));
