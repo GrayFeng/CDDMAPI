@@ -36,7 +36,6 @@ import com.cdd.mapi.pojo.MemberRelation;
 import com.cdd.mapi.pojo.PrivateLetter;
 import com.cdd.mapi.pojo.PrivateLetterVO;
 import com.google.common.collect.Maps;
-import com.google.gson.JsonObject;
 
 /**
  * CDDMAPI
@@ -278,8 +277,10 @@ public class MemberController {
 				memberId = member.getId();
 			}
 			result = Result.getSuccessResult();
+			Integer relation = memberService.getMemberRelation(member.getId(), memberId);
 			member = memberService.getMemberById(memberId);
 			MemberVO memberVO = memberService.transformMember(member);
+			memberVO.setRelation(relation);
 			result.setRe(memberVO);
 		}catch (Exception e) {
 			log.error(e.getMessage(),e);

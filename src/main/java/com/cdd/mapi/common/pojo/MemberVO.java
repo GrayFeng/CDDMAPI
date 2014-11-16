@@ -43,9 +43,19 @@ private Integer id;
 	private Long dynamicInfoCount = 0L;
 	//关注的人数量
 	private Long idolCount = 0L;
-	//关系，1-互相已关注；0-我的粉丝/我的关注
-	private Integer relation;
 	
+	private Long subjectCount = 0L;
+	//关系，1-互相已关注；0-我的粉丝;2-我的关注;3-无关系
+	private Integer relation = 3;
+	
+	public Long getSubjectCount() {
+		return subjectCount;
+	}
+
+	public void setSubjectCount(Long subjectCount) {
+		this.subjectCount = subjectCount;
+	}
+
 	public Integer getRelation() {
 		return relation;
 	}

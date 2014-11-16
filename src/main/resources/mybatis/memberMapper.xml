@@ -40,10 +40,11 @@
 	 	</select>
 	 	
     	<select id="getMemberStatistics" resultType="Map" parameterType="Integer">
-    	    select fansCount,idolCount,dynamicInfoCount from
+    	    select fansCount,idolCount,dynamicInfoCount,subjectCount from
     	    ((select count(fans) as fansCount from t_member_relation where popular_person = #{memberId}) as f
     	    ,(select count(popular_person) as idolCount from t_member_relation where fans = #{memberId}) as i
-    	    ,(select count(id) as dynamicInfoCount from t_circle_of_friends where sender = #{memberId}) as d)
+    	    ,(select count(id) as dynamicInfoCount from t_circle_of_friends where sender = #{memberId}) as d
+    	    ,(select count(id) as subjectCount from t_forum_question where member_id = #{memberId}) as s)
     	</select>
 	 	
 	 	<update id="updateMemberDeviceFlag" parameterType="Member">
@@ -71,6 +72,14 @@
 	 	    select count(fans) as fansCount from t_member_relation where popular_person = #{memberId}
 	 	</select>
 	 	
+	 	<select id="getMemberRelation" resultType="Map" parameterType="Map">
+	 	    select * from 
+	 	    	(SELECT count(id) as fanState 
+	 	    	 	FROM t_member_relation where fans = #{memberId} and popular_person = #{otherMemberId}) as a,
+	 	    	(SELECT count(id) as idolState 
+	 	    		FROM t_member_relation where popular_person = #{memberId} and fans = #{otherMemberId}) as b
+	 	</select>
+	 	
 	 	<select id="getFansList" resultType="Member" parameterType="Map">
 	 	    select m.<include refid="memberValues"/>,mr.relation from t_member m inner join 
 	 	    (select t1.id,t1.fans,t1.popular_person,t1.create_time,
@@ -89,7 +98,7 @@
 	 	    select m.<include refid="memberValues"/>,mr.relation from t_member m 
 	 	    inner join (select t1.id,t1.fans,t1.popular_person,t1.create_time,
 	 	    	case when t2.popular_person = t1.fans and t1.popular_person = t2.fans 
-	 	    	then 1 else 0 end  as relation from 
+	 	    	then 1 else 2 end  as relation from 
 	 	    		(SELECT * FROM t_member_relation where fans = #{memberId}) as t1 
 	 	    		left join t_member_relation as t2 on t2.popular_person = t1.fans and t1.popular_person = t2.fans) mr on m.id = mr.popular_person 
 			where m.status = 0 order by mr.create_time desc limit #{startNum},#{size}

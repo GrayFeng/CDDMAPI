@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.cdd.mapi.remind.dao.IRemindDao">
+    
+    <insert id="addExamRemind" parameterType="ExamRemind">
+        insert into t_exam_remind 
+ 			(member_id,item_id,type,remind_time,title,des,create_time) 
+ 		values
+ 			(#{memberId},#{itemId},#{type},#{remindTime},#{title},#{des},now())
+	 	<selectKey resultType="int" keyProperty="id" order="AFTER">  
+  			SELECT LAST_INSERT_ID() as id
+  		</selectKey>  
+    </insert>
+    
+    <insert id="addLearningPlan" parameterType="LearningPlan">
+        insert into t_learning_program 
+ 			(member_id,title,description,start_time,end_time,create_time) 
+ 		values
+ 			(#{memberId},#{title},#{des},#{startTime},#{endTime},now())
+	 	<selectKey resultType="int" keyProperty="id" order="AFTER">  
+  			SELECT LAST_INSERT_ID() as id
+  		</selectKey>  
+    </insert>
+	
+    <select id="getExamById" parameterType="Map" resultType="Exam">
+        select
+        	id,name,
+        	city_id as cityId ,
+        	DATE_FORMAT(exam_time,'%Y-%m-%d %T') as examTime,
+        	DATE_FORMAT(sign_up_time,'%Y-%m-%d %T') as signUpTime,
+        	DATE_FORMAT(create_time,'%Y-%m-%d %T') as createTime,
+        	item_id as itemId,
+        	status,
+        	description as des
+        from 
+        	t_exam 
+        where 
+        	item_id = ${itemId} and city_id = #{cityId}
+    </select>
+    
+    <select id="isExistLearningPlan" resultType="int" parameterType="Map">
+        <![CDATA[
+	        SELECT 
+	        	count(id) 
+	        from 
+	        	t_learning_program  
+	        where
+	        	start_time <= #{startTime} 
+	        	and end_time >= #{startTime}
+	        	and member_id = #{memberId}
+        ]]>
+    </select>
+    
+    <select id="isExistRemind" resultType="int" parameterType="Map">
+        <![CDATA[
+	        SELECT 
+	        	count(id) 
+	        FROM 
+	        	t_exam_remind 
+	        where 
+	        	member_id = #{memberId} 
+	        	and item_id = #{itemId} 
+	        	and type = #{type} 
+	        	and remind_time > now()
+        ]]>
+    </select>
+    
+    <delete id="delRemid" parameterType="Map">
+        delete from t_exam_remind where member_id = #{memberId} and id = #{remindId}
+    </delete>
+    
+     <select id="getRemindList" parameterType="int" resultType="ExamRemind">
+        select 
+			id,
+			member_id as memberId,
+			item_id as itemId,
+			type,
+			DATE_FORMAT(remind_time,'%Y-%m-%d') as remindTime,
+			title,
+			des,
+			DATE_FORMAT(create_time,'%Y-%m-%d') as createTime
+        from 
+        	t_exam_remind 
+        where 
+        	member_id = #{memberId} and remind_time >= now()
+    </select>
+    
+      <select id="getLearningPlanList" parameterType="Map" resultType="LearningPlan">
+        <![CDATA[
+	        SELECT 
+	        	id,
+	        	member_id as memberId,
+	        	title,
+	        	description as des,
+	        	DATE_FORMAT(start_time,'%Y-%m-%d') as startTime,
+	        	DATE_FORMAT(end_time,'%Y-%m-%d') as endTime
+	        from 
+	        	t_learning_program  
+	        where
+	        	start_time >= #{startTime} 
+	        	and end_time <= #{endTime}
+	        	and member_id = #{memberId}
+        ]]>
+    </select>
+    
+   	<select id="getExpertLearningPlanList" parameterType="Map" resultType="LearningPlan">
+        <![CDATA[
+	        SELECT 
+	        	id,
+	        	title,
+	        	description as des,
+	        	DATE_FORMAT(start_time,'%Y-%m-%d') as startTime,
+	        	DATE_FORMAT(end_time,'%Y-%m-%d') as endTime
+	        from 
+	        	t_learning_program_expert  
+	        where
+	        	start_time >= #{startTime} 
+	        	and end_time <= #{endTime}
+        ]]>
+    </select>
+    
+</mapper> 

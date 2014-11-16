@@ -57,4 +57,6 @@ public interface IMemberDao {
 	
 	public void sendPrivateMessage(PrivateLetter letter);
 	
+	public Map<String,Object> getMemberRelation(Map<String,Object> params);
+	
 }

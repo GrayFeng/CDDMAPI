@@ -160,6 +160,7 @@ public class MemberServiceImpl implements IMemberService {
 			memberVO.setFansCount(statisticsMap.get("fansCount"));
 			memberVO.setIdolCount(statisticsMap.get("idolCount"));
 			memberVO.setDynamicInfoCount(statisticsMap.get("dynamicInfoCount"));
+			memberVO.setSubjectCount(statisticsMap.get("subjectCount"));
 		}
 		return memberVO;
 	}
@@ -269,6 +270,28 @@ public class MemberServiceImpl implements IMemberService {
 			list = memberDao.getPrivateLetterList(search);
 		}
 		return list;
+	}
+
+	@Override
+	public Integer getMemberRelation(Integer memberId, Integer otherMemberId) {
+		Map<String,Object> paramMap = Maps.newHashMap();
+		paramMap.put("memberId", memberId);
+		paramMap.put("otherMemberId", otherMemberId);
+		Map<String,Object> resultMap = memberDao.getMemberRelation(paramMap);
+		if(resultMap != null){
+			Long fanState = (Long)resultMap.get("fanState");
+			Long idolState = (Long)resultMap.get("idolState");
+			if(fanState != null && idolState != null){
+				if(fanState == 1 && idolState == 1){
+					return 1;
+				}else if(fanState == 1){
+					return 2;
+				}else if(idolState == 1){
+					return 0;
+				}
+			}
+		}
+		return 3;
 	}
 
 }

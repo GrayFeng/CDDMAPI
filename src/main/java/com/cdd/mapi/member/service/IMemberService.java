@@ -60,4 +60,6 @@ public interface IMemberService {
 	
 	public void sendPrivateMessage(PrivateLetter letter);
 	
+	public Integer getMemberRelation(Integer memberId,Integer otherMemberId);
+	
 }
