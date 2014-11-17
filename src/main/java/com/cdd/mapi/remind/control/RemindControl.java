@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cdd.mapi.base.service.IBaseService;
-import com.cdd.mapi.base.service.impl.BaseServiceImpl;
 import com.cdd.mapi.common.enums.EEchoCode;
 import com.cdd.mapi.common.enums.ENoticeType;
 import com.cdd.mapi.common.enums.ERemindType;
@@ -27,7 +26,6 @@ import com.cdd.mapi.pojo.LearningPlan;
 import com.cdd.mapi.pojo.Member;
 import com.cdd.mapi.pojo.SysNotice;
 import com.cdd.mapi.remind.service.IRemindService;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Maps;
 @Controller
 @RequestMapping("/api/remind")
@@ -63,6 +61,8 @@ public class RemindControl {
 						}else if(examRemind.getType() == ERemindType.SIGN_UP.getCode()){
 							examRemind.setRemindTime(exam.getSignUpTime());
 						}
+						examRemind.setStartTime(examRemind.getRemindTime());
+						examRemind.setEndTime(examRemind.getRemindTime());
 						examRemind.setMemberId(member.getId());
 						examRemind.setDes(exam.getDes());
 						remindService.addExamRemind(examRemind);
@@ -182,6 +182,29 @@ public class RemindControl {
 				}
 				result = Result.getSuccessResult();
 				result.setRe(learningPlanList);
+			}
+		}catch (Exception e) {
+			log.error(e.getMessage(),e);
+		}finally{
+			if(result == null){
+				result = new Result(EEchoCode.ERROR.getCode(),"信息不全，读取失败!");
+			}
+		}
+		return ResultUtil.getJsonString(result);
+	}
+	
+	@RequestMapping("remindInfo")
+	@ResponseBody
+	public String remindInfo(String uid,String params){
+		Result result = null;
+		try{
+			Member member = memberService.getMemberByUID(uid);
+			JSONObject jsonObject = JSON.parseObject(params);
+			Integer remindId = jsonObject.getInteger("remindId");
+			if(member != null && remindId != null){
+				ExamRemind remind = remindService.getRemindInfo(member.getId(), remindId);
+				result = Result.getSuccessResult();
+				result.setRe(remind);
 			}
 		}catch (Exception e) {
 			log.error(e.getMessage(),e);

@@ -5,7 +5,9 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.cdd.mapi.common.enums.ERemindType;
 import com.cdd.mapi.pojo.Exam;
 import com.cdd.mapi.pojo.ExamRemind;
 import com.cdd.mapi.pojo.LearningPlan;
@@ -39,8 +41,18 @@ public class RemindServiceImpl implements IRemindService{
 	}
 
 	@Override
+	@Transactional
 	public void addLearningPlan(LearningPlan plan) {
 		remindDao.addLearningPlan(plan);
+		ExamRemind examRemind = new ExamRemind();
+		examRemind.setTitle(plan.getTitle());
+		examRemind.setDes(plan.getDes());
+		examRemind.setMemberId(plan.getMemberId());
+		examRemind.setType(ERemindType.LEARING.getCode());
+		examRemind.setRemindTime(plan.getStartTime());
+		examRemind.setStartTime(plan.getStartTime());
+		examRemind.setEndTime(plan.getEndTime());
+		addExamRemind(examRemind);
 	}
 
 	@Override
@@ -90,6 +102,14 @@ public class RemindServiceImpl implements IRemindService{
 		paramsMap.put("startTime", startTime);
 		paramsMap.put("endTime", endTime);
 		return remindDao.getExpertLearningPlanList(paramsMap);
+	}
+
+	@Override
+	public ExamRemind getRemindInfo(Integer memberId, Integer id) {
+		Map<String,Object> paramsMap = Maps.newHashMap();
+		paramsMap.put("memberId", memberId);
+		paramsMap.put("id", id);
+		return remindDao.getRemindInfo(paramsMap);
 	}
 
 }

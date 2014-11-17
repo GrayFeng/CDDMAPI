@@ -38,4 +38,6 @@ public interface IRemindDao {
 	
 	public List<LearningPlan> getExpertLearningPlanList(Map<String,Object> paramsMap);
 	
+	public ExamRemind getRemindInfo(Map<String,Object> paramsMap);
+	
 }

@@ -11,6 +11,7 @@ import com.cdd.mapi.pojo.MemberLevel;
 import com.cdd.mapi.pojo.Province;
 import com.cdd.mapi.pojo.ScoreRule;
 import com.cdd.mapi.pojo.SysNotice;
+import com.cdd.mapi.pojo.VersionInfo;
 
 /**
  * Description: IBaseDao.java
@@ -36,5 +37,7 @@ public interface IBaseService {
 	public List<ExamItem> getExamItemList();
 	
 	public List<SysNotice> getNoticeList(Integer type);
+	
+	public VersionInfo checkVersion(String ver);
 
 }

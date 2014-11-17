@@ -31,5 +31,7 @@ public interface IRemindService {
 	public List<LearningPlan> getLearningPlanList(Integer memberId,String startTime,String endTime);
 	
 	public List<LearningPlan> getExpertLearningPlanList(String startTime,String endTime);
+	
+	public ExamRemind getRemindInfo(Integer memberId,Integer id);
 
 }

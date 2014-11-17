@@ -3,10 +3,12 @@ package com.cdd.mapi.member.control;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -143,6 +145,56 @@ public class MemberController {
 		}finally{
 			if(result == null){
 				result = new Result(EEchoCode.ERROR.getCode(),"账号或密码错误!");
+			}
+		}
+		return ResultUtil.getJsonString(result);
+	}
+	
+	@RequestMapping("loginByQQ")
+	@ResponseBody
+	@NotNeedLogin
+	public  String loginByQQ(String uid,String params,HttpServletRequest request){
+		Result result = null;
+		try{
+			if(StringUtils.isNotEmpty(params)){
+				JSONObject paramsObj = JSON.parseObject(params);
+				if(StringUtils.isNotEmpty(uid) 
+						&& MemberCache.getInstance().isHave(uid)){
+					String qq = paramsObj.getString("qq");
+					String deviceFlag = paramsObj.getString("deviceFlag");
+					if(StringUtils.isNotEmpty(qq) && NumberUtils.isNumber(qq)){
+						Member member = memberService.getMemberByLoginId(qq);
+						if(member == null){
+							member = new Member();
+							member.setLoginId(qq);
+							member.setPassword(String.valueOf(new Random().nextInt(99999999)));
+							member.setName(qq);
+							memberService.addMember(member);
+							member = memberService.getMemberByLoginId(qq);
+						}
+						if(member != null){
+							if(StringUtils.isNotEmpty(deviceFlag) 
+									&& !deviceFlag.equals(member.getDeviceFlag())){
+								member.setDeviceFlag(deviceFlag);
+								memberService.updateMemberDeviceFlag(member);
+							}
+							LoginInfo loginInfo = new LoginInfo();
+							loginInfo.setMember(member);
+							MemberCache.getInstance().add(uid, loginInfo);
+							result = Result.getSuccessResult();
+							MemberVO memberVO = memberService.transformMember(member);
+							result.setRe(memberVO);
+						}
+					}else{
+						result = new Result(EEchoCode.ERROR.getCode(),"请输入正确的qq号码");
+					}
+				}
+			}
+		}catch (Exception e) {
+			log.error(e.getMessage(),e);
+		}finally{
+			if(result == null){
+				result = new Result(EEchoCode.ERROR.getCode(),"授权异常，登录失败!");
 			}
 		}
 		return ResultUtil.getJsonString(result);

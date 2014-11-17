@@ -11,6 +11,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.cdd.mapi.base.service.IBaseService;
 import com.cdd.mapi.common.annotation.NotNeedLogin;
 import com.cdd.mapi.common.annotation.NotNeedUID;
@@ -18,6 +20,7 @@ import com.cdd.mapi.common.cache.MemberCache;
 import com.cdd.mapi.common.pojo.LoginInfo;
 import com.cdd.mapi.common.pojo.Result;
 import com.cdd.mapi.common.uitls.ResultUtil;
+import com.cdd.mapi.pojo.VersionInfo;
 import com.google.common.collect.Maps;
 
 /**
@@ -100,6 +103,37 @@ public class BaseController {
 	public String getExamItemList(){
 		Result result = Result.getSuccessResult();
 		result.setRe(baseService.getExamItemList());
+		return ResultUtil.getJsonString(result);
+	}
+	
+	@RequestMapping("checkVersion")
+	@ResponseBody
+	@NotNeedLogin
+	public String checkVersion(String uid,String params){
+		Result result = null;
+		Map<String,Object> resultMap = Maps.newHashMap();
+		if(StringUtils.isNotEmpty(params)){
+			JSONObject jsonObject = JSON.parseObject(params);
+			String cid = jsonObject.getString("cid");
+			VersionInfo versionInfo = baseService.checkVersion(cid);
+			if(versionInfo != null && versionInfo.isUpgrade()){
+				result = Result.getSuccessResult();
+				resultMap.put("address", versionInfo.getAddress());
+				resultMap.put("ver",versionInfo.getVersion_name());
+				resultMap.put("msg", versionInfo.getMsg());
+				resultMap.put("upgrade",1);
+				result.setRe(resultMap);
+			}
+		}
+		if(result == null){
+			result = Result.getSuccessResult();
+			resultMap.put("address",null);
+			resultMap.put("ver",null);
+			resultMap.put("msg","无可更新版本");
+			resultMap.put("upgrade",0);
+			result.setRe(resultMap);
+			
+		}
 		return ResultUtil.getJsonString(result);
 	}
 

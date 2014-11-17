@@ -6,9 +6,9 @@
     
     <insert id="addExamRemind" parameterType="ExamRemind">
         insert into t_exam_remind 
- 			(member_id,item_id,type,remind_time,title,des,create_time) 
+ 			(member_id,item_id,type,remind_time,title,des,create_time,start_time,end_time) 
  		values
- 			(#{memberId},#{itemId},#{type},#{remindTime},#{title},#{des},now())
+ 			(#{memberId},#{itemId},#{type},#{remindTime},#{title},#{des},now(),#{startTime},#{endTime})
 	 	<selectKey resultType="int" keyProperty="id" order="AFTER">  
   			SELECT LAST_INSERT_ID() as id
   		</selectKey>  
@@ -78,6 +78,8 @@
 			item_id as itemId,
 			type,
 			DATE_FORMAT(remind_time,'%Y-%m-%d') as remindTime,
+			DATE_FORMAT(start_time,'%Y-%m-%d') as startTime,
+			DATE_FORMAT(end_time,'%Y-%m-%d') as endTime,
 			title,
 			des,
 			DATE_FORMAT(create_time,'%Y-%m-%d') as createTime
@@ -85,6 +87,25 @@
         	t_exam_remind 
         where 
         	member_id = #{memberId} and remind_time >= now()
+    </select>
+    
+    
+    <select id="getRemindInfo" parameterType="Map" resultType="ExamRemind">
+        select 
+			id,
+			member_id as memberId,
+			item_id as itemId,
+			type,
+			DATE_FORMAT(remind_time,'%Y-%m-%d') as remindTime,
+			DATE_FORMAT(start_time,'%Y-%m-%d') as startTime,
+			DATE_FORMAT(end_time,'%Y-%m-%d') as endTime,
+			title,
+			des,
+			DATE_FORMAT(create_time,'%Y-%m-%d') as createTime
+        from 
+        	t_exam_remind 
+        where 
+        	member_id = #{memberId} and id = #{id}
     </select>
     
       <select id="getLearningPlanList" parameterType="Map" resultType="LearningPlan">

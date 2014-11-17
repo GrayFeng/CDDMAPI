@@ -20,10 +20,12 @@ import com.cdd.mapi.pojo.MemberLevel;
 import com.cdd.mapi.pojo.Province;
 import com.cdd.mapi.pojo.ScoreRule;
 import com.cdd.mapi.pojo.SysNotice;
+import com.cdd.mapi.pojo.VersionInfo;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Maps;
+import com.google.common.primitives.Ints;
 
 /**
  * Description: BaseServiceImpl.java
@@ -168,5 +170,25 @@ public class BaseServiceImpl implements IBaseService{
 	@Override
 	public List<SysNotice> getNoticeList(Integer type) {
 		return baseDao.getNoticeList(type);
+	}
+	
+	@Override
+	public VersionInfo checkVersion(String verStr) {
+		List<VersionInfo> versionList = baseDao.getVersionList();
+
+        if (null == verStr || verStr.length() < 4) {
+            return null;
+        }
+
+        String channel = verStr.substring(0, 3);
+        String verNum = verStr.substring(3);
+
+        for (VersionInfo versionInfo : versionList) {
+            if (versionInfo.getChannel().equalsIgnoreCase(channel)) {
+            	versionInfo.setUpgrade(versionInfo.getNewver() > Ints.tryParse(verNum));
+                return versionInfo;
+            }
+        }
+		return null;
 	}
 }

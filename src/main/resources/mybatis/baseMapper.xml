@@ -38,4 +38,8 @@
 		]]>
 	</select>
 	
+	<select id="getVersionList" resultType="VersionInfo">
+        select * from t_update_info
+    </select>
+	
 </mapper> 
