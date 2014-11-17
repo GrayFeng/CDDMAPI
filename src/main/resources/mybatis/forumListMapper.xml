@@ -246,6 +246,7 @@
 	 		</if>
 	 		and q.title like "%"#{keyword}"%"
 	 		order by q.create_time desc
+	 		limit 0,1000
 	 	</select>
 	
 	</mapper> 

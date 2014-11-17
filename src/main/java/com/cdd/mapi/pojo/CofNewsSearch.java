@@ -17,6 +17,16 @@ public class CofNewsSearch {
 	
 	private Integer memberId;
 	
+	private String keyWord;
+	
+	public String getKeyWord() {
+		return keyWord;
+	}
+
+	public void setKeyWord(String keyWord) {
+		this.keyWord = keyWord;
+	}
+
 	public Integer getMemberId() {
 		return memberId;
 	}

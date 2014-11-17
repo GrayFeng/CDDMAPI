@@ -120,6 +120,39 @@ public class COFController {
 		return ResultUtil.getJsonString(result);
 	}
 	
+	@RequestMapping("searchNews")
+	@ResponseBody
+	public String searchNews(String uid,String params){
+		Result result = null;
+		try{
+			JSONObject jsonObject = JSON.parseObject(params);
+			Integer pageNum = jsonObject.getInteger("pageNum");
+			String keyword = jsonObject.getString("keyword");
+			if(StringUtils.isNotEmpty(keyword)){
+				List<CofNewsVO> newsList = cofService.searchNews(pageNum, keyword);
+				result = Result.getSuccessResult();
+				Map<String,Object> map = Maps.newHashMap();
+				if(newsList != null ){
+					map.put("size", newsList.size());
+					map.put("newsList", newsList);
+				}else{
+					map.put("size", 0);
+					map.put("newsList", null);
+				}
+				result.setRe(map);
+			}else{
+				result = new Result(EEchoCode.ERROR.getCode(),"请输入查询关键字");
+			}
+		}catch (Exception e) {
+			log.error(e.getMessage(),e);
+		}finally{
+			if(result == null){
+				result = new Result(EEchoCode.ERROR.getCode(),"读取失败,未找到相关的新鲜事");
+			}
+		}
+		return ResultUtil.getJsonString(result);
+	}
+	
 	@RequestMapping("favNewsList")
 	@ResponseBody
 	public String favNewsList(String uid,String params){

@@ -64,5 +64,7 @@ public interface ICOFDao {
 	public void forwardNews(ForwardNews forwardNews);
 	
 	public CofNewsVO getNewsInfoById(Integer newsId);
+	
+	public List<CofNewsVO> searchNews(CofNewsSearch search);
 
 }

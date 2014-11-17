@@ -202,4 +202,11 @@
 	 		limit #{startNum},#{size};
 	 	</select>
 	 	
+	 	<select id="searchNews" parameterType="CofNewsSearch" resultMap="getNewsListMap">
+	 		<include refid="newsCommon"/>
+	 		where message like "%"#{keyWord}"%"
+	 		order by cof.create_time desc
+	 		limit 0,1000
+	 	</select>
+	 	
 	</mapper> 
