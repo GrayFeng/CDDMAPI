@@ -10,6 +10,7 @@ import com.cdd.mapi.pojo.ForumItem;
 import com.cdd.mapi.pojo.MemberLevel;
 import com.cdd.mapi.pojo.Province;
 import com.cdd.mapi.pojo.ScoreRule;
+import com.cdd.mapi.pojo.SysNotice;
 
 /**
  * Description: IBaseDao.java
@@ -33,5 +34,7 @@ public interface IBaseService {
 	public List<ForumItem> getForumItemList();
 	
 	public List<ExamItem> getExamItemList();
+	
+	public List<SysNotice> getNoticeList(Integer type);
 
 }

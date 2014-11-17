@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cdd.mapi.common.enums.EAffiliatedType;
+import com.cdd.mapi.common.enums.EScoreRuleType;
 import com.cdd.mapi.common.pojo.Page;
 import com.cdd.mapi.forum.dao.IForumDao;
 import com.cdd.mapi.forum.service.IForumService;
+import com.cdd.mapi.member.service.IMemberService;
 import com.cdd.mapi.pojo.ForumAffiliatedInfo;
 import com.cdd.mapi.pojo.ForumAnswer;
 import com.cdd.mapi.pojo.ForumAnswerSearch;
@@ -32,11 +34,14 @@ public class ForumServiceImpl implements IForumService{
 	
 	@Autowired
 	private IForumDao forumDao;
+	@Autowired
+	private IMemberService memberService;
 	
 	@Transactional
 	public void addSubject(ForumSubject forumSubject){
 		forumDao.addSubject(forumSubject);
 		addPhotos(forumSubject.getPhotos(), forumSubject.getId(), null);
+		memberService.addMemberScore(forumSubject.getMemberId(), EScoreRuleType.ADD_SUBJECT);
 	}
 
 	@Override
@@ -44,6 +49,7 @@ public class ForumServiceImpl implements IForumService{
 	public void addAnswer(ForumAnswer answer) {
 		forumDao.addAnswer(answer);
 		addPhotos(answer.getPhotos(), null, answer.getId());
+		memberService.addMemberScore(answer.getMemberId(), EScoreRuleType.ANSWER_QUESTION);
 	}
 
 	@Override
@@ -249,10 +255,12 @@ public class ForumServiceImpl implements IForumService{
 				forumDao.addForumAffiliated(forumAffiliatedInfo);
 				if(EAffiliatedType.LIKE.getCode().equals(forumAffiliatedInfo.getType())){
 					forumDao.updateSubjectLikeCount(forumAffiliatedInfo.getQuestionId());
+					memberService.addMemberScore(forumAffiliatedInfo.getMemberId(), EScoreRuleType.LIKE_SUBJECT);
 				}else if(EAffiliatedType.FAV.getCode().equals(forumAffiliatedInfo.getType())){
 					forumDao.updateSubjectFavCount(forumAffiliatedInfo.getQuestionId());
 				}else if(EAffiliatedType.SHARE.getCode().equals(forumAffiliatedInfo.getType())){
 					forumDao.updateSubjectShareCount(forumAffiliatedInfo.getQuestionId());
+					memberService.addMemberScore(forumAffiliatedInfo.getMemberId(), EScoreRuleType.SHARE_SUBJECT);
 				}
 			}else if(forumAffiliatedInfo.getAnswerId() != null){
 				forumDao.addForumAffiliated(forumAffiliatedInfo);

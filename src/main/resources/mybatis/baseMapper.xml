@@ -28,4 +28,14 @@
 		select id,name from t_exam_item;
 	</select>
 	
+	<select id="getNoticeList" resultType="SysNotice" parameterType="int">
+		<![CDATA[
+			select * 
+			from 
+				t_sys_notice 
+			where 
+				type = #{type} and start_time <= now() and end_time >= now();
+		]]>
+	</select>
+	
 </mapper> 

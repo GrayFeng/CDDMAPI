@@ -19,6 +19,7 @@ import com.cdd.mapi.pojo.ForumItem;
 import com.cdd.mapi.pojo.MemberLevel;
 import com.cdd.mapi.pojo.Province;
 import com.cdd.mapi.pojo.ScoreRule;
+import com.cdd.mapi.pojo.SysNotice;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -162,5 +163,10 @@ public class BaseServiceImpl implements IBaseService{
 			log.error(e.getMessage(),e);;
 		}
 		return result;
+	}
+
+	@Override
+	public List<SysNotice> getNoticeList(Integer type) {
+		return baseDao.getNoticeList(type);
 	}
 }

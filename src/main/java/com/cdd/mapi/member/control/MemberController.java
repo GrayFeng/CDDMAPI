@@ -148,6 +148,26 @@ public class MemberController {
 		return ResultUtil.getJsonString(result);
 	}
 	
+	@RequestMapping("logout")
+	@ResponseBody
+	public String logout(String uid,String params){
+		Result result = null;
+		try{
+			if(StringUtils.isNotEmpty(uid) 
+					&& MemberCache.getInstance().isHave(uid)){
+				MemberCache.getInstance().remove(uid);
+				result = Result.getSuccessResult();
+			}
+		}catch (Exception e) {
+			log.error(e.getMessage(),e);
+		}finally{
+			if(result == null){
+				result = new Result(EEchoCode.ERROR.getCode(),"注销失败，缺少认证信息!");
+			}
+		}
+		return ResultUtil.getJsonString(result);
+	}
+	
 	@RequestMapping("updateMember")
 	@ResponseBody
 	public String updateMember(String uid,String params){
@@ -343,11 +363,15 @@ public class MemberController {
 			JSONObject jsonObject = JSONObject.parseObject(params);
 			Integer idolId = jsonObject.getInteger("idolId");
 			if(member != null && idolId != null){
-				MemberRelation memberRelation = new MemberRelation();
-				memberRelation.setFans(member.getId());
-				memberRelation.setPopular_person(idolId);
-				memberService.attention(memberRelation);
-				result = Result.getSuccessResult();
+				if(idolId.equals(member.getId())){
+					MemberRelation memberRelation = new MemberRelation();
+					memberRelation.setFans(member.getId());
+					memberRelation.setPopular_person(idolId);
+					memberService.attention(memberRelation);
+					result = Result.getSuccessResult();
+				}else{
+					result = new Result(EEchoCode.ERROR.getCode(),"不能关注自己");
+				}
 			}
 		}catch (Exception e) {
 			log.error(e.getMessage(),e);

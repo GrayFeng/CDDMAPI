@@ -10,7 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cdd.mapi.cof.dao.ICOFDao;
 import com.cdd.mapi.cof.service.ICOFService;
 import com.cdd.mapi.common.enums.EAffiliatedType;
+import com.cdd.mapi.common.enums.EScoreRuleType;
 import com.cdd.mapi.common.pojo.Page;
+import com.cdd.mapi.member.service.IMemberService;
 import com.cdd.mapi.pojo.COFAffiliatedInfo;
 import com.cdd.mapi.pojo.COFReply;
 import com.cdd.mapi.pojo.COFReplyVO;
@@ -32,12 +34,15 @@ public class COFServiceImpl implements ICOFService{
 	
 	@Autowired
 	private ICOFDao cofDao;
+	@Autowired
+	private IMemberService memberService;
 
 	@Override
 	@Transactional
 	public void addNews(CircleOfFriends cof) {
 		cofDao.addNews(cof);
 		addPhotos(cof.getPhotos(), cof.getMemberId(), cof.getId());
+		memberService.addMemberScore(cof.getMemberId(), EScoreRuleType.ADD_NEWS);
 	}
 
 	@Override
@@ -53,8 +58,10 @@ public class COFServiceImpl implements ICOFService{
 	}
 
 	@Override
+	@Transactional
 	public void addReply(COFReply reply) {
 		cofDao.addReply(reply);
+		memberService.addMemberScore(reply.getMemberId(), EScoreRuleType.REPLY_NEWS);
 	}
 	
 	@Override
@@ -142,12 +149,14 @@ public class COFServiceImpl implements ICOFService{
 	}
 
 	@Override
+	@Transactional
 	public void addCofAffiliated(COFAffiliatedInfo affiliatedInfo) {
 		if(affiliatedInfo.getType() != null){
 			if(affiliatedInfo.getCofId() != null){
 				cofDao.addCofAffiliated(affiliatedInfo);
 				if(EAffiliatedType.LIKE.getCode().equals(affiliatedInfo.getType())){
 					cofDao.updateCofLikeCount(affiliatedInfo.getCofId());
+					memberService.addMemberScore(affiliatedInfo.getMemberId(), EScoreRuleType.LIKE_NEWS);
 				}else if(EAffiliatedType.FAV.getCode().equals(affiliatedInfo.getType())){
 					cofDao.updateCofFavCount(affiliatedInfo.getCofId());
 				}else if(EAffiliatedType.SHARE.getCode().equals(affiliatedInfo.getType())){
@@ -162,6 +171,7 @@ public class COFServiceImpl implements ICOFService{
 					}
 					forwardNews(forwardNews);
 					cofDao.updateCofShareCount(affiliatedInfo.getCofId());
+					memberService.addMemberScore(affiliatedInfo.getMemberId(), EScoreRuleType.SHARE_NEWS);
 				}
 			}
 		}

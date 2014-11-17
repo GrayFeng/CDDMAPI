@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.cdd.mapi.base.service.IBaseService;
+import com.cdd.mapi.base.service.impl.BaseServiceImpl;
 import com.cdd.mapi.common.enums.EEchoCode;
+import com.cdd.mapi.common.enums.ENoticeType;
 import com.cdd.mapi.common.enums.ERemindType;
 import com.cdd.mapi.common.pojo.Result;
 import com.cdd.mapi.common.uitls.ResultUtil;
@@ -22,6 +25,7 @@ import com.cdd.mapi.pojo.Exam;
 import com.cdd.mapi.pojo.ExamRemind;
 import com.cdd.mapi.pojo.LearningPlan;
 import com.cdd.mapi.pojo.Member;
+import com.cdd.mapi.pojo.SysNotice;
 import com.cdd.mapi.remind.service.IRemindService;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Maps;
@@ -35,6 +39,8 @@ public class RemindControl {
 	private IRemindService remindService;
 	@Autowired
 	private IMemberService memberService;
+	@Autowired
+	private IBaseService baseService;
 	
 	@RequestMapping("addExamRemind")
 	@ResponseBody
@@ -139,7 +145,8 @@ public class RemindControl {
 			if(member != null){
 				List<ExamRemind> remindList = remindService.getRemindList(member.getId());
 				Map<String,Object> resultMap = Maps.newHashMap();
-				resultMap.put("notice", "近期考试通知");
+				List<SysNotice> noticeList = baseService.getNoticeList(ENoticeType.REMIND.getCode());
+				resultMap.put("notice", noticeList);
 				resultMap.put("list", remindList);
 				result = Result.getSuccessResult();
 				result.setRe(resultMap);
