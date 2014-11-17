@@ -25,6 +25,16 @@ public class ForumSubjectSearch {
 	
 	private Integer answerMemberId;
 	
+	private String keyword;
+	
+	public String getKeyword() {
+		return keyword;
+	}
+
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
+	}
+
 	public Integer getAnswerMemberId() {
 		return answerMemberId;
 	}

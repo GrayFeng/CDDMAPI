@@ -294,4 +294,62 @@ public class MemberServiceImpl implements IMemberService {
 		return 3;
 	}
 
+	@Override
+	public List<MemberVO> getOtherMemberFansList(Integer otherMemberId,
+			Integer memberId, Integer pageNum) {
+		List<MemberVO> list = null;
+		Integer prizeCount = memberDao.getFansCount(memberId);
+		if(prizeCount != null && prizeCount > 0){
+			Page page = new Page();
+			page.setTotal(prizeCount);
+			page.setSize(20);
+			page.setNumber(pageNum == null ? 1 : pageNum);
+			if(page.getTotalPages() < page.getNumber()){
+				return list;
+			}
+			Map<String,Object> paramsMap = Maps.newHashMap();
+			paramsMap.put("startNum", page.getStartNum());
+			paramsMap.put("size", page.getSize());
+			paramsMap.put("memberId", memberId);
+			paramsMap.put("otherMemberId", otherMemberId);
+			List<Member> memberList = memberDao.getOtherMemberFansList(paramsMap);
+			if(memberList != null && !memberList.isEmpty()){
+				list = Lists.newArrayList();
+				for(Member member : memberList){
+					list.add(transformMember(member));
+				}
+			}
+		}
+		return list;
+	}
+
+	@Override
+	public List<MemberVO> getOtherMemberIdolList(Integer otherMemberId,
+			Integer memberId, Integer pageNum) {
+		List<MemberVO> list = null;
+		Integer prizeCount = memberDao.getIdolCount(memberId);
+		if(prizeCount != null && prizeCount > 0){
+			Page page = new Page();
+			page.setTotal(prizeCount);
+			page.setSize(20);
+			page.setNumber(pageNum == null ? 1 : pageNum);
+			if(page.getTotalPages() < page.getNumber()){
+				return list;
+			}
+			Map<String,Object> paramsMap = Maps.newHashMap();
+			paramsMap.put("startNum", page.getStartNum());
+			paramsMap.put("size", page.getSize());
+			paramsMap.put("memberId", memberId);
+			paramsMap.put("otherMemberId", otherMemberId);
+			List<Member> memberList = memberDao.getOtherMemberIdolList(paramsMap);
+			if(memberList != null && !memberList.isEmpty()){
+				list = Lists.newArrayList();
+				for(Member member : memberList){
+					list.add(transformMember(member));
+				}
+			}
+		}
+		return list;
+	}
+
 }

@@ -36,6 +36,8 @@ public interface IForumDao {
 	
 	public List<Map<String,Object>> getSubjectList(ForumSubjectSearch params);
 	
+	public List<Map<String,Object>> searchSubject(ForumSubjectSearch params);
+	
 	public Integer getHotSubjectCount(ForumSubjectSearch params);
 	
 	public List<Map<String,Object>> getHotSubjectList(ForumSubjectSearch params);

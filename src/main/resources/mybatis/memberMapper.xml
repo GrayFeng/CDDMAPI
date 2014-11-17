@@ -90,6 +90,22 @@
 			where m.status = 0 order by mr.create_time desc limit #{startNum},#{size}
 	 	</select>
 	 	
+	 	<select id="getOtherMemberFansList" resultType="Member" parameterType="Map">
+	 	    select m.<include refid="memberValues"/>,mr.relation from t_member m inner join 
+	 	    (select t1.fans,t1.create_time,
+	 	    	case when t1.fans = tf.popular_person and t1.fans = ti.fans
+	 	    	then 1
+	 	    	when t1.fans = tf.popular_person
+	 	    	then 2
+	 	    	when t1.fans = ti.fans
+	 	    	then 0
+	 	    	else 3 end  as relation from 
+	 	    		(SELECT * FROM t_member_relation where popular_person = #{otherMemberId}) as t1 
+	 	    		left join t_member_relation as tf on tf.fans = #{memberId} and tf.popular_person = t1.fans
+	 	    		left join t_member_relation as ti on ti.popular_person = #{memberId} and ti.fans = t1.fans) mr on m.id = mr.fans 
+			where m.status = 0 order by mr.create_time desc limit #{startNum},#{size}
+	 	</select>
+	 	
 	 	<select id="getIdolCount" resultType="int" parameterType="Integer">
 	 	    select count(popular_person) as idolCount from t_member_relation where fans = #{memberId}
 	 	</select>
@@ -101,6 +117,22 @@
 	 	    	then 1 else 2 end  as relation from 
 	 	    		(SELECT * FROM t_member_relation where fans = #{memberId}) as t1 
 	 	    		left join t_member_relation as t2 on t2.popular_person = t1.fans and t1.popular_person = t2.fans) mr on m.id = mr.popular_person 
+			where m.status = 0 order by mr.create_time desc limit #{startNum},#{size}
+	 	</select>
+	 	
+	 	<select id="getOtherMemberIdolList" resultType="Member" parameterType="Map">
+	 	    select m.<include refid="memberValues"/>,mr.relation from t_member m 
+	 	    inner join (select t1.popular_person,t1.create_time,
+	 	    	case when t1.popular_person = tf.popular_person and t1.popular_person = ti.fans
+	 	    	then 1
+	 	    	when t1.popular_person = tf.popular_person
+	 	    	then 2
+	 	    	when t1.popular_person = ti.fans
+	 	    	then 0
+	 	    	else 3 end  as relation from  
+	 	    		(SELECT * FROM t_member_relation where fans = #{otherMemberId}) as t1 
+	 	    		left join t_member_relation as tf on tf.fans = #{memberId} and tf.popular_person = t1.popular_person
+	 	    		left join t_member_relation as ti on ti.popular_person = #{memberId} and ti.fans = t1.popular_person) mr on m.id = mr.popular_person 
 			where m.status = 0 order by mr.create_time desc limit #{startNum},#{size}
 	 	</select>
 	 	

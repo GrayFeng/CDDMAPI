@@ -41,5 +41,7 @@ public interface IForumService {
 	public void addForumAffiliated(ForumAffiliatedInfo forumAffiliatedInfo);
 	
 	public Integer findForumAffiliatedInfo(ForumAffiliatedInfo forumAffiliatedInfo);
+	
+	public List<ForumSubjectVO> searchSubject(ForumSubjectSearch params);
 
 }

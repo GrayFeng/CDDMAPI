@@ -56,6 +56,10 @@ public interface IMemberService {
 	
 	public List<MemberVO> getIdolList(Integer memberId,Integer pageNum);
 	
+	public List<MemberVO> getOtherMemberFansList(Integer otherMemberId,Integer memberId,Integer pageNum);
+	
+	public List<MemberVO> getOtherMemberIdolList(Integer otherMemberId,Integer memberId,Integer pageNum);
+	
 	public List<PrivateLetterVO> getPrivateLetterList(Integer memberId,Integer pageNum);
 	
 	public void sendPrivateMessage(PrivateLetter letter);

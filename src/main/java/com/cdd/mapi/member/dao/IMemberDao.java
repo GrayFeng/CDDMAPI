@@ -51,6 +51,10 @@ public interface IMemberDao {
 	
 	public List<Member> getIdolList(Map<String,Object> paramsMap);
 	
+	public List<Member> getOtherMemberFansList(Map<String,Object> paramsMap);
+	
+	public List<Member> getOtherMemberIdolList(Map<String,Object> paramsMap);
+	
 	public Integer getPrivateLetterCount(Integer memberId);
 	
 	public List<PrivateLetterVO> getPrivateLetterList(PrivateLetterListSearch search);

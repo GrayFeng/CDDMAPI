@@ -417,14 +417,17 @@ public class MemberController {
 			JSONObject jsonObject = JSONObject.parseObject(params);
 			Integer pageNum = jsonObject.getInteger("pageNum");
 			Integer memberId = jsonObject.getInteger("memberId");
-			if(memberId == null && member != null){
-				memberId = member.getId();
+			List<MemberVO> list = null;
+			if(member != null){
+				if(memberId == null){
+					memberId = member.getId();
+					list = memberService.getIdolList(memberId, pageNum);
+				}else{
+					list = memberService.getOtherMemberIdolList(memberId, member.getId(), pageNum);
+				}
 			}
-			if(memberId != null){
-				List<MemberVO> list = memberService.getIdolList(memberId, pageNum);
-				result = Result.getSuccessResult();
-				result.setRe(list);
-			}
+			result = Result.getSuccessResult();
+			result.setRe(list);
 		}catch (Exception e) {
 			log.error(e.getMessage(),e);
 		}finally{
@@ -444,14 +447,17 @@ public class MemberController {
 			JSONObject jsonObject = JSONObject.parseObject(params);
 			Integer pageNum = jsonObject.getInteger("pageNum");
 			Integer memberId = jsonObject.getInteger("memberId");
-			if(memberId == null && member != null){
-				memberId = member.getId();
+			List<MemberVO> list = null;
+			if(member != null){
+				if(memberId == null){
+					memberId = member.getId();
+					list = memberService.getFansList(memberId, pageNum);
+				}else{
+					list = memberService.getOtherMemberFansList(memberId, member.getId(), pageNum);
+				}
 			}
-			if(memberId != null){
-				List<MemberVO> list = memberService.getFansList(memberId, pageNum);
-				result = Result.getSuccessResult();
-				result.setRe(list);
-			}
+			result = Result.getSuccessResult();
+			result.setRe(list);
 		}catch (Exception e) {
 			log.error(e.getMessage(),e);
 		}finally{

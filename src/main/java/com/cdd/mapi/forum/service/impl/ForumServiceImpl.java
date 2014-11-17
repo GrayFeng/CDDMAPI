@@ -2,11 +2,16 @@ package com.cdd.mapi.forum.service.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.cdd.mapi.common.enums.EAffiliatedType;
 import com.cdd.mapi.common.enums.EScoreRuleType;
 import com.cdd.mapi.common.pojo.Page;
@@ -20,6 +25,9 @@ import com.cdd.mapi.pojo.ForumAnswerVO;
 import com.cdd.mapi.pojo.ForumSubject;
 import com.cdd.mapi.pojo.ForumSubjectSearch;
 import com.cdd.mapi.pojo.ForumSubjectVO;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -32,10 +40,21 @@ import com.google.common.collect.Maps;
 @Service
 public class ForumServiceImpl implements IForumService{
 	
+	private Logger log = LoggerFactory.getLogger(ForumServiceImpl.class);
+	
 	@Autowired
 	private IForumDao forumDao;
 	@Autowired
 	private IMemberService memberService;
+	
+	private final LoadingCache<String, List<?>> searchDataCache = CacheBuilder
+			.newBuilder().expireAfterWrite(3, TimeUnit.MINUTES)
+			.maximumSize(600).build(new CacheLoader<String, List<?>>() {
+				@Override
+				public List<?> load(String key) throws Exception {
+					return searchSubjectFromCache(key);
+				}
+		});
 	
 	@Transactional
 	public void addSubject(ForumSubject forumSubject){
@@ -273,6 +292,51 @@ public class ForumServiceImpl implements IForumService{
 	public Integer findForumAffiliatedInfo(
 			ForumAffiliatedInfo forumAffiliatedInfo) {
 		return forumDao.findForumAffiliatedInfo(forumAffiliatedInfo);
+	}
+
+	@Override
+	public List<ForumSubjectVO> searchSubject(ForumSubjectSearch params) {
+		List<ForumSubjectVO> list = null;
+		Map<String,Object> paramsMap = Maps.newHashMap();
+		paramsMap.put("keyword", params.getKeyword());
+		paramsMap.put("itemId", params.getItemId());
+		paramsMap.put("subItemId", params.getSubItemId());
+		List<Map<String, Object>> mapList = null;
+		try {
+			mapList = (List<Map<String,Object>>)searchDataCache.get(JSON.toJSONString(paramsMap));
+		} catch (ExecutionException e) {
+			log.error(e.getMessage(), e);
+		}
+		if(mapList != null){
+			Integer prizeCount = mapList.size();
+			if(prizeCount != null && prizeCount > 0){
+				Page page = new Page();
+				page.setTotal(prizeCount);
+				page.setSize(20);
+				Integer pageNum = params.getPageNum() == null ? 1 : params.getPageNum();
+				page.setNumber(pageNum);
+				if(page.getTotalPages() < pageNum){
+					return list;
+				}
+				list = Lists.newArrayList();
+				for(int i = 0;i < page.getSize() ; i++){
+					int index = page.getStartNum() + i;
+					if(index < mapList.size()){
+						Map<String,Object> mapInfo = mapList.get(index);
+						ForumSubjectVO subjectVO = packageSubjectVo(mapInfo);
+						list.add(subjectVO);
+					}else{
+						break;
+					}
+				}
+			}
+		}
+		return list;
+	}
+	
+	private List<Map<String,Object>> searchSubjectFromCache(String params){
+		ForumSubjectSearch subjectSearch = JSON.parseObject(params, ForumSubjectSearch.class);
+		return forumDao.searchSubject(subjectSearch);
 	}
 
 }

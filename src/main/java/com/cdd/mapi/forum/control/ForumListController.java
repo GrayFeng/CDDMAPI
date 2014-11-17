@@ -83,6 +83,13 @@ public class ForumListController {
 		return ResultUtil.getJsonString(result);
 	}
 	
+	@RequestMapping("search")
+	@ResponseBody
+	public String searchSubjectList(String uid,String params){
+		Result result = getSubjectList(uid, params,SubjectListType.SEARCH);
+		return ResultUtil.getJsonString(result);
+	}
+	
 	@RequestMapping("hotSubjectList")
 	@ResponseBody
 	@NotNeedLogin
@@ -120,7 +127,7 @@ public class ForumListController {
 	}
 	
 	private enum SubjectListType{
-		LIST,HOT_LIST,MY_LIST,MY_ANSWER,FAV_LIST,MEMBER_SUBJECT_LIST
+		LIST,HOT_LIST,MY_LIST,MY_ANSWER,FAV_LIST,MEMBER_SUBJECT_LIST,SEARCH
 	}
 	
 	private Result getSubjectList(String uid,String params,SubjectListType type){
@@ -135,6 +142,7 @@ public class ForumListController {
 			Integer itemId = jsonObject.getInteger("itemId");
 			Integer subItemId = jsonObject.getInteger("subItemId");
 			Integer memberId = jsonObject.getInteger("memberId");
+			String keyword = jsonObject.getString("keyword");
 			if(memberId == null){
 				Member member = memberService.getMemberByUID(uid);
 				if(member != null){
@@ -168,6 +176,16 @@ public class ForumListController {
 			case FAV_LIST:
 				forumSubjectSearch.setMemberId(memberId);
 				list = forumService.getFavSubjectList(forumSubjectSearch);
+				break;
+			case SEARCH:
+				if(StringUtils.isEmpty(keyword)){
+					result = new Result(EEchoCode.ERROR.getCode(),"缺少查询关键字");
+					return result;
+				}
+				forumSubjectSearch.setItemId(itemId);
+				forumSubjectSearch.setSubItemId(subItemId);
+				forumSubjectSearch.setKeyword(keyword);
+				list = forumService.searchSubject(forumSubjectSearch);
 				break;
 			default:
 				break;
