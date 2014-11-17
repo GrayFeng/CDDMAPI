@@ -181,11 +181,11 @@ public class BaseServiceImpl implements IBaseService{
         }
 
         String channel = verStr.substring(0, 3);
-        String verNum = verStr.substring(3);
+        Integer verNum = Ints.tryParse(verStr.substring(3));
 
         for (VersionInfo versionInfo : versionList) {
             if (versionInfo.getChannel().equalsIgnoreCase(channel)) {
-            	versionInfo.setUpgrade(versionInfo.getNewver() > Ints.tryParse(verNum));
+            	versionInfo.setUpgrade(versionInfo.getNewver() > verNum);
                 return versionInfo;
             }
         }

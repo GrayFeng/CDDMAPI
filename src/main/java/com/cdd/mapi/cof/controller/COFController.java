@@ -120,7 +120,7 @@ public class COFController {
 		return ResultUtil.getJsonString(result);
 	}
 	
-	@RequestMapping("searchNews")
+	@RequestMapping("search")
 	@ResponseBody
 	public String searchNews(String uid,String params){
 		Result result = null;
