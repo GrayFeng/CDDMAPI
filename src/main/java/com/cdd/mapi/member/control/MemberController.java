@@ -342,8 +342,11 @@ public class MemberController {
 	public String memberInfo(String uid,String params){
 		Result result = null;
 		try{
-			JSONObject jsonObject = JSON.parseObject(params);
-			Integer memberId = jsonObject.getInteger("memberId");
+			Integer memberId =null;
+			if(StringUtils.isNotEmpty(params)){
+				JSONObject jsonObject = JSON.parseObject(params);
+				memberId = jsonObject.getInteger("memberId");
+			}
 			Member member = memberService.getMemberByUID(uid);
 			if(memberId == null && member != null){
 				memberId = member.getId();
@@ -466,9 +469,13 @@ public class MemberController {
 		Result result = null;
 		try{
 			Member member = memberService.getMemberByUID(uid);
-			JSONObject jsonObject = JSONObject.parseObject(params);
-			Integer pageNum = jsonObject.getInteger("pageNum");
-			Integer memberId = jsonObject.getInteger("memberId");
+			Integer pageNum = null;
+			Integer memberId =null;
+			if(StringUtils.isNotEmpty(params)){
+				JSONObject jsonObject = JSON.parseObject(params);
+				memberId = jsonObject.getInteger("memberId");
+				pageNum = jsonObject.getInteger("pageNum");
+			}
 			List<MemberVO> list = null;
 			if(member != null){
 				if(memberId == null){
@@ -496,9 +503,13 @@ public class MemberController {
 		Result result = null;
 		try{
 			Member member = memberService.getMemberByUID(uid);
-			JSONObject jsonObject = JSONObject.parseObject(params);
-			Integer pageNum = jsonObject.getInteger("pageNum");
-			Integer memberId = jsonObject.getInteger("memberId");
+			Integer pageNum = null;
+			Integer memberId =null;
+			if(StringUtils.isNotEmpty(params)){
+				JSONObject jsonObject = JSON.parseObject(params);
+				memberId = jsonObject.getInteger("memberId");
+				pageNum = jsonObject.getInteger("pageNum");
+			}
 			List<MemberVO> list = null;
 			if(member != null){
 				if(memberId == null){
