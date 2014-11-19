@@ -2,10 +2,12 @@ package com.cdd.mapi.common.uitls;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cn.jpush.api.JPushClient;
+import cn.jpush.api.push.PushResult;
 import cn.jpush.api.push.model.Platform;
 import cn.jpush.api.push.model.PushPayload;
 import cn.jpush.api.push.model.audience.Audience;
@@ -48,7 +50,7 @@ public class JPushUtils {
 		return jpushClient;
 	}
 	
-	public void sendMsg(List<String> aliasList,String msg){
+	public boolean sendMsg(List<String> aliasList,String msg){
 		if(aliasList !=null && aliasList.size()>0){
 			PushPayload pushPayload = PushPayload.newBuilder()
 					.setPlatform(Platform.all())
@@ -56,21 +58,48 @@ public class JPushUtils {
 					.setNotification(Notification.alert(msg)).build();
 			try {
 				JPushClient jpushClient = JPushUtils.getInstance().getClient();
-				jpushClient.sendPush(pushPayload);
+				PushResult result = jpushClient.sendPush(pushPayload);
+				if(result != null){
+					return result.isResultOK();
+				}
 			} catch (Exception e) {
 				log.error(e.getMessage(),e);
 			}
 		}
+		return false;
 	}
 	
-	public void sendMsgAll(String msg){
+	public boolean sendMsg(String alias,String msg){
+		if(StringUtils.isNotEmpty(alias)){
+			PushPayload pushPayload = PushPayload.newBuilder()
+					.setPlatform(Platform.all())
+					.setAudience(Audience.alias(alias))
+					.setNotification(Notification.alert(msg)).build();
+			try {
+				JPushClient jpushClient = JPushUtils.getInstance().getClient();
+				PushResult result = jpushClient.sendPush(pushPayload);
+				if(result != null){
+					return result.isResultOK();
+				}
+			} catch (Exception e) {
+				log.error(e.getMessage(),e);
+			}
+		}
+		return false;
+	}
+	
+	public boolean sendMsgAll(String msg){
 		try {
 			PushPayload pushPayload = PushPayload.alertAll(msg);
 			JPushClient jpushClient = JPushUtils.getInstance().getClient();
-			jpushClient.sendPush(pushPayload);
+			PushResult result = jpushClient.sendPush(pushPayload);
+			if(result != null){
+				return result.isResultOK();
+			}
 		} catch (Exception e) {
 			log.error(e.getMessage(),e);
 		}
+		return false;
 	}
 	
 	public static void main(String[] args) {

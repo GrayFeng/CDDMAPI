@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cdd.mapi.common.enums.ERemindType;
+import com.cdd.mapi.common.pojo.Page;
 import com.cdd.mapi.pojo.Exam;
 import com.cdd.mapi.pojo.ExamRemind;
 import com.cdd.mapi.pojo.LearningPlan;
+import com.cdd.mapi.pojo.Remind4Push;
 import com.cdd.mapi.remind.dao.IRemindDao;
 import com.cdd.mapi.remind.service.IRemindService;
 import com.google.common.collect.Maps;
@@ -110,6 +112,45 @@ public class RemindServiceImpl implements IRemindService{
 		paramsMap.put("memberId", memberId);
 		paramsMap.put("id", id);
 		return remindDao.getRemindInfo(paramsMap);
+	}
+
+	@Override
+	public Integer getRemindPageCount4Push(String startTime, String endTime,
+			Integer type) {
+		Map<String,Object> paramsMap = Maps.newHashMap();
+		paramsMap.put("startTime", startTime);
+		paramsMap.put("endTime", endTime);
+		paramsMap.put("type", type);
+		Integer prizeCount = remindDao.getRemindCount4Push(paramsMap);
+		Page page = new Page();
+		page.setTotal(prizeCount);
+		page.setSize(1000);
+		page.setNumber(1);
+		return page.getTotalPages();
+	}
+
+	@Override
+	public List<Remind4Push> getRemindList4Push(String startTime,
+			String endTime, Integer type, Integer pageNum) {
+		List<Remind4Push> list = null;
+		Map<String,Object> paramsMap = Maps.newHashMap();
+		paramsMap.put("startTime", startTime);
+		paramsMap.put("endTime", endTime);
+		paramsMap.put("type", type);
+		Integer prizeCount = remindDao.getRemindCount4Push(paramsMap);
+		if(prizeCount != null && prizeCount > 0){
+			Page page = new Page();
+			page.setTotal(prizeCount);
+			page.setSize(1000);
+			pageNum = pageNum == null ? 1 : pageNum;
+			page.setNumber(pageNum);
+			if(page.getTotalPages() >= pageNum){
+				paramsMap.put("startNum", page.getStartNum());
+				paramsMap.put("size", page.getSize());
+				list = remindDao.getRemindList4Push(paramsMap);
+			}
+		}
+		return list;
 	}
 
 }

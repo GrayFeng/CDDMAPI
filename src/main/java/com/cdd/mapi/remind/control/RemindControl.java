@@ -1,5 +1,8 @@
 package com.cdd.mapi.remind.control;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -55,18 +58,32 @@ public class RemindControl {
 				if(exam != null){
 					Integer remnindCount = remindService.isExistRemind(member.getId(), examRemind.getItemId(),examRemind.getType());
 					if(remnindCount == null || remnindCount == 0){
+						boolean canSave = true;
 						examRemind.setTitle(exam.getName());
+						Date now = new Date();
+						String remindTime = null;
 						if(examRemind.getType() == ERemindType.EXAM.getCode()){
-							examRemind.setRemindTime(exam.getExamTime());
+							remindTime = exam.getExamTime();
 						}else if(examRemind.getType() == ERemindType.SIGN_UP.getCode()){
-							examRemind.setRemindTime(exam.getSignUpTime());
+							remindTime = exam.getSignUpTime();
 						}
-						examRemind.setStartTime(examRemind.getRemindTime());
-						examRemind.setEndTime(examRemind.getRemindTime());
-						examRemind.setMemberId(member.getId());
-						examRemind.setDes(exam.getDes());
-						remindService.addExamRemind(examRemind);
-						result = Result.getSuccessResult();
+						if(remindTime != null){
+							SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+							Date remindDate = sf.parse(remindTime);
+							if(remindDate.before(now)){
+								canSave = false;
+								result = new Result(EEchoCode.ERROR.getCode(),"很抱歉，该考试已经开始，无法制定提醒");
+							}
+						}
+						if(canSave && remindTime != null){
+							examRemind.setRemindTime(remindTime);
+							examRemind.setStartTime(examRemind.getRemindTime());
+							examRemind.setEndTime(examRemind.getRemindTime());
+							examRemind.setMemberId(member.getId());
+							examRemind.setDes(exam.getDes());
+							remindService.addExamRemind(examRemind);
+							result = Result.getSuccessResult();
+						}
 					}else{
 						result = new Result(EEchoCode.ERROR.getCode(),"您已制定过了此考试的考试提醒");
 					}
@@ -95,13 +112,33 @@ public class RemindControl {
 					&& StringUtils.isNotEmpty(learningPlan.getTitle())
 					&& StringUtils.isNotEmpty(learningPlan.getStartTime())
 					&& StringUtils.isNotEmpty(learningPlan.getEndTime())){
-				Integer planCount = remindService.isExistLearningPlan(member.getId(), learningPlan.getStartTime());
-				if(planCount == null || planCount == 0){
-					learningPlan.setMemberId(member.getId());
-					remindService.addLearningPlan(learningPlan);
-					result = Result.getSuccessResult();
-				}else{
-					result = new Result(EEchoCode.ERROR.getCode(),"这段时间内您已经设置了其他的学习计划");
+				boolean canSave = true;
+				try{
+					SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+					Date startDate = sf.parse(learningPlan.getStartTime());
+					Calendar c = Calendar.getInstance();
+					c.set(Calendar.HOUR_OF_DAY, 0);
+					c.set(Calendar.MINUTE, 0);
+					c.set(Calendar.SECOND, 0);
+					c.set(Calendar.MILLISECOND, 0);
+					if(startDate.before(c.getTime())){
+						canSave = false;
+						result = new Result(EEchoCode.ERROR.getCode(),"开始时间有误，请选择正确时间");
+					}
+				}catch(Exception e){
+					log.error(e.getMessage(),e);
+					canSave = false;
+					result = new Result(EEchoCode.ERROR.getCode(),"时间格式错误，请选择正确时间");
+				}
+				if(canSave){
+					Integer planCount = remindService.isExistLearningPlan(member.getId(), learningPlan.getStartTime());
+					if(planCount == null || planCount == 0){
+						learningPlan.setMemberId(member.getId());
+						remindService.addLearningPlan(learningPlan);
+						result = Result.getSuccessResult();
+					}else{
+						result = new Result(EEchoCode.ERROR.getCode(),"这段时间内您已经设置了其他的学习计划");
+					}
 				}
 			}
 		}catch (Exception e) {

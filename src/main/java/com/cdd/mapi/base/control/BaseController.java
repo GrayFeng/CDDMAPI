@@ -1,5 +1,6 @@
 package com.cdd.mapi.base.control;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -20,6 +21,7 @@ import com.cdd.mapi.common.cache.MemberCache;
 import com.cdd.mapi.common.pojo.LoginInfo;
 import com.cdd.mapi.common.pojo.Result;
 import com.cdd.mapi.common.uitls.ResultUtil;
+import com.cdd.mapi.pojo.PushMessage;
 import com.cdd.mapi.pojo.VersionInfo;
 import com.google.common.collect.Maps;
 
@@ -36,6 +38,15 @@ public class BaseController {
 	
 	@Autowired
 	private IBaseService baseService;
+	
+	@RequestMapping("test")
+	@ResponseBody
+	@NotNeedLogin
+	@NotNeedUID
+	public String test(){
+		List<PushMessage> list = baseService.getPushMsgList();
+		return ResultUtil.getJsonString(list);
+	}
 	
 	@RequestMapping("getCityList")
 	@ResponseBody

@@ -142,4 +142,34 @@
         ]]>
     </select>
     
+    <select id="getRemindCount4Push" parameterType="Map" resultType="int">
+    	<![CDATA[
+	    	select 
+	    		count(id) 
+	    	from 
+	    		t_exam_remind er 
+			where 
+				remind_time >= #{startTime} and 
+				remind_time <= #{endTime} and 
+				type = #{type}
+			order by er.create_time
+		 ]]>
+    </select>
+    
+     <select id="getRemindList4Push" parameterType="Map" resultType="Remind4Push">
+	     <![CDATA[
+	    	select 
+	    		type,member_id,title,m.device_flag 
+	    	from 
+	    		t_exam_remind er 
+	    	left join 
+	    		t_member m on m.id = er.member_id
+			where 
+				remind_time >= #{startTime} and 
+				remind_time <= #{endTime} and 
+				type = #{type}
+			order by er.create_time
+			limit #{startNum},#{size}
+		]]>
+    </select>
 </mapper> 

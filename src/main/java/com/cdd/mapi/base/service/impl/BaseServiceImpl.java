@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cdd.mapi.base.dao.IBaseDao;
 import com.cdd.mapi.base.service.IBaseService;
@@ -18,6 +19,7 @@ import com.cdd.mapi.pojo.ExamItem;
 import com.cdd.mapi.pojo.ForumItem;
 import com.cdd.mapi.pojo.MemberLevel;
 import com.cdd.mapi.pojo.Province;
+import com.cdd.mapi.pojo.PushMessage;
 import com.cdd.mapi.pojo.ScoreRule;
 import com.cdd.mapi.pojo.SysNotice;
 import com.cdd.mapi.pojo.VersionInfo;
@@ -191,4 +193,27 @@ public class BaseServiceImpl implements IBaseService{
         }
 		return null;
 	}
+
+	@Override
+	public void addPushMsg(List<PushMessage> msgList) {
+		baseDao.addPushMsg(msgList);
+	}
+
+	@Override
+	public List<PushMessage> getPushMsgList() {
+		return baseDao.getPushMsgList();
+	}
+
+	@Override
+	public void updatePushMsgSuccessStatus(List<Integer> msgIds) {
+		baseDao.updatePushMsgSuccessStatus(msgIds);
+	}
+
+	@Override
+	public void updatePushMsgFailStatus(List<Integer> msgIds) {
+		baseDao.updatePushMsgFailStatus(msgIds);
+	}
+	
+	
+
 }

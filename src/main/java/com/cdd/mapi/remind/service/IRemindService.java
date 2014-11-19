@@ -1,10 +1,12 @@
 package com.cdd.mapi.remind.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.cdd.mapi.pojo.Exam;
 import com.cdd.mapi.pojo.ExamRemind;
 import com.cdd.mapi.pojo.LearningPlan;
+import com.cdd.mapi.pojo.Remind4Push;
 
 /**
  * CDDMAPI
@@ -33,5 +35,9 @@ public interface IRemindService {
 	public List<LearningPlan> getExpertLearningPlanList(String startTime,String endTime);
 	
 	public ExamRemind getRemindInfo(Integer memberId,Integer id);
+	
+	public Integer getRemindPageCount4Push(String startTime,String endTime,Integer type);
+	
+	public List<Remind4Push> getRemindList4Push(String startTime,String endTime,Integer type,Integer pageNum);
 
 }

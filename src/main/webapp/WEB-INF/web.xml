@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://java.sun.com/xml/ns/javaee" 
-	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
-	
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:web="http://xmlns.jcp.org/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd http://xmlns.jcp.org/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
 	<context-param>
 		<param-name>log4jConfigLocation</param-name>
 		<param-value>log4j.properties</param-value>
 	</context-param>
-	<!-- Spring ApplicationContext -->
+
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
@@ -16,7 +15,7 @@
 			classpath*:spring/*.xml
 		</param-value>
 	</context-param>
-	<!-- 转码fileter -->
+
 	<filter>
 		<filter-name>utfEncodingFilter</filter-name>
 		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -25,28 +24,31 @@
 			<param-value>utf-8</param-value>
 		</init-param>
 	</filter>
-	 
-  <filter>
-    <display-name>commonFilter</display-name>
-    <filter-name>commonFilter</filter-name>
-    <filter-class>com.cdd.mapi.filter.CommonFilter</filter-class>
-  </filter>
-  
-  <filter-mapping>
-    <filter-name>commonFilter</filter-name>
-    <url-pattern>/api/*</url-pattern>
-  </filter-mapping>
-  
+
+	<filter>
+		<display-name>commonFilter</display-name>
+		<filter-name>commonFilter</filter-name>
+		<filter-class>com.cdd.mapi.filter.CommonFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>commonFilter</filter-name>
+		<url-pattern>/api/*</url-pattern>
+	</filter-mapping>
+
 	<filter-mapping>
 		<filter-name>utfEncodingFilter</filter-name>
 		<url-pattern>*.do</url-pattern>
 	</filter-mapping>
-	<!--Spring ApplicationContext 载入 -->
+
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
-	
-	<!-- srping controller Mapping -->
+
+	<listener>
+		<listener-class>com.cdd.mapi.common.InitListener</listener-class>
+	</listener>
+
 	<servlet>
 		<servlet-name>mvc</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -56,12 +58,12 @@
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-	
+
 	<servlet-mapping>
 		<servlet-name>mvc</servlet-name>
 		<url-pattern>*.do</url-pattern>
 	</servlet-mapping>
-	
+
 	<welcome-file-list>
 		<welcome-file>/jsp/index.jsp</welcome-file>
 	</welcome-file-list>

@@ -9,6 +9,7 @@ import com.cdd.mapi.common.annotation.MyBatisRepository;
 import com.cdd.mapi.pojo.Exam;
 import com.cdd.mapi.pojo.ExamRemind;
 import com.cdd.mapi.pojo.LearningPlan;
+import com.cdd.mapi.pojo.Remind4Push;
 
 /**
  * CDDMAPI
@@ -39,5 +40,9 @@ public interface IRemindDao {
 	public List<LearningPlan> getExpertLearningPlanList(Map<String,Object> paramsMap);
 	
 	public ExamRemind getRemindInfo(Map<String,Object> paramsMap);
+	
+	public Integer getRemindCount4Push(Map<String,Object> paramsMap);
+	
+	public List<Remind4Push> getRemindList4Push(Map<String,Object> paramsMap);	
 	
 }

@@ -1,6 +1,7 @@
 package com.cdd.mapi.base.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
@@ -10,6 +11,7 @@ import com.cdd.mapi.pojo.ExamItem;
 import com.cdd.mapi.pojo.ForumItem;
 import com.cdd.mapi.pojo.MemberLevel;
 import com.cdd.mapi.pojo.Province;
+import com.cdd.mapi.pojo.PushMessage;
 import com.cdd.mapi.pojo.ScoreRule;
 import com.cdd.mapi.pojo.SysNotice;
 import com.cdd.mapi.pojo.VersionInfo;
@@ -40,5 +42,14 @@ public interface IBaseDao {
 	public List<SysNotice> getNoticeList(Integer type);
 	
 	public List<VersionInfo> getVersionList();
+	
+	public void addPushMsg(List<PushMessage> msgList);
+	
+	public void updatePushMsgSuccessStatus(List<Integer> msgIds);
+	
+	public void updatePushMsgFailStatus(List<Integer> msgIds);
+	
+	public List<PushMessage> getPushMsgList();
+	
 
 }
