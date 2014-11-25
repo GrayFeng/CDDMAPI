@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+        xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+       
+	<bean id="pushMessage" class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass" value="com.cdd.mapi.schedule.PushMessageJob">
+		</property>
+	</bean>
+	
+	<bean id="cronTriggerPushMessageJob" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="pushMessage"></property>
+		<property name="cronExpression" value="0 0/3 * * * ?"></property>
+	</bean>
+	
+	<bean id="examRemindJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass" value="com.cdd.mapi.schedule.ExamRemindJob">
+		</property>
+	</bean>
+	
+	<bean id="cronTriggerExamRemindJob" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="examRemindJob"></property>
+		<property name="cronExpression" value="0 0 7 * * ?"></property>
+	</bean>
+	
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="cronTriggerPushMessageJob"/>
+				<ref bean="cronTriggerExamRemindJob"/>
+			</list>
+		</property>
+	</bean>
+</beans>

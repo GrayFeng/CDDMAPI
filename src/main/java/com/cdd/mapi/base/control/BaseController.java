@@ -39,15 +39,6 @@ public class BaseController {
 	@Autowired
 	private IBaseService baseService;
 	
-	@RequestMapping("test")
-	@ResponseBody
-	@NotNeedLogin
-	@NotNeedUID
-	public String test(){
-		List<PushMessage> list = baseService.getPushMsgList();
-		return ResultUtil.getJsonString(list);
-	}
-	
 	@RequestMapping("getCityList")
 	@ResponseBody
 	@NotNeedLogin

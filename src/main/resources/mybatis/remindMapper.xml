@@ -30,6 +30,7 @@
         	city_id as cityId ,
         	DATE_FORMAT(exam_time,'%Y-%m-%d %T') as examTime,
         	DATE_FORMAT(sign_up_time,'%Y-%m-%d %T') as signUpTime,
+        	DATE_FORMAT(sign_up_end_time,'%Y-%m-%d %T') as signUpEndTime,
         	DATE_FORMAT(create_time,'%Y-%m-%d %T') as createTime,
         	item_id as itemId,
         	status,
@@ -159,14 +160,20 @@
      <select id="getRemindList4Push" parameterType="Map" resultType="Remind4Push">
 	     <![CDATA[
 	    	select 
-	    		type,member_id,title,m.device_flag 
+	    		type,
+	    		member_id,
+	    		title,
+	    		m.device_flag,
+	    		remind_time as remindTime,
+	    		start_time as startTime,
+	    		end_time as endTime 
 	    	from 
 	    		t_exam_remind er 
 	    	left join 
 	    		t_member m on m.id = er.member_id
 			where 
-				remind_time >= #{startTime} and 
-				remind_time <= #{endTime} and 
+				start_time >= #{startTime} and 
+				end_time <= #{endTime} and 
 				type = #{type}
 			order by er.create_time
 			limit #{startNum},#{size}

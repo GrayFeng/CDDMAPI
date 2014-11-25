@@ -17,6 +17,8 @@ public class Exam {
 	
 	private String signUpTime;
 	
+	private String signUpEndTime;
+	
 	private String examTime;
 	
 	private String des;
@@ -24,6 +26,14 @@ public class Exam {
 	private Integer status;
 	
 	private String createTime;
+	
+	public String getSignUpEndTime() {
+		return signUpEndTime;
+	}
+
+	public void setSignUpEndTime(String signUpEndTime) {
+		this.signUpEndTime = signUpEndTime;
+	}
 
 	public Integer getId() {
 		return id;

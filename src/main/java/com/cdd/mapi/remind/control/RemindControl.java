@@ -1,5 +1,6 @@
 package com.cdd.mapi.remind.control;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -60,17 +61,9 @@ public class RemindControl {
 					if(remnindCount == null || remnindCount == 0){
 						boolean canSave = true;
 						examRemind.setTitle(exam.getName());
-						Date now = new Date();
-						String remindTime = null;
-						if(examRemind.getType() == ERemindType.EXAM.getCode()){
-							remindTime = exam.getExamTime();
-						}else if(examRemind.getType() == ERemindType.SIGN_UP.getCode()){
-							remindTime = exam.getSignUpTime();
-						}
+						String remindTime = exam.getExamTime();
 						if(remindTime != null){
-							SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-							Date remindDate = sf.parse(remindTime);
-							if(remindDate.before(now)){
+							if(!isEffectiveTime(remindTime)){
 								canSave = false;
 								result = new Result(EEchoCode.ERROR.getCode(),"很抱歉，该考试已经开始，无法制定提醒");
 							}
@@ -81,6 +74,14 @@ public class RemindControl {
 							examRemind.setEndTime(examRemind.getRemindTime());
 							examRemind.setMemberId(member.getId());
 							examRemind.setDes(exam.getDes());
+							examRemind.setType(ERemindType.EXAM.getCode());
+							remindService.addExamRemind(examRemind);
+							examRemind.setRemindTime(exam.getSignUpTime());
+							examRemind.setStartTime(exam.getSignUpTime());
+							examRemind.setEndTime(exam.getSignUpEndTime());
+							examRemind.setMemberId(member.getId());
+							examRemind.setDes(exam.getDes());
+							examRemind.setType(ERemindType.SIGN_UP.getCode());
 							remindService.addExamRemind(examRemind);
 							result = Result.getSuccessResult();
 						}
@@ -99,6 +100,21 @@ public class RemindControl {
 			}
 		}
 		return ResultUtil.getJsonString(result);
+	}
+	
+	
+	private boolean isEffectiveTime(String time){
+		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+		Date remindDate;
+		try {
+			remindDate = sf.parse(time);
+			if(remindDate.before(new Date())){
+				return false;
+			}
+		} catch (ParseException e) {
+			log.error(e.getMessage());
+		}
+		return true;
 	}
 
 	@RequestMapping("addLearingPlan")
