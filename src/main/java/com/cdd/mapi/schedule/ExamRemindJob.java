@@ -3,7 +3,6 @@ package com.cdd.mapi.schedule;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -21,8 +20,6 @@ import com.cdd.mapi.common.enums.ERemindType;
 import com.cdd.mapi.pojo.PushMessage;
 import com.cdd.mapi.pojo.Remind4Push;
 import com.cdd.mapi.remind.service.IRemindService;
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 
 /**
@@ -48,16 +45,16 @@ public class ExamRemindJob extends QuartzJobBean
       c.add(5, 6);
       String endTime = DateFormatUtils.format(c.getTime(), "yyyy-MM-dd");
       Integer remindCount = remindService.getRemindPageCount4Push(startTime, endTime, ERemindType.EXAM.getCode());
-      if (remindCount.intValue() > 0) {
-        List<Remind4Push> remindList = null;
-        for (int i = 1; i <= remindCount.intValue(); i++) {
-          remindList = remindService.getRemindList4Push(startTime, endTime, ERemindType.EXAM.getCode(), Integer.valueOf(i));
-          if (remindList != null) {
-            List<PushMessage> pushMessages = transform(remindList, ERemindType.EXAM);
-            baseService.addPushMsg(pushMessages);
-          }
-        }
-      }
+//      if (remindCount.intValue() > 0) {
+//        List<Remind4Push> remindList = null;
+//        for (int i = 1; i <= remindCount.intValue(); i++) {
+//          remindList = remindService.getRemindList4Push(startTime, endTime, ERemindType.EXAM.getCode(), Integer.valueOf(i));
+//          if (remindList != null) {
+//            List<PushMessage> pushMessages = transform(remindList, ERemindType.EXAM);
+//            baseService.addPushMsg(pushMessages);
+//          }
+//        }
+//      }
 
       remindCount = remindService.getRemindPageCount4Push(startTime, endTime, ERemindType.SIGN_UP.getCode());
       if (remindCount.intValue() > 0) {
@@ -87,43 +84,41 @@ public class ExamRemindJob extends QuartzJobBean
     }
   }
 
-  private List<PushMessage> transform(List<Remind4Push> remindList,final ERemindType type) {
-    Collection<PushMessage> pushMessages = Collections2.transform(remindList,new Function<Remind4Push,PushMessage>() {
-	@Override
-	public PushMessage apply(Remind4Push input) {
-		PushMessage message = new PushMessage();
-        message.setMemberId(input.getMemberId());
-        message.setDeviceNo(input.getDeviceNo());
-        String title = input.getTitle();
-        Long diffDay = ExamRemindJob.this.getDiffDay(input.getRemindTime());
-        switch (type) {
-        case EXAM:
-          if ((diffDay != null) && (diffDay.longValue() > 0L))
-            title = "距离" + title + "还有" + diffDay + "天";
-          else {
-            title = title + "开始了！";
-          }
-          break;
-        case SIGN_UP:
-          if ((diffDay != null) && (diffDay.longValue() > 0L))
-            title = "距离开始" + title + "还有" + diffDay + "天";
-          else {
-            title = "今天要开始" + title + "喽！";
-          }
-          break;
-        case LEARING:
-          if ((diffDay != null) && (diffDay.longValue() > 0L))
-            title = "距离" + title + "还有" + diffDay + "天";
-          else {
-            title = title + "开始了！";
-          }
-          break;
-        }
-        message.setMsg(title);
-        return message;
-	}
-    });
-    return Lists.newArrayList(pushMessages);
+  private List<PushMessage> transform(List<Remind4Push> remindList,ERemindType type) {
+	  List<PushMessage> list = Lists.newArrayList();
+	  for(Remind4Push remind4Push : remindList){
+		  PushMessage message = new PushMessage();
+	        message.setMemberId(remind4Push.getMemberId());
+	        message.setDeviceNo(remind4Push.getDeviceNo());
+	        String msg = null;
+	        Long diffDay = getDiffDay(remind4Push.getStartTime());
+	        switch (type) {
+	        case SIGN_UP:
+	        	if(diffDay == 1 || diffDay == 3 || diffDay == 7){
+	        		 msg = "距离" + remind4Push.getTitle() + "报名开始还有" + diffDay + "天";
+	        	}else{
+	        		Long endTimeDiffDay = getDiffDay(remind4Push.getEndTime());
+	        		if(endTimeDiffDay != null && endTimeDiffDay == 1){
+	        			msg = "距离" + remind4Push.getTitle() + "报名结束还有" + endTimeDiffDay + "天";
+	        		}
+	        	}
+	          break;
+	        case LEARING:
+	          if ((diffDay != null) && (diffDay.longValue() > 0L)){
+	            msg = "距离" + remind4Push.getTitle() + "还有" + diffDay + "天";
+	          }else {
+	            msg = remind4Push.getTitle() + "开始了！";
+	          }
+	          break;
+			default:
+				break;
+	        }
+	        if(msg != null){
+	        	message.setMsg(msg);
+	        	list.add(message);
+	        }
+	  }
+    return list;
   }
 
   private Long getDiffDay(String time) {

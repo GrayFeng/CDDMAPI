@@ -196,7 +196,9 @@ public class BaseServiceImpl implements IBaseService{
 
 	@Override
 	public void addPushMsg(List<PushMessage> msgList) {
-		baseDao.addPushMsg(msgList);
+		if(msgList != null && msgList.size() > 0){
+			baseDao.addPushMsg(msgList);
+		}
 	}
 
 	@Override
