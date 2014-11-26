@@ -20,7 +20,7 @@
 	
 	<bean id="cronTriggerExamRemindJob" class="org.springframework.scheduling.quartz.CronTriggerBean">
 		<property name="jobDetail" ref="examRemindJob"></property>
-		<property name="cronExpression" value="0 0/3 * * * ?"></property>
+		<property name="cronExpression" value="0 0 2 * * ?"></property>
 	</bean>
 	
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
