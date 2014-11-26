@@ -44,7 +44,8 @@ public class ExamRemindJob extends QuartzJobBean {
             String planEndTime = DateFormatUtils.format(c.getTime(), "yyyy-MM-dd");
             c.add(5, 6);
             String endTime = DateFormatUtils.format(c.getTime(), "yyyy-MM-dd");
-            Integer remindCount = remindService.getRemindPageCount4Push(startTime, endTime, ERemindType.EXAM.getCode());
+            Integer remindCount = 0;
+//            Integer remindCount = remindService.getRemindPageCount4Push(startTime, endTime, ERemindType.EXAM.getCode());
 //      if (remindCount.intValue() > 0) {
 //        List<Remind4Push> remindList = null;
 //        for (int i = 1; i <= remindCount.intValue(); i++) {

@@ -28,7 +28,7 @@ private Integer id;
 	
 	private String description;
 	//可用积分
-	private String availableScore;
+	private Long availableScore;
 	
 	private Integer status;
 	
@@ -160,14 +160,6 @@ private Integer id;
 		this.description = description;
 	}
 
-	public String getAvailableScore() {
-		return availableScore;
-	}
-
-	public void setAvailableScore(String availableScore) {
-		this.availableScore = availableScore;
-	}
-
 	public Integer getStatus() {
 		return status;
 	}
@@ -199,5 +191,12 @@ private Integer id;
 	public void setCityName(String cityName) {
 		this.cityName = cityName;
 	}
-	
+
+    public Long getAvailableScore() {
+        return availableScore;
+    }
+
+    public void setAvailableScore(Long availableScore) {
+        this.availableScore = availableScore;
+    }
 }

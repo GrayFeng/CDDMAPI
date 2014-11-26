@@ -35,9 +35,9 @@ public class Member implements Serializable{
 	
 	private String description;
 	//积分上限值
-	private String scoreCeiling;
+	private Long scoreCeiling;
 	//可用积分
-	private String availableScore;
+	private Long availableScore;
 	//设备标识
 	private String deviceFlag;
 	//注册来源
@@ -142,14 +142,6 @@ public class Member implements Serializable{
 		this.description = description;
 	}
 
-	public String getAvailableScore() {
-		return availableScore;
-	}
-
-	public void setAvailableScore(String availableScore) {
-		this.availableScore = availableScore;
-	}
-
 	public String getDeviceFlag() {
 		return deviceFlag;
 	}
@@ -222,14 +214,6 @@ public class Member implements Serializable{
 		this.sex = sex;
 	}
 
-	public String getScoreCeiling() {
-		return scoreCeiling;
-	}
-
-	public void setScoreCeiling(String scoreCeiling) {
-		this.scoreCeiling = scoreCeiling;
-	}
-
 	public Date getCreateTime() {
 		return createTime;
 	}
@@ -237,5 +221,20 @@ public class Member implements Serializable{
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
-	
+
+    public Long getScoreCeiling() {
+        return scoreCeiling;
+    }
+
+    public void setScoreCeiling(Long scoreCeiling) {
+        this.scoreCeiling = scoreCeiling;
+    }
+
+    public Long getAvailableScore() {
+        return availableScore;
+    }
+
+    public void setAvailableScore(Long availableScore) {
+        this.availableScore = availableScore;
+    }
 }

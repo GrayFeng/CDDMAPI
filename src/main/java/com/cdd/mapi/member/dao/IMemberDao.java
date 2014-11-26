@@ -32,6 +32,8 @@ public interface IMemberDao {
 	public void updateMemberDeviceFlag(Member member);
 	
 	public void updateMember(Member member);
+
+    public void updateMemberLevel(Member member);
 	
 	public void addMemberScore(Map<String,Object> paramMap);
 	

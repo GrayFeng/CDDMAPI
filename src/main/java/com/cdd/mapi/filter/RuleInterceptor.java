@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.cdd.mapi.common.RequestContext;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,7 @@ public class RuleInterceptor extends HandlerInterceptorAdapter{
 			throws Exception {
 		String uid = request.getParameter("uid");
 		String uri = request.getRequestURI();
+        RequestContext.init();
 		printRequestParams(request);
 		HandlerMethod handlerMethod =  (HandlerMethod)handler;
 		Result result = null;
@@ -53,7 +55,8 @@ public class RuleInterceptor extends HandlerInterceptorAdapter{
 				response.flushBuffer();
 				return false;
 			}
-		}
+            RequestContext.setUID(uid);
+        }
 		return true;
 	}
 	

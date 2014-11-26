@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
+import com.cdd.mapi.common.RequestContext;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,14 +76,19 @@ public class MemberServiceImpl implements IMemberService {
 	@Override
 	public void updateMember(Member member,String uid) {
 		memberDao.updateMember(member);
-		if(StringUtils.isNotEmpty(uid)){
-			LoginInfo loginInfo = MemberCache.getInstance().get(uid);
-			if(loginInfo != null){
-				loginInfo.setMember(member);
-				MemberCache.getInstance().add(uid, loginInfo);
-			}
-		}
+        flushMemberInfoCache(member);
 	}
+
+    private void flushMemberInfoCache(Member member){
+        String uid = RequestContext.getUID();
+        if(StringUtils.isNotEmpty(uid) && member != null){
+            LoginInfo loginInfo = MemberCache.getInstance().get(uid);
+            if(loginInfo != null){
+                loginInfo.setMember(member);
+                MemberCache.getInstance().add(uid, loginInfo);
+            }
+        }
+    }
 
 	@Override
 	public Member getMemberById(Integer id) {
@@ -119,10 +125,32 @@ public class MemberServiceImpl implements IMemberService {
 			paramMap.put("id", memberId);
 			paramMap.put("score", score);
 			memberDao.addMemberScore(paramMap);
+            calculateMemberLevel(memberId);
 			return score;
 		}
 		return null;
 	}
+
+    private void calculateMemberLevel(Integer memberId){
+        Member member = getMemberById(memberId);
+        if(member != null){
+            List<MemberLevel> memberLevelList = baseService.getMemberLevelList();
+            if(memberLevelList != null && memberLevelList.size() > 0){
+                Long scoreCeiling = member.getScoreCeiling();
+                Integer levelId = member.getLevelId();
+                for(MemberLevel memberLevel : memberLevelList){
+                    if(memberLevel.getScoreRangeStart() <= scoreCeiling
+                            && memberLevel.getScoreRangeEnd() >= scoreCeiling){
+                        if(levelId != memberLevel.getId()){
+                            member.setLevelId(memberLevel.getId());
+                            memberDao.updateMemberLevel(member);
+                            flushMemberInfoCache(member);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 	@Override
 	public Integer signIn(Member member) {

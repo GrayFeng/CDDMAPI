@@ -26,7 +26,11 @@
 	 			description = #{description},password = #{password},mobile = #{mobile}
 	 		where id = #{id}
 	 	</update>
-	 	
+
+        <update id="updateMemberLevel" parameterType="Member">
+	 		update t_member set level_id = #{levelId} where id = #{id}
+	 	</update>
+
 	 	<select id="getMemberById" resultType="Member" parameterType="Integer">
 			select <include refid="memberValues"/> from t_member m where id = #{id} and status = 0
 	 	</select>
