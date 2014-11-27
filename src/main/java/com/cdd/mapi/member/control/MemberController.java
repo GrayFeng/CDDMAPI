@@ -7,6 +7,7 @@ import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.cdd.mapi.common.enums.EMemberOrigin;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
@@ -69,6 +70,7 @@ public class MemberController {
 						&& StringUtils.isNotEmpty(member.getLoginId())
 						&& StringUtils.isNotEmpty(member.getPassword())
 						&& StringUtils.isNotEmpty(member.getConfirmPassword())){
+                    member.setOrigin(EMemberOrigin.APP.getCode());
 					result = executeReg(member,uid);
 				}
 			}
@@ -169,6 +171,7 @@ public class MemberController {
 							member.setLoginId(qq);
 							member.setPassword(String.valueOf(new Random().nextInt(99999999)));
 							member.setName(qq);
+                            member.setOrigin(EMemberOrigin.QQ.getCode());
 							memberService.addMember(member);
 							member = memberService.getMemberByLoginId(qq);
 						}
