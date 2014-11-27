@@ -241,7 +241,7 @@
 	 		<if test="itemId != null">
 	 			and q.item_id = #{itemId}
 	 		</if>
-	 		<if test="itemId != null">
+	 		<if test="subItemId != null">
 	 			and q.sub_item_id = #{subItemId}
 	 		</if>
 	 		and q.title like "%"#{keyword}"%"
