@@ -6,7 +6,7 @@ import com.google.common.base.Charsets;
 
 public class AESEncrypter {
 
-    private static final String key = "ydsw123321";
+    private static final String key = "cdd123321CDD";
     
     public static String encrypt(String str) {
         CryptAES aes = new CryptAES(key, 128);
@@ -19,5 +19,12 @@ public class AESEncrypter {
         byte[] decrypt = aes.decrypt(Base64.decodeBase64(str));
         return new String(decrypt, Charsets.UTF_8);
     }
-    
+
+
+    public static  void main(String a[]){
+        String str1 = "{\"loginId\":\"13400000004\",\"password\":\"123\"}";
+        String str = "PmA1T1Dn+QWIPYPdoinKDWifyv2Tv7LXk7hEFDrIkluOAY0+SHorEuTd+VEA1EQGuBiz97Ddi6pfiClH7yw5HFFkcIwEdwXd/OhNPCXttc5xyTphjU4id+mpximkAHNfKVFLLYhj8NJbPVvQJrVQbw==";
+        System.out.println(AESEncrypter.decrypt(str));
+        System.out.println(AESEncrypter.encrypt(str1));
+    }
 }
