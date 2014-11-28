@@ -7,7 +7,9 @@ import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.cdd.mapi.base.service.IBaseService;
 import com.cdd.mapi.common.enums.EMemberOrigin;
+import com.cdd.mapi.pojo.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
@@ -34,10 +36,6 @@ import com.cdd.mapi.common.serivce.IUploadService;
 import com.cdd.mapi.common.uitls.CommonValidate;
 import com.cdd.mapi.common.uitls.ResultUtil;
 import com.cdd.mapi.member.service.IMemberService;
-import com.cdd.mapi.pojo.Member;
-import com.cdd.mapi.pojo.MemberRelation;
-import com.cdd.mapi.pojo.PrivateLetter;
-import com.cdd.mapi.pojo.PrivateLetterVO;
 import com.google.common.collect.Maps;
 
 /**
@@ -56,6 +54,8 @@ public class MemberController {
 	private IMemberService memberService;
 	@Autowired
 	private IUploadService uploadService;
+    @Autowired
+    private IBaseService baseService;
 	
 	@RequestMapping("reg")
 	@NotNeedLogin
@@ -593,4 +593,32 @@ public class MemberController {
 		}
 		return ResultUtil.getJsonString(result);
 	}
+
+    @RequestMapping("share")
+    @ResponseBody
+    public String share(String params){
+        Result result = null;
+        Map<String,Object> resultMap = Maps.newHashMap();
+        if(StringUtils.isNotEmpty(params)){
+            JSONObject jsonObject = JSON.parseObject(params);
+            String cid = jsonObject.getString("cid");
+            VersionInfo versionInfo = baseService.checkVersion(cid);
+            result = Result.getSuccessResult();
+            resultMap.put("picUrl","http://www.baidu.com");
+            resultMap.put("msg", "财务社区-财叮铛");
+            if(versionInfo == null){
+                resultMap.put("url", "http://a.app.qq.com/");
+            }else{
+                if(versionInfo.getChannel().equals("100")){
+                    resultMap.put("url", "http://a.app.qq.com/");
+                }else if(versionInfo.getChannel().equals("200")){
+                    resultMap.put("url", versionInfo.getAddress());
+                }else{
+                    resultMap.put("url", versionInfo.getAddress());
+                }
+            }
+            result.setRe(resultMap);
+        }
+        return ResultUtil.getJsonString(result);
+    }
 }
