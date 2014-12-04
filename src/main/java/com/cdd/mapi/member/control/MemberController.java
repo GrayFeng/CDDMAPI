@@ -604,7 +604,7 @@ public class MemberController {
             String cid = jsonObject.getString("cid");
             VersionInfo versionInfo = baseService.checkVersion(cid);
             result = Result.getSuccessResult();
-            resultMap.put("picUrl","http://www.baidu.com");
+            resultMap.put("picUrl",Constant.PHOTO_URL_PATH + "/logo.png");
             resultMap.put("msg", "财务社区-财叮铛");
             if(versionInfo == null){
                 resultMap.put("url", "http://a.app.qq.com/");
