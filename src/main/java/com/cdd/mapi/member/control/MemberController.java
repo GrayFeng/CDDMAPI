@@ -163,6 +163,7 @@ public class MemberController {
 				if(StringUtils.isNotEmpty(uid) 
 						&& MemberCache.getInstance().isHave(uid)){
 					String qq = paramsObj.getString("qq");
+					String name = paramsObj.getString("name");
 					String deviceFlag = paramsObj.getString("deviceFlag");
 					if(StringUtils.isNotEmpty(qq) && NumberUtils.isNumber(qq)){
 						Member member = memberService.getMemberByLoginId(qq);
@@ -170,7 +171,7 @@ public class MemberController {
 							member = new Member();
 							member.setLoginId(qq);
 							member.setPassword(String.valueOf(new Random().nextInt(99999999)));
-							member.setName(qq);
+							member.setName(StringUtils.isNotEmpty(name) ? name : qq);
                             member.setOrigin(EMemberOrigin.QQ.getCode());
 							memberService.addMember(member);
 							member = memberService.getMemberByLoginId(qq);
