@@ -12,9 +12,9 @@
     
     	<insert id="addMember" parameterType="Member">
 	 		insert into t_member 
-	 			(login_id,name,password,sex,status,level_id,score_ceiling,available_score,create_time,modify_time,mobile,email,origin)
+	 			(login_id,name,password,sex,status,level_id,score_ceiling,available_score,create_time,modify_time,mobile,email,origin,photo)
 	 		values
-	 			(#{loginId},#{name},#{password},1,0,1,0,0,now(),now(),#{mobile},#{email},#{origin})
+	 			(#{loginId},#{name},#{password},1,0,1,0,0,now(),now(),#{mobile},#{email},#{origin},#{photo})
 		 	<selectKey resultType="int" keyProperty="id" order="AFTER">  
 	  			SELECT LAST_INSERT_ID() as id
 	  		</selectKey>  
