@@ -162,19 +162,23 @@ public class MemberController {
 				JSONObject paramsObj = JSON.parseObject(params);
 				if(StringUtils.isNotEmpty(uid) 
 						&& MemberCache.getInstance().isHave(uid)){
-					String qq = paramsObj.getString("qq");
-					String name = paramsObj.getString("name");
+					String openId = paramsObj.getString("openId");
+					String name = paramsObj.getString("nickname");
+					String gender  = paramsObj.getString("gender");
+					String photo  = paramsObj.getString("photo");
 					String deviceFlag = paramsObj.getString("deviceFlag");
-					if(StringUtils.isNotEmpty(qq)){
-						Member member = memberService.getMemberByLoginId(qq);
+					if(StringUtils.isNotEmpty(openId)){
+						Member member = memberService.getMemberByLoginId(openId);
 						if(member == null){
 							member = new Member();
-							member.setLoginId(qq);
+							member.setLoginId(openId);
 							member.setPassword(String.valueOf(new Random().nextInt(99999999)));
-							member.setName(StringUtils.isNotEmpty(name) ? name : qq);
+							member.setName(StringUtils.isNotEmpty(name) ? name : openId);
+							member.setSex((StringUtils.isNotEmpty(gender) && "女".equals(gender))? 2 : 1);
                             member.setOrigin(EMemberOrigin.QQ.getCode());
+							member.setPhoto(photo);
 							memberService.addMember(member);
-							member = memberService.getMemberByLoginId(qq);
+							member = memberService.getMemberByLoginId(openId);
 						}
 						if(member != null){
 							if(StringUtils.isNotEmpty(deviceFlag) 
