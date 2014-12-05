@@ -165,7 +165,7 @@ public class MemberController {
 					String qq = paramsObj.getString("qq");
 					String name = paramsObj.getString("name");
 					String deviceFlag = paramsObj.getString("deviceFlag");
-					if(StringUtils.isNotEmpty(qq) && NumberUtils.isNumber(qq)){
+					if(StringUtils.isNotEmpty(qq)){
 						Member member = memberService.getMemberByLoginId(qq);
 						if(member == null){
 							member = new Member();
@@ -190,7 +190,7 @@ public class MemberController {
 							result.setRe(memberVO);
 						}
 					}else{
-						result = new Result(EEchoCode.ERROR.getCode(),"请输入正确的qq号码");
+						result = new Result(EEchoCode.ERROR.getCode(),"QQ登录授权信息有误");
 					}
 				}
 			}
