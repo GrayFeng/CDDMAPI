@@ -26,13 +26,13 @@ public class JPushUtils {
 	
 	private Logger log = LoggerFactory.getLogger(JPushUtils.class);
 
-	private final static String APP_KEY = "46d93ea2b7edc1f0f726f938";
-
-	private final static String MASTER_SECRET = "9f3fc8782d2c461f879bbc49";
-	//-------正式appKey---------
-//	private final static String APP_KEY = "7bed32389d1f4f02c078d2ad";
+//	private final static String APP_KEY = "46d93ea2b7edc1f0f726f938";
 //
-//	private final static String MASTER_SECRET = "f630aa3f4c842d3d0751fe6d";
+//	private final static String MASTER_SECRET = "9f3fc8782d2c461f879bbc49";
+	//-------正式appKey---------
+	private final static String APP_KEY = "7bed32389d1f4f02c078d2ad";
+
+	private final static String MASTER_SECRET = "f630aa3f4c842d3d0751fe6d";
 	
 	private static JPushClient jpushClient ;
 	
