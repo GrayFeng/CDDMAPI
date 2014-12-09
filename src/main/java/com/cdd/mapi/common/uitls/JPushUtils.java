@@ -30,9 +30,9 @@ public class JPushUtils {
 //
 //	private final static String MASTER_SECRET = "9f3fc8782d2c461f879bbc49";
 	//-------正式appKey---------
-	private final static String APP_KEY = "7bed32389d1f4f02c078d2ad";
+	private final static String APP_KEY = "67e2bb6425739c4f8a68471e";
 
-	private final static String MASTER_SECRET = "f630aa3f4c842d3d0751fe6d";
+	private final static String MASTER_SECRET = "4df57bb27eb0f29c9a5d4a6a";
 	
 	private static JPushClient jpushClient ;
 	
