@@ -426,7 +426,7 @@ public class MemberController {
 			JSONObject jsonObject = JSONObject.parseObject(params);
 			Integer idolId = jsonObject.getInteger("idolId");
 			if(member != null && idolId != null){
-				if(idolId.equals(member.getId())){
+				if(!idolId.equals(member.getId())){
 					MemberRelation memberRelation = new MemberRelation();
 					memberRelation.setFans(member.getId());
 					memberRelation.setPopular_person(idolId);
