@@ -62,7 +62,7 @@ public class PushMessageJob extends QuartzJobBean {
                 }
                 if (failList.size() > 0) {
                     log.info(new StringBuilder().append(Thread.currentThread().getName()) + "-本次消息推送成功：" + failList.size() + "条");
-                    baseService.updatePushMsgFailStatus(successList);
+                    baseService.updatePushMsgFailStatus(failList);
                 }
             }
         } catch (Exception e) {
