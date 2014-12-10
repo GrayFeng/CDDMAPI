@@ -10,7 +10,7 @@
 	
 	<bean id="cronTriggerPushMessageJob" class="org.springframework.scheduling.quartz.CronTriggerBean">
 		<property name="jobDetail" ref="pushMessage"></property>
-		<property name="cronExpression" value="0 0/3 7 * * ?"></property>
+		<property name="cronExpression" value="0 0/3 8 * * ?"></property>
 	</bean>
 	
 	<bean id="examRemindJob" class="org.springframework.scheduling.quartz.JobDetailBean">

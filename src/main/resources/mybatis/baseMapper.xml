@@ -80,7 +80,7 @@
     		DATE_FORMAT(create_time,'%Y-%m-%d %T') as createTime 
     	from 
     		t_push_msg
-    	where status == 0
+    	where status = 0
     	order by create_time
     	limit 0,500
     </select>
