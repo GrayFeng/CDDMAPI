@@ -615,7 +615,7 @@ public class MemberController {
                 resultMap.put("url", "http://a.app.qq.com/");
             }else{
                 if(versionInfo.getChannel().equals("100")){
-                    resultMap.put("url", "http://a.app.qq.com/");
+                    resultMap.put("url", "http://a.app.qq.com/o/simple.jsp?pkgname=com.cdd");
                 }else if(versionInfo.getChannel().equals("200")){
                     resultMap.put("url", versionInfo.getAddress());
                 }else{
