@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>客户端下载</title>
+		<script type="text/javascript">
+			function selectMobileApp(){
+				var userAgent = navigator.userAgent;
+				if(userAgent.indexOf("MicroMessenger") > 0){
+					//微信扫描
+					if (userAgent.indexOf("Android") > 0) {
+						window.location.href="http://a.app.qq.com/o/simple.jsp?pkgname=com.cdd";
+					} else if (userAgent.indexOf("iPhone") > 0) {
+						window.location.href="";
+					}else{
+						window.location.href="http://a.app.qq.com/o/simple.jsp?pkgname=com.cdd";
+					}
+				}else{
+					if (userAgent.indexOf("Android") > 0) {
+						window.location.href="http://123.57.45.145:82/CaiDd.apk";
+					} else if (userAgent.indexOf("iPhone") > 0) {
+						window.location.href="";
+					}else{
+						window.location.href="http://123.57.45.145:82/CaiDd.apk";
+					}
+				}
+			}
+			selectMobileApp();
+		</script>
+	</head>
+</html>
